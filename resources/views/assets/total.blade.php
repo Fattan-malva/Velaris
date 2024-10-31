@@ -40,7 +40,7 @@
                 </div>
             @endif
             <div class="table-responsive">
-                <table id="inventoryTable" class="table table-hover">
+                <table id="assetsTable" class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col" style="width: 400px;">Type</th>
@@ -49,9 +49,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($inventorySummary as $summary)
+                        @forelse ($assetsSummary as $summary)
                             <tr>
-                                <td>{{ $summary->asets }}</td>
+                                <td>{{ $summary->category }}</td>
                                 <td>{{ $summary->merk }}</td>
                                 <td>{{ $summary->total_quantity }}</td>
                             </tr>

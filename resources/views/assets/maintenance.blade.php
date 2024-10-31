@@ -33,67 +33,94 @@
         </div>
     </div>
 
-    @if($inventories->isEmpty())
+    @if($assetss->isEmpty())
         <div class="alert alert-warning" role="alert">
             No assets available for maintenance. Please add assets before proceeding.
         </div>
     @else
         <div class="card">
             <div class="card-body" style="padding: 30px;">
-                <form method="POST" action="{{ route('inventorys.update') }}">
+                <form method="POST" action="{{ route('assets.update') }}">
                     @csrf
                     @method('PUT')
 
                     <div class="row mb-4">
-                        <div class="col-md-12 form-group">
-                            <label for="tagging" class="form-label">Select Assets to Maintenance</label>
-                            <select class="form-control select-dark" id="tagging" name="ids[]" multiple="multiple" required>
-                                @foreach($inventories as $inventory)
-                                    @php
-                                        $tanggalMasuk = $inventory->tanggalmasuk;
-                                        $tanggalMaintenance = $inventory->maintenance ?? null;
-                                        $tanggalAcuan = $tanggalMaintenance ?? $tanggalMasuk;
-                                        $bulanSejakAcuan = now()->diffInMonths($tanggalAcuan);
-                                    @endphp
+                        <div class="text-end">
+                            <a href="{{ route('assets.historymaintenance') }}" class="btn btn-sm history-btn"
+                                style="background-color: #9A9A9A;">
+                                <i class="fa-solid fa-clock"></i> History
+                            </a>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="code" class="form-label">Select Assets to Maintenance</label>
+                            <select class="form-control select-dark" id="code" name="ids[]" multiple="multiple" required>
+                                @foreach($assetss as $assets)
+                                                        @php
+                                                            $tanggalMasuk = $assets->entry_date;
+                                                            $tanggalMaintenance = $assets->last_maintenance ?? $tanggalMasuk;
 
-                                    @if ($bulanSejakAcuan >= 1) {{-- Only show assets that need maintenance --}}
-                                        <option value="{{ $inventory->id }}">{{ $inventory->tagging }}</option>
-                                    @endif
+                                                            // Convert scheduling maintenance to months
+                                                            switch ($assets->scheduling_maintenance) {
+                                                                case '3 Weeks':
+                                                                    $bulanJadwal = 0.75; // 3 weeks in months
+                                                                    break;
+                                                                case '1 Month':
+                                                                    $bulanJadwal = 1;
+                                                                    break;
+                                                                case '1 Year':
+                                                                    $bulanJadwal = 12;
+                                                                    break;
+                                                                case '5 Years':
+                                                                    $bulanJadwal = 60;
+                                                                    break;
+                                                                default:
+                                                                    $bulanJadwal = 0; // Default to 0 if no schedule
+                                                            }
+
+                                                            // Calculate months since the last maintenance
+                                                            $bulanSejakAcuan = now()->diffInMonths($tanggalMaintenance);
+                                                        @endphp
+
+                                                        @if ($bulanSejakAcuan >= $bulanJadwal)
+                                                            <option value="{{ $assets->id }}">{{ $assets->code }}</option>
+                                                        @endif
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12 form-group">
-                            <label for="maintenance" class="form-label">Maintenance</label>
-                            <input type="date" class="form-control" id="maintenance" name="maintenance"
-                                value="{{ old('maintenance', isset($inventory) ? \Carbon\Carbon::parse($inventory->maintenance)->format('Y-m-d') : '') }}" required>
+                        <div class="col-md-6 form-group">
+                            <label for="last_maintenance" class="form-label">Maintenance Date</label>
+                            <input type="date" class="form-control" id="last_maintenance" name="last_maintenance"
+                                value="{{ old('last_maintenance') }}" required>
                         </div>
                     </div>
 
+                    <!-- New Row for Maintenance Note and Condition Side-by-Side -->
                     <div class="row mb-4">
-                        <div class="col-md-12 form-group">
-                            <label for="kondisi" class="form-label">Kondisi</label>
-                            <select id="kondisi" name="kondisi" class="form-select" required>
-                                <option value="Good" {{ old('kondisi', isset($inventory) && $inventory->kondisi === 'Good' ? 'selected' : '') }}>Good</option>
-                                <option value="Exception" {{ old('kondisi', isset($inventory) && $inventory->kondisi === 'Exception' ? 'selected' : '') }}>
-                                    Exception</option>
-                                <option value="Bad" {{ old('kondisi', isset($inventory) && $inventory->kondisi === 'Bad' ? 'selected' : '') }}>Bad</option>
+                        <div class="col-md-6 form-group">
+                            <label for="note_maintenance" class="form-label">Maintenance Note</label>
+                            <input type="text" class="form-control" id="note_maintenance" name="note_maintenance"
+                                value="{{ old('note_maintenance') }}" placeholder="Enter maintenance note" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="condition" class="form-label">Condition</label>
+                            <select id="condition" name="condition" class="form-select" required>
+                                <option value="Good" {{ old('condition') == 'Good' ? 'selected' : '' }}>Good</option>
+                                <option value="Exception" {{ old('condition') == 'Exception' ? 'selected' : '' }}>Exception
+                                </option>
+                                <option value="Bad" {{ old('condition') == 'Bad' ? 'selected' : '' }}>Bad</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="mt-4 mb-2 text-end">
                         <button type="submit" class="btn" style="background-color:#1bcfb4;">Submit</button>
-                        <a href="{{ route('inventorys.index') }}" class="btn ml-3" style="background-color:#FE7C96;">Cancel</a>
                     </div>
                 </form>
             </div>
+
         </div>
     @endif
 </div>
-
 
 <style>
     .card {
@@ -202,6 +229,11 @@
         font-size: 16px;
         font-weight: bold;
         color: white;
+    }
+
+    .history-btn {
+        background-color: #9A9A9A;
+        border-radius: 20PX;
     }
 </style>
 @endsection

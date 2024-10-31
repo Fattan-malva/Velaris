@@ -42,10 +42,10 @@
 
                 <div class="row" style="padding: 15px;">
                     <div class="col-md-6 form-group">
-                        <label for="tagging">Select Assets to Scrap</label>
-                        <select class="form-control select-dark" id="tagging" name="ids[]" multiple="multiple" required>
+                        <label for="code">Select Assets to Scrap</label>
+                        <select class="form-control select-dark" id="code" name="ids[]" multiple="multiple" required>
                             @foreach($inventories as $inventory)
-                                <option value="{{ $inventory->id }}">{{ $inventory->tagging }}</option>
+                                <option value="{{ $inventory->id }}">{{ $inventory->code }}</option>
                             @endforeach
                         </select>
                     </div>

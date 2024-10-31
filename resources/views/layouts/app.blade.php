@@ -352,7 +352,7 @@
                 $(this).remove();
             });
             $(document).ready(function () {
-                $('#tagging').select2({
+                $('#code').select2({
                     placeholder: 'Select assets',
                     allowClear: true
                 });

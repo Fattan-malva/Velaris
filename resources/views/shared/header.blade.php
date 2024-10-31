@@ -29,8 +29,8 @@
             <li>
                 <div class="iocn-link">
                     <a
-                        class="{{ request()->routeIs('assets.total') || request()->routeIs('assets.index') || request()->routeIs('assets.mapping') ? 'active' : '' }}">
-                        <i class="fa-solid fa-cubes" {{ request()->routeIs('assets.total') || request()->routeIs('assets.index') || request()->routeIs('assets.mapping') ? 'active' : '' }}"></i>
+                        class="{{ request()->routeIs('assets.total') || request()->routeIs('assets.index') || request()->routeIs('assets.location') ? 'active' : '' }}">
+                        <i class="fa-solid fa-cubes" {{ request()->routeIs('assets.total') || request()->routeIs('assets.index') || request()->routeIs('assets.location') ? 'active' : '' }}"></i>
                         <span class="link_name">Asset</span>
                     </a>
                     <i class='bx bxs-chevron-left arrow'></i>
@@ -40,8 +40,8 @@
                             class="{{ request()->routeIs('assets.total') ? 'active' : '' }}">Total</a></li>
                     <li><a href="{{ route('assets.index') }}"
                             class="{{ request()->routeIs('assets.index') ? 'active' : '' }}">List</a></li>
-                    <li><a href="{{ route('assets.mapping') }}"
-                            class="{{ request()->routeIs('assets.mapping') ? 'active' : '' }}">Location</a></li>
+                    <li><a href="{{ route('assets.location') }}"
+                            class="{{ request()->routeIs('assets.location') ? 'active' : '' }}">Location</a></li>
                 </ul>
             </li>
             <li>
@@ -63,8 +63,8 @@
                             class="{{ request()->routeIs('transactions.indexreturn') ? 'active' : '' }}">Return</a></li>
                     <li><a href="{{ route('assets.scrap') }}"
                             class="{{ request()->routeIs('assets.scrap') ? 'active' : '' }}">Scrap</a></li>
-                    <li><a href="{{ route('assets.edit') }}"
-                            class="{{ request()->routeIs('assets.edit') ? 'active' : '' }}">
+                    <li><a href="{{ route('assets.maintenance') }}"
+                            class="{{ request()->routeIs('assets.maintenance') ? 'active' : '' }}">
                             Maintenance
                         </a>
                     </li>
@@ -100,9 +100,9 @@
             <li>
                 <div class="iocn-link">
                     <a href="#"
-                        class="{{ request()->routeIs('customer.index') || request()->routeIs('assets.create') || request()->routeIs('merk.index') ? 'active' : '' }}">
+                        class="{{ request()->routeIs('customer.index') || request()->routeIs('assets.add-asset') || request()->routeIs('merk.index') ? 'active' : '' }}">
                         <i class='fa-solid fa-gear'
-                            class="{{ request()->routeIs('customer.index') || request()->routeIs('assets.create') || request()->routeIs('merk.index') ? 'active' : '' }}"></i>
+                            class="{{ request()->routeIs('customer.index') || request()->routeIs('assets.add-asset') || request()->routeIs('merk.index') ? 'active' : '' }}"></i>
                         <span class="link_name">Setting</span>
                     </a>
                     <i class='bx bxs-chevron-left arrow'></i>
@@ -110,8 +110,8 @@
                 <ul class="sub-menu">
                     <li><a href="{{ route('customer.index') }}"
                             class="{{ request()->routeIs('customer.index') ? 'active' : '' }}">Users</a></li>
-                    <li><a href="{{ route('assets.create') }}"
-                            class="{{ request()->routeIs('assets.create') ? 'active' : '' }}">Add Asset</a></li>
+                    <li><a href="{{ route('assets.add-asset') }}"
+                            class="{{ request()->routeIs('assets.add-asset') ? 'active' : '' }}">Add Asset</a></li>
                     <li><a href="{{ route('merk.index') }}"
                             class="{{ request()->routeIs('merk.index') ? 'active' : '' }}">Add Merk</a></li>
                 </ul>
@@ -214,8 +214,8 @@
                 class="{{ request()->routeIs('assets.total') ? 'active' : '' }}">Total</a>
             <a href="{{ route('assets.index') }}"
                 class="{{ request()->routeIs('assets.index') ? 'active' : '' }}">List</a>
-            <a href="{{ route('assets.mapping') }}"
-                class="{{ request()->routeIs('assets.mapping') ? 'active' : '' }}">Location</a>
+            <a href="{{ route('assets.location') }}"
+                class="{{ request()->routeIs('assets.location') ? 'active' : '' }}">Location</a>
             <a href="{{ route('inventory.history') }}"
                 class="{{ request()->routeIs('inventory.history') ? 'active' : '' }}">History</a>
         </div>
@@ -234,8 +234,8 @@
                 class="{{ request()->routeIs('transactions.indexreturn') ? 'active' : '' }}">Return</a>
             <a href="{{ route('assets.scrap') }}"
                 class="{{ request()->routeIs('assets.scrap') ? 'active' : '' }}">Scrap</a>
-            <a href="{{ route('assets.edit') }}"
-                class="{{ request()->routeIs('assets.edit') ? 'active' : '' }}">Maintenance</a>
+            <a href="{{ route('assets.maintenance') }}"
+                class="{{ request()->routeIs('assets.maintenance') ? 'active' : '' }}">Maintenance</a>
         </div>
 
         <!-- Settings Menu -->
@@ -246,8 +246,8 @@
         <div id="settings-submenu" class="submenu">
             <a href="{{ route('customer.index') }}"
                 class="{{ request()->routeIs('customer.index') ? 'active' : '' }}">Users</a>
-            <a href="{{ route('assets.create') }}"
-                class="{{ request()->routeIs('assets.create') ? 'active' : '' }}">Add Asset</a>
+            <a href="{{ route('assets.add-asset') }}"
+                class="{{ request()->routeIs('assets.add-asset') ? 'active' : '' }}">Add Asset</a>
             <a href="{{ route('merk.index') }}" class="{{ request()->routeIs('merk.index') ? 'active' : '' }}">Add
                 Merk</a>
         </div>

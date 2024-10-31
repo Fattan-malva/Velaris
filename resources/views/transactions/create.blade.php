@@ -134,10 +134,13 @@
                     </div>
                 </form>
             @elseif (!$assetTaggingAvailable)
-                <p class="text-center">All assets have been used</p>
+                <p class="text-center">All assets have been used. <a href="{{ route('assets.create') }}"
+                        class="btn" style="background-color:#388df5; font-size:12px;">Add New Asset</a></p>
             @elseif (!$namesAvailable)
-                <p class="text-center">There are no more users, register users anymore</p>
+                <p class="text-center">There are no more users, register users anymore. <a
+                        href="{{ route('customer.create') }}" class="btn btn-link">Register New User</a></p>
             @endif
+
         </div>
     </div>
 </div>

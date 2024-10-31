@@ -22,38 +22,38 @@ class DashboardUserController extends Controller
             return redirect()->route('login')->with('error', 'User is not logged in.');
         }
 
-        // Fetch approved assets related to the logged-in user and join related tables
-        $assets = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id')
-            ->join('customer', 'assets.nama', '=', 'customer.id')
-            ->join('inventory', 'assets.asset_tagging', '=', 'inventory.id')
+        // Fetch approved transactions related to the logged-in user and join related tables
+        $transactions = DB::table('transactions')
+            ->join('merk', 'transactions.merk', '=', 'merk.id')
+            ->join('customer', 'transactions.nama', '=', 'customer.id')
+            ->join('inventory', 'transactions.asset_tagging', '=', 'inventory.id')
             ->select(
-                'assets.*',
+                'transactions.*',
                 'merk.name as merk_name',
                 'customer.name as customer_name',
                 'inventory.tagging as tagging'
             )
-            ->where('assets.nama', $userId) // Filter by user ID
-            ->where('assets.approval_status', 'Approved') // Only get approved assets
+            ->where('transactions.nama', $userId) // Filter by user ID
+            ->where('transactions.approval_status', 'Approved') // Only get approved transactions
             ->get();
 
-        // Fetch pending assets related to the logged-in user and join related tables
-        $pendingAssets = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id')
-            ->join('customer', 'assets.nama', '=', 'customer.id')
-            ->join('inventory', 'assets.asset_tagging', '=', 'inventory.id')
+        // Fetch pending transactions related to the logged-in user and join related tables
+        $pendingAssets = DB::table('transactions')
+            ->join('merk', 'transactions.merk', '=', 'merk.id')
+            ->join('customer', 'transactions.nama', '=', 'customer.id')
+            ->join('inventory', 'transactions.asset_tagging', '=', 'inventory.id')
             ->select(
-                'assets.*',
+                'transactions.*',
                 'merk.name as merk_name',
                 'customer.name as customer_name',
                 'inventory.tagging as tagging'
             )
-            ->where('assets.nama', $userId) // Filter by user ID
-            ->where('assets.approval_status', 'Pending') // Only get pending assets
+            ->where('transactions.nama', $userId) // Filter by user ID
+            ->where('transactions.approval_status', 'Pending') // Only get pending transactions
             ->get();
 
       
         // Return view with the fetched data
-        return response(view('shared.homeUser', compact('assets', 'pendingAssets')));
+        return response(view('shared.homeUser', compact('transactions', 'pendingAssets')));
     }
 }

@@ -5,12 +5,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
 
-class InventoryLocationController extends Controller
+class AssetsLocationController extends Controller
 {
     public function mapping()
     {
         // Run the SQL query
-        $data = DB::table('assets')
+        $data = DB::table('transactions')
             ->select('lokasi', 'jenis_aset', DB::raw('COUNT(*) as jumlah_aset'))
             ->groupBy('lokasi', 'jenis_aset')
             ->orderBy('lokasi')
@@ -18,6 +18,6 @@ class InventoryLocationController extends Controller
             ->get();
 
         // Pass the data to the view
-        return view('assets.mapping', ['data' => $data]);
+        return view('assets.location', ['data' => $data]);
     }
 }

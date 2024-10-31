@@ -19,7 +19,7 @@
         <h2 style="margin-top: 25px; margin-bottom: 20px; text-align: center; font-weight: 600;">Asset Return</h2>
         <hr style="width: 80%; margin: 0 auto;">
         <div class="card-body mt-3">
-            <form action="{{ route('assets.returnUpdate', $asset->id) }}" method="POST" enctype="multipart/form-data"
+            <form action="{{ route('transactions.returnUpdate', $asset->id) }}" method="POST" enctype="multipart/form-data"
                 id="Return" class="return-form">
                 @csrf
                 @method('PUT')

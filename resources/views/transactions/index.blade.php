@@ -65,10 +65,15 @@
             @endif
             <div class="mb-3">
                 <div class="d-flex flex-column flex-sm-row justify-content-start" style="margin-bottom: -50px;">
-                    <a href="{{ route('transactions.create') }}" class="btn btn-sm me-2 mb-2 mb-sm-0"
-                        style="background-color: #1BCFB4; color: #fff; font-weight: bold;">Handover Asset</a>
-                    <a href="{{ route('transactions.indexreturn') }}" class="btn btn-sm"
-                        style="background-color: #FE7C96; color: #fff; font-weight: bold;">Return Asset</a>
+                    <a href="{{ route('transactions.create') }}" class="btn btn-sm me-2 mb-2 mb-sm-0 handover-btn">
+                        <i class="fa-solid fa-hand-holding-dollar"></i> Handover
+                    </a>
+                    <a href="{{ route('transactions.indexreturn') }}" class="btn btn-sm me-2 mb-2 mb-sm-0 return-btn">
+                        <i class="fa-solid fa-circle-left"></i> Return
+                    </a>
+                    <a href="{{ route('history') }}" class="btn btn-sm history-btn">
+                        <i class="fa-solid fa-clock"></i> History
+                    </a>
                 </div>
             </div>
 
@@ -87,7 +92,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($assets as $index => $asset)
+                        @forelse ($transactions as $index => $asset)
                             <tr data-bs-toggle="modal" data-bs-target="#detailModal{{ $asset->id }}"
                                 style="cursor: pointer;">
                                 <td>{{ $index + 1 }}</td>
@@ -114,14 +119,14 @@
                                     <div class="btn-group" role="group">
                                         <!-- Button to View Details -->
                                         <!-- <button type="button" class="btn btn-sm text-white" data-bs-toggle="modal"
-                                                    data-bs-target="#detailModal{{ $asset->id }}" title="Details"
-                                                    style="background-color:#4FB0F1; margin-right:5px;">
-                                                    <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
-                                                </button> -->
+                                                            data-bs-target="#detailModal{{ $asset->id }}" title="Details"
+                                                            style="background-color:#4FB0F1; margin-right:5px;">
+                                                            <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
+                                                        </button> -->
                                         <!-- Conditional Button: Cancel Process -->
                                         @if ($asset->approval_status === 'Rejected' && $asset->aksi === 'Handover')
-                                            <form action="{{ route('transactions.delete', ['id' => $asset->id]) }}" method="POST"
-                                                style="display:inline;" class="cancel-form">
+                                            <form action="{{ route('transactions.delete', ['id' => $asset->id]) }}"
+                                                method="POST" style="display:inline;" class="cancel-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger text-white"
@@ -184,7 +189,7 @@
 </div>
 
 <!-- Modals -->
-@foreach ($assets as $asset)
+@foreach ($transactions as $asset)
     <div class="modal fade" id="detailModal{{ $asset->id }}" tabindex="-1"
         aria-labelledby="detailModalLabel{{ $asset->id }}" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -514,6 +519,45 @@
             margin-bottom: 10px;
             /* Tambahkan jarak antara tombol di mobile */
         }
+    }
+
+    .handover-btn {
+        background-color: #139c87;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 50px;
+        transition: background-color 0.3s ease;
+    }
+
+    .handover-btn:hover {
+        background-color: #107b6d;
+        /* Darker shade for hover */
+    }
+
+    .return-btn {
+        background-color: #f7395f;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 50px;
+        transition: background-color 0.3s ease;
+    }
+
+    .return-btn:hover {
+        background-color: #d22f50;
+        /* Darker shade for hover */
+    }
+
+    .history-btn {
+        background-color: #9A9A9A;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 50px;
+        transition: background-color 0.3s ease;
+    }
+
+    .history-btn:hover {
+        background-color: #7d7d7d;
+        /* Darker shade for hover */
     }
 </style>
 

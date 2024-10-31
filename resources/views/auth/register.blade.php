@@ -40,15 +40,15 @@
         }
 
         .left-section {
-            background: linear-gradient(to top right, #E5D3F6, #B86DFF);
+            background: linear-gradient(to top left, #fff, #FECE04);
         }
 
         .right-section {
-            background-color: #F2EDF3;
+            background-color: #FFF;
         }
 
         .btn-primary {
-            background-color: #8d45d1;
+            background-color: #FEBD0D;
             border: none;
             border-radius: 10px;
             padding: 10px 20px;
@@ -57,7 +57,7 @@
         }
 
         .btn-primary:hover {
-            background-color: #B86DFF;
+            background-color: #fcc735;
         }
 
         .form-group label {
@@ -70,7 +70,7 @@
         }
 
         .login-link a {
-            color: #8d45d1;
+            color: #ffc105;
             text-decoration: none;
         }
 
@@ -88,7 +88,7 @@
             text-align: center;
             font-weight: bold;
             margin-bottom: 5px;
-            margin-left: 7px;
+            margin-left: -12px;
         }
 
         .form-container {
@@ -143,7 +143,7 @@
             left: 10px;
             top: 50%;
             transform: translateY(-50%);
-            color: #b66dff;
+            color: #A3A3A3;
         }
 
         .form-row {
@@ -199,8 +199,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            /* Redupkan background */
+            background-color: rgba(0, 0, 0, 0.7);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -277,8 +276,9 @@
             <div class="text-center">
                 <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
                     type="module"></script>
-                <dotlottie-player src="https://lottie.host/1fe35e94-e1f9-43d4-b401-b23f59ac064b/BTLdiThtoe.json"
-                    background="transparent" speed="1" style="width: 400px; height: 400px; margin-bottom:100px;" loop
+
+                <dotlottie-player src="https://lottie.host/333d89f5-67ef-4495-b186-359ce34833cf/od0pzE1P6Q.json"
+                    background="transparent" speed="1" style="width: 500px; height: 7000px;" loop
                     autoplay></dotlottie-player>
             </div>
         </div>
@@ -286,8 +286,8 @@
         <div class="right-section">
             <div class="welcome">
                 <div class="logo-text-wrapper">
-                    <img src="{{ asset('assets/img/velaris.png') }}" alt="Register Image">
-                    <h1>eLaris</h1>
+                    <img src="{{ asset('assets/img/assetslogo.png') }}" alt="Register Image">
+                    <h1>ssets</h1>
                 </div>
             </div>
             <form id="registrationForm" action="{{ route('user.storeregister') }}" method="POST">
@@ -353,7 +353,7 @@
                                     id="password" name="password" placeholder="Your password..." required
                                     style="padding-left: 40px; padding-right: 40px;">
                                 <span
-                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color:#b66dff;"
+                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color:#A3A3A3;"
                                     onclick="togglePassword()">
                                     <i id="password-icon" class="fas fa-eye"></i>
                                 </span>
@@ -374,7 +374,7 @@
                                     id="confirm_password" name="confirm_password" placeholder="Confirm Your password..."
                                     required style="padding-left: 40px; padding-right: 40px;">
                                 <span
-                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color:#b66dff;"
+                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color:#A3A3A3;"
                                     onclick="toggleConfirmPassword()">
                                     <i id="confirm-password-icon" class="fas fa-eye"></i>
                                 </span>
@@ -396,32 +396,35 @@
         </div>
     </div>
     <div id="loading-animation" class="overlay" style="display: none; text-align: center;">
-        <dotlottie-player src="https://lottie.host/19a1839c-74a1-49d3-ae7c-41b465f7f546/KLdGOA1RNO.json"
-            background="transparent" speed="1" style="width: 300px; height: 300px;" loop
-            autoplay></dotlottie-player>
+
+        <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+            type="module"></script>
+
+        <dotlottie-player src="https://lottie.host/104f5ddb-9632-4973-a5d4-dd98659272dc/nrBfuqx8XO.json"
+            background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
     </div>
 
 
     <script>
         document.getElementById('registrationForm').addEventListener('submit', function (e) {
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm_password').value;
-        const passwordError = document.getElementById('passwordError');
-        const loadingAnimation = document.getElementById('loading-animation');
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const passwordError = document.getElementById('passwordError');
+            const loadingAnimation = document.getElementById('loading-animation');
 
-        // Prevent form submission if passwords do not match
-        if (password !== confirmPassword) {
-            e.preventDefault(); // Stop form submission
-            passwordError.style.display = 'block'; // Show error
-        } else {
-            passwordError.style.display = 'none'; // Hide error if matched
+            // Prevent form submission if passwords do not match
+            if (password !== confirmPassword) {
+                e.preventDefault(); // Stop form submission
+                passwordError.style.display = 'block'; // Show error
+            } else {
+                passwordError.style.display = 'none'; // Hide error if matched
 
-            // Display loading animation
-            loadingAnimation.style.display = 'flex';
+                // Display loading animation
+                loadingAnimation.style.display = 'flex';
 
-            // Allow form submission to proceed
-        }
-    });
+                // Allow form submission to proceed
+            }
+        });
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const passwordIcon = document.getElementById('password-icon');

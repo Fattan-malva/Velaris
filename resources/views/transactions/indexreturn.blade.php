@@ -75,7 +75,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($assets as $index => $asset)
+                        @forelse ($transactions as $index => $asset)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $asset->customer_name }}</td>
@@ -84,7 +84,7 @@
                                 <td>{{ $asset->merk_name }}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a href="{{ route('assets.return', ['id' => $asset->id]) }}"
+                                        <a href="{{ route('transactions.return', ['id' => $asset->id]) }}"
                                             class="btn btn-sm form-return"
                                             style="background-color: #fe7c96; color: #fff; font-weight: 500;"
                                             title="Return">

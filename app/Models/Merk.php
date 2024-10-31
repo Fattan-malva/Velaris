@@ -21,7 +21,7 @@ class Merk extends Model
     // Relasi dengan InventoryHistory
     public function inventoryHistories()
     {
-        return $this->hasMany(InventoryHistory::class, 'merk'); // Pastikan 'merk_id' sesuai dengan nama kolom di tabel inventory_histories
+        return $this->hasMany(InventoryHistory::class, 'merk'); // Pastikan 'merk_id' sesuai dengan nama kolom di tabel asset_histories
     }
 
     public $timestamps = false; // Jika tabel tidak menggunakan timestamps

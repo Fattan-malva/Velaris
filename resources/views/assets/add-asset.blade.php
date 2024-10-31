@@ -36,24 +36,24 @@
             <form action="{{ route('assets.store') }}" method="POST" enctype="multipart/form-data" id="addAsset">
                 @csrf
                 <div class="row">
+                    
                     <div class="col-md-6 form-group">
-                        <label for="tagging" class="form-label">Asset Code</label>
-                        <input type="text" class="form-control @error('tagging') is-invalid @enderror" id="tagging"
-                            name="tagging" value="{{ old('tagging') }}" placeholder="Enter asset tag">
-                        @error('tagging')
+                        <label for="category" class="form-label">Category</label>
+                        <input type="text" class="form-control @error('category') is-invalid @enderror" id="category"
+                            name="category" value="{{ old('category') }}" placeholder="Enter asset category">
+                        @error('category')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6 form-group">
-                        <label for="asets" class="form-label">Asset Type</label>
-                        <input type="text" class="form-control @error('asets') is-invalid @enderror" id="asets"
-                            name="asets" value="{{ old('asets') }}" placeholder="Enter asset type">
-                        @error('asets')
+                        <label for="code" class="form-label">Asset Code</label>
+                        <input type="text" class="form-control @error('code') is-invalid @enderror" id="code"
+                            name="code" value="{{ old('code') }}" placeholder="Enter asset code">
+                        @error('code')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
                     <div class="col-md-6 form-group">
                         <label for="merk" class="form-label">Merk</label>
                         <select class="form-select @error('merk') is-invalid @enderror" id="merk" name="merk">
@@ -70,48 +70,67 @@
                     </div>
 
                     <div class="col-md-6 form-group">
-                        <label for="seri" class="form-label">Serial Number</label>
-                        <input type="text" class="form-control @error('seri') is-invalid @enderror" id="seri"
-                            name="seri" value="{{ old('seri') }}" placeholder="Enter serial number">
-                        @error('seri')
+                        <label for="serial_number" class="form-label">Serial Number</label>
+                        <input type="text" class="form-control @error('serial_number') is-invalid @enderror"
+                            id="serial_number" name="serial_number" value="{{ old('serial_number') }}"
+                            placeholder="Enter serial number">
+                        @error('serial_number')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6 form-group">
-                        <label for="type" class="form-label">Specification</label>
-                        <input type="text" class="form-control @error('type') is-invalid @enderror" id="type"
-                            name="type" value="{{ old('type') }}" placeholder="Enter asset type">
-                        @error('type')
+                        <label for="spesification" class="form-label">Specification</label>
+                        <input type="text" class="form-control @error('spesification') is-invalid @enderror" id="type"
+                            name="spesification" value="{{ old('spesification') }}" placeholder="Enter spesification">
+                        @error('spesification')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6 form-group">
-                        <label for="kondisi" class="form-label">Condition</label>
-                        <select class="form-select @error('kondisi') is-invalid @enderror" id="kondisi" name="kondisi"
-                            required>
-                            <option value="New" {{ old('kondisi') == 'New' ? 'selected' : '' }}>New</option>
-                            <option value="Good" {{ old('kondisi') == 'Good' ? 'selected' : '' }}>Good</option>
-                            <option value="Exception" {{ old('kondisi') == 'Exception' ? 'selected' : '' }}>Exception
+                        <label for="condition" class="form-label">Condition</label>
+                        <select class="form-select @error('condition') is-invalid @enderror" id="condition"
+                            name="condition" required>
+                            <option value="">Select Condition</option>
+                            <option value="New" {{ old('condition') == 'New' ? 'selected' : '' }}>New</option>
+                            <option value="Good" {{ old('condition') == 'Good' ? 'selected' : '' }}>Good</option>
+                            <option value="Exception" {{ old('condition') == 'Exception' ? 'selected' : '' }}>Exception
                             </option>
-                            <option value="Bad" {{ old('kondisi') == 'Bad' ? 'selected' : '' }}>Bad</option>
+                            <option value="Bad" {{ old('condition') == 'Bad' ? 'selected' : '' }}>Bad</option>
                         </select>
-                        @error('kondisi')
+                        @error('condition')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
                     <div class="col-md-6 form-group">
-                        <label for="tanggalmasuk" class="form-label">Entry Date</label>
-                        <input type="date" class="form-control @error('tanggalmasuk') is-invalid @enderror"
-                            id="tanggalmasuk" name="tanggalmasuk" value="{{ old('tanggalmasuk') }}"
+                        <label for="entry_date" class="form-label">Entry Date</label>
+                        <input type="date" class="form-control @error('entry_date') is-invalid @enderror"
+                            id="entry_date" name="entry_date" value="{{ old('entry_date') }}"
                             placeholder="Enter the entry date">
-                        @error('tanggalmasuk')
+                        @error('entry_date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
+                    <div class="col-md-6 form-group">
+                        <label for="scheduling_maintenance" class="form-label">Sceduling Maintenance</label>
+                        <select class="form-select @error('scheduling_maintenance') is-invalid @enderror"
+                            id="scheduling_maintenance" name="scheduling_maintenance" required>
+                            <option value="">Select Scheduling Maintenance</option>
+                            <option value="3 Weeks" {{ old('scheduling_maintenance') == '3 Weeks' ? 'selected' : '' }}>3
+                                Weeks</option>
+                            <option value="1 Mont" {{ old('scheduling_maintenance') == '1 Mont' ? 'selected' : '' }}>1
+                                Mont</option>
+                            <option value="1 Year" {{ old('scheduling_maintenance') == '1 Years' ? 'selected' : '' }}>1
+                                Years
+                            </option>
+                            <option value="5 Years" {{ old('scheduling_maintenance') == '5 Years' ? 'selected' : '' }}>5
+                                Years</option>
+                        </select>
+                        @error('scheduling_maintenance')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                     <div class="col-md-6 form-group">
                         <label for="documentation" class="form-label">Documentation</label>
                         <input type="file" class="form-control @error('documentation') is-invalid @enderror"
@@ -125,8 +144,7 @@
 
                 <div class="text-end mt-4">
                     <button type="submit" class="btn" style="background-color:#1bcfb4;">Submit</button>
-                    <a href="{{ route('assets.index') }}" class="btn ml-3"
-                        style="background-color:#FE7C96;">Cancel</a>
+                    <a href="{{ route('assets.index') }}" class="btn ml-3" style="background-color:#FE7C96;">Cancel</a>
                 </div>
             </form>
         </div>

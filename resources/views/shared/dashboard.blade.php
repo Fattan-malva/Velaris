@@ -309,7 +309,7 @@
         margin-right: 10px;
     }
 
-    .inventory-summary {
+    .assets-summary {
         display: inline-block;
         background-color: rgba(128, 0, 128, 0.3);
         /* Transparent purple */
@@ -318,7 +318,7 @@
         line-height: 1.5;
     }
 
-    .inventory-icon {
+    .assets-icon {
         color: white;
         /* Purple color */
         background-color: black;
@@ -349,7 +349,7 @@
     @media (max-width: 768px) {
 
         .location-summary,
-        .inventory-summary,
+        .assets-summary,
         .operation-summary {
             display: block;
             /* Stack vertically */
@@ -362,7 +362,7 @@
         }
 
         .location-icon,
-        .inventory-icon,
+        .assets-icon,
         .operation-icon {
             padding: 20px;
             /* Adjust padding for mobile */
@@ -379,14 +379,14 @@
     @media (max-width: 480px) {
 
         .location-summary,
-        .inventory-summary,
+        .assets-summary,
         .operation-summary {
             font-size: 14px;
             /* Reduce font size for smaller screens */
         }
 
         .location-icon,
-        .inventory-icon,
+        .assets-icon,
         .operation-icon {
             padding: 15px;
             /* Further adjust padding */
@@ -400,8 +400,8 @@
         $('.table-responsivee').each(function () {
             const tableId = $(this).find('table').attr('id'); // Mendapatkan ID tabel
             // Tentukan apakah pencarian harus dinonaktifkan untuk tabel tertentu
-            const disableSearch = tableId === 'inventorySummaryTable' || tableId === 'mappingTable' || tableId === 'operationSummaryTable';
-            const disableLength = tableId === 'inventorySummaryTable' || tableId === 'mappingTable' || tableId === 'operationSummaryTable';
+            const disableSearch = tableId === 'assetsSummaryTable' || tableId === 'locationTable' || tableId === 'operationSummaryTable';
+            const disableLength = tableId === 'assetsSummaryTable' || tableId === 'locationTable' || tableId === 'operationSummaryTable';
             $(this).find('table').DataTable({
                 paging: true,
                 searching: false,
@@ -472,6 +472,85 @@
         });
     });
 </script>
+@if ($countMaintenanceNeeded > 0)
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const assetCodes = @json($assetCodes); // Convert PHP array to JavaScript array
+            const assetCodesString = assetCodes.join(', '); // Create a string of asset codes
+
+            // Create the SweetAlert with a custom class for styling
+            Swal.fire({
+                title: 'Maintenance Alert!',
+                html: 'The following assets need maintenance: <strong>' + assetCodesString + '</strong>', // Use 'html' to allow HTML tags
+                icon: 'warning',
+                position: 'top-end',
+                toast: true,
+                showConfirmButton: false,
+                timer: 10000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'custom-alert-popup' // Custom class for the popup
+                },
+                willClose: () => {
+                    // You can perform additional actions when the alert closes
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    // Additional actions when the timer runs out can be performed here
+                }
+            });
+
+            // Add click event to redirect on notification click
+            document.querySelector('.swal2-container').addEventListener('click', function () {
+                window.location.href = "{{ route('assets.maintenance') }}"; // Redirect to the maintenance route
+            });
+        });
+    </script>
+
+    <style>
+        /* Custom styles for the SweetAlert popup */
+        .custom-alert-popup {
+            cursor: pointer;
+            /* Change cursor to pointer */
+            background-color: #fff3cd;
+            /* Light background color for visibility */
+            border: 2px solid #ffeeba;
+            /* Border color to make it more noticeable */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow for depth */
+            padding: 15px;
+            /* Padding for better spacing */
+            border-radius: 10px;
+            /* Rounded corners */
+            transition: transform 0.2s;
+            /* Smooth scaling effect */
+            animation: blink-animation 1.5s steps(5, end) infinite;
+            /* Blinking effect */
+        }
+
+        /* Hover effect to scale the popup */
+        .custom-alert-popup:hover {
+            transform: scale(1.05);
+            /* Slightly increase size on hover */
+        }
+
+        /* Keyframes for blinking effect */
+        @keyframes blink-animation {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0.5;
+                /* Fade out to half opacity */
+            }
+        }
+    </style>
+@endif
+
+
+
+
 
 <div class="container mt-1">
     <div class="row" style="margin-left: 0px;">
@@ -496,37 +575,18 @@
             </a>
         </div>
 
-        <!-- Card Asset Location -->
-        <div class="col-lg-4 col-md-6 mb-2 assettotal-padding">
-            <a href="{{ route('assets.mapping') }}" class="text-decoration-none">
-                <div
-                    class="card text-white border-0 d-flex flex-column justify-content-center align-items-center card-map">
-                    <img class="d-flex flex-column img-card" alt="circle">
-                    <div class="card-body d-flex align-items-center justify-content-center"
-                        style="position: relative; z-index: 1;">
-                        <div class="d-flex flex-column align-items-start text-left">
-                            <h6 class="card-title mb-3" style="color: #ffdc3b">Asset Location</h6>
-                            <p class="card-text h4 mb-0" id="distinctLocations">{{ $distinctLocations }}</p>
-                        </div>
-                        <div class="me-3" style="margin-left: 50px;">
-                            <i class="fa-solid fa-location-dot fa-4x" style="color: #ffdc3b"></i>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
         <!-- Card Type -->
         <div class="col-lg-4 col-md-6 mb-2 assettotal-padding">
-            <a href="{{ route('assets.index') }}" class="text-decoration-none">
+            <a href="{{ route('assets.location') }}" class="text-decoration-none">
                 <div
                     class="card text-white border-0 d-flex flex-column justify-content-center align-items-center card-type">
                     <img class=" img-card" alt="circle">
                     <div class="card-body d-flex align-items-center justify-content-center"
                         style="position: relative; z-index: 1;">
                         <div class="d-flex flex-column align-items-start text-left">
-                            <h6 class="card-title mb-3" style="color: #1bcfb4;">Asset Type</h6>
-                            <p class="card-text h4 mb-0" id="distinctAssetTypes">{{ $distinctAssetTypes }}</p>
+                            <h6 class="card-title mb-3" style="color: #1bcfb4;">Asset Location</h6>
+                            <!-- <p class="card-text h4 mb-0" id="distinctAssetTypes">{{ $distinctAssetTypes }}</p> -->
+                            <p class="card-text h4 mb-0" id="distinctLocations">{{ $distinctLocations }}</p>
                         </div>
                         <div class="me-3" style="margin-left: 50px;">
                             <i class="fas fa-cogs fa-4x" style="color: #1bcfb4;"></i>
@@ -535,6 +595,28 @@
                 </div>
             </a>
         </div>
+
+        <!-- Card Asset Location -->
+        <div class="col-lg-4 col-md-6 mb-2 assettotal-padding">
+            <a href="{{ route('assets.maintenance') }}" class="text-decoration-none">
+                <div
+                    class="card text-white border-0 d-flex flex-column justify-content-center align-items-center card-map">
+                    <img class="d-flex flex-column img-card" alt="circle">
+                    <div class="card-body d-flex align-items-center justify-content-center"
+                        style="position: relative; z-index: 1;">
+                        <div class="d-flex flex-column align-items-start text-left">
+                            <h6 class="card-title mb-3" style="color: #ffdc3b">Asset Need Maintenance</h6>
+
+                            <p class="card-text h4 mb-0" id="countMaintenanceNeeded">{{ $countMaintenanceNeeded }}</p>
+                        </div>
+                        <div class="me-3" style="margin-left: 50px;">
+                            <i class="fa-solid fa-screwdriver-wrench fa-4x" style="color: #ffdc3b"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
     </div>
     <br />
     <div class="row">
@@ -603,7 +685,7 @@
                                         <td>{{ $data->jenis_aset }}</td>
                                         <td>{{ $data->merk }}</td>
                                         <td>{!! nl2br(e(str_replace(', ', "\n", $data->asset_tagging))) !!}</td>
-                                        <td>{{ $data->total_assets }}</td>
+                                        <td>{{ $data->total_transactions }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -623,13 +705,13 @@
                 <div class="col-md-12 mb-4">
                     <div class="card border-1 shadow-sm">
                         <div class="card-body">
-                            <h5 class="card-title inventory-summary">
-                                <i class="fa-solid fa-boxes-stacked fa-xl inventory-icon"></i>
+                            <h5 class="card-title assets-summary">
+                                <i class="fa-solid fa-boxes-stacked fa-xl assets-icon"></i>
                                 Inventory Summary
                             </h5>
 
                             <div class="table-responsivee">
-                                <table id="inventorySummaryTable" class="table table-hover">
+                                <table id="assetsSummaryTable" class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Asset Code</th>
@@ -639,12 +721,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($inventoryData as $data)
+                                        @foreach($assetsData as $data)
                                             <tr>
                                                 <td>{{ $data->asset_tagging }}</td>
                                                 <td>{{ $data->asset }}</td>
                                                 <td>{{ $data->merk_name }}</td>
-                                                <td>{{ $data->kondisi }}</td>
+                                                <td>{{ $data->condition }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -671,7 +753,7 @@
 
 
                             <div class="table-responsivee">
-                                <table id="mappingTable" class="table table-hover">
+                                <table id="locationTable" class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Location</th>

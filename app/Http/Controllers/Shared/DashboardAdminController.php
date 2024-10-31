@@ -12,29 +12,36 @@ class DashboardAdminController extends Controller
     }
     public function indexUser()
     {
-        // Data untuk dashboard pengguna
-        $totalAssets = DB::table('inventory')->count();
-        $distinctLocations = DB::table('assets')->distinct()->count('lokasi');
-        $distinctAssetTypes = DB::table('inventory')->distinct()->count('asets');
+        // Data for user dashboard
+        $totalAssets = DB::table('assets')->count();
+        $distinctLocations = DB::table('transactions')->distinct()->count('lokasi');
+        $distinctAssetTypes = DB::table('assets')->distinct()->count('category');
 
-        // Data untuk Pie Chart: Jenis Aset dari tabel 'inventory'
-        $assetData = DB::table('inventory')
-            ->select('asets as jenis_aset', DB::raw('count(*) as total'))
-            ->groupBy('asets')
+        // Data for Pie Chart: Jenis Aset from the 'assets' table
+        $assetData = DB::table('assets')
+            ->select('category as jenis_aset', DB::raw('count(*) as total'))
+            ->groupBy('category')
             ->get();
 
-        // Data untuk Pie Chart: Lokasi Mapping dari tabel 'assets'
-        $locationData = DB::table('assets')
+        // Data for Pie Chart: Lokasi Mapping from the 'transactions' table
+        $locationData = DB::table('transactions')
             ->select('lokasi', DB::raw('count(*) as total'))
             ->groupBy('lokasi')
             ->get();
+
+        // Calculate the count of assets needing maintenance
+        $countMaintenanceNeeded = DB::table('assets')
+            ->whereNotNull('last_maintenance') // Ensure there is a last maintenance date
+            ->whereRaw('TIMESTAMPDIFF(MONTH, last_maintenance, NOW()) >= scheduling_maintenance') // Check if maintenance is due
+            ->count();
 
         return view('shared.dashboardUser', [
             'totalAssets' => $totalAssets,
             'distinctLocations' => $distinctLocations,
             'distinctAssetTypes' => $distinctAssetTypes,
             'assetData' => $assetData,
-            'locationData' => $locationData
+            'locationData' => $locationData,
+            'countMaintenanceNeeded' => $countMaintenanceNeeded,
         ]);
     }
 
@@ -42,27 +49,27 @@ class DashboardAdminController extends Controller
 
     public function showSummary()
     {
-        // Data for Pie Chart: Jenis Aset from 'inventory' table
-        $assetData = DB::table('inventory')
-            ->select('asets as jenis_aset', DB::raw('count(*) as total'))
-            ->groupBy('asets')
+        // Data for Pie Chart: Jenis Aset from 'assets' table
+        $assetData = DB::table('assets')
+            ->select('category as jenis_aset', DB::raw('count(*) as total'))
+            ->groupBy('category')
             ->get();
 
-        // Data for Pie Chart: Lokasi Mapping from 'assets' table
-        $locationData = DB::table('assets')
+        // Data for Pie Chart: Lokasi Mapping from 'transactions' table
+        $locationData = DB::table('transactions')
             ->select('lokasi', DB::raw('count(*) as total'))
             ->groupBy('lokasi')
             ->get();
 
-        // Inventory Summary: Include assets where approval_status is not 'Approved' 
+        // Inventory Summary: Include transactions where approval_status is not 'Approved' 
         // or the status is 'Operations' and not approved
-        $inventorySummary = DB::table('assets as a')
+        $assetsSummary = DB::table('transactions as a')
             ->leftJoin('merk as m', 'a.merk', '=', 'm.id')
             ->select(
                 'a.jenis_aset as asset_name',
                 'm.name as merk_name',
                 'a.lokasi as location',
-                DB::raw('SUM(CASE WHEN a.status = "Inventory" THEN 1 ELSE 0 END) as inventory_count')
+                DB::raw('SUM(CASE WHEN a.status = "Inventory" THEN 1 ELSE 0 END) as assets_count')
             )
             ->where(function ($query) {
                 $query->where('a.approval_status', '<>', 'Approved')
@@ -74,27 +81,64 @@ class DashboardAdminController extends Controller
             ->groupBy('a.jenis_aset', 'm.name', 'a.lokasi')
             ->get(); // Ensure this returns results
 
-        // Additional query to get specific inventory data based on your provided query
-        $inventoryData = DB::table('inventory')
+        // Calculate the count of assets needing maintenance in this summary
+        $assetsNeedingMaintenance = DB::table('assets')
+        ->select('code AS code', 'last_maintenance', 'scheduling_maintenance', 'entry_date') // Select necessary fields
+        ->get()
+        ->filter(function ($asset) {
+            // Same filtering logic as before
+            $tanggalMaintenance = $asset->last_maintenance ?? $asset->entry_date;
+
+            // Convert maintenance schedule to months
+            switch ($asset->scheduling_maintenance) {
+                case '3 Weeks':
+                    $bulanJadwal = 0.75; // 3 weeks in months
+                    break;
+                case '1 Month':
+                    $bulanJadwal = 1;
+                    break;
+                case '1 Year':
+                    $bulanJadwal = 12;
+                    break;
+                case '5 Years':
+                    $bulanJadwal = 60;
+                    break;
+                default:
+                    $bulanJadwal = 0; // No schedule
+            }
+
+            // Calculate the elapsed time since the last maintenance
+            $bulanSejakAcuan = now()->diffInMonths($tanggalMaintenance);
+
+            // Check if maintenance is needed
+            return $bulanSejakAcuan >= $bulanJadwal;
+        });
+
+    // Count and extract asset codes
+    $countMaintenanceNeeded = $assetsNeedingMaintenance->count();
+    $assetCodes = $assetsNeedingMaintenance->pluck('code')->toArray();
+
+        // Additional query to get specific assets data based on your provided query
+        $assetsData = DB::table('assets')
             ->select(
-                'tagging AS asset_tagging',
-                'asets AS asset',
-                DB::raw('(SELECT name FROM merk WHERE id = inventory.merk) AS merk_name'),
-                'kondisi'
+                'code AS asset_tagging',
+                'category AS asset',
+                DB::raw('(SELECT name FROM merk WHERE id = assets.merk) AS merk_name'),
+                'condition'
             )
             ->where('status', 'Inventory')
             ->get(); // Ensure this returns results
 
-        // Operation Summary Data: Include only approved assets
-        $operationSummaryData = DB::table('assets as a')
-            ->join('inventory as i', 'a.asset_tagging', '=', 'i.id')
+        // Operation Summary Data: Include only approved transactions
+        $operationSummaryData = DB::table('transactions as a')
+            ->join('assets as i', 'a.asset_tagging', '=', 'i.id')
             ->join('merk as m', 'a.merk', '=', 'm.id')
             ->select(
                 'a.lokasi',
                 'a.jenis_aset',
                 'm.name AS merk',
-                DB::raw('GROUP_CONCAT(i.tagging ORDER BY i.tagging ASC SEPARATOR ", ") AS asset_tagging'), // Pakai separator koma
-                DB::raw('COUNT(a.id) AS total_assets')
+                DB::raw('GROUP_CONCAT(i.code ORDER BY i.code ASC SEPARATOR ", ") AS asset_tagging'), // Pakai separator koma
+                DB::raw('COUNT(a.id) AS total_transactions')
             )
             ->where('a.approval_status', 'Approved')
             ->groupBy('a.lokasi', 'a.jenis_aset', 'm.name')
@@ -103,9 +147,8 @@ class DashboardAdminController extends Controller
             ->orderBy('m.name')
             ->get();
 
-
         // Additional query to display asset quantities by location and type
-        $data = DB::table('assets')
+        $data = DB::table('transactions')
             ->select('lokasi', 'jenis_aset', DB::raw('COUNT(*) as jumlah_aset'))
             ->groupBy('lokasi', 'jenis_aset')
             ->orderBy('lokasi')
@@ -113,17 +156,20 @@ class DashboardAdminController extends Controller
             ->get(); // Ensure this returns results
 
         return view('shared.dashboard', [
-            'totalAssets' => DB::table('inventory')->count(),
-            'distinctLocations' => DB::table('assets')->distinct()->count('lokasi'),
-            'distinctAssetTypes' => DB::table('inventory')->distinct()->count('asets'),
+            'totalAssets' => DB::table('assets')->count(),
+            'distinctLocations' => DB::table('transactions')->distinct()->count('lokasi'),
+            'distinctAssetTypes' => DB::table('assets')->distinct()->count('category'),
             'assetData' => $assetData,
             'locationData' => $locationData,
-            'summary' => $inventorySummary,
-            'inventoryData' => $inventoryData,
+            'summary' => $assetsSummary,
+            'assetsData' => $assetsData,
             'operationSummaryData' => $operationSummaryData,
-            'assetQuantitiesByLocation' => $data // Pass the new data to the view
+            'assetQuantitiesByLocation' => $data, // Pass the new data to the view
+            'countMaintenanceNeeded' => $countMaintenanceNeeded,
+            'assetCodes' => $assetCodes, // Pass the maintenance count here too
         ]);
     }
+
 
 
 

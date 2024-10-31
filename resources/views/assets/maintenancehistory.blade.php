@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Entry & Scrap')
+@section('title', 'Maintenance History')
 
 @section('content')
 <div class="container">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <h3 class="assetHistory-title">
-                    Entry & Scrap History&nbsp;&nbsp;
+                    History Maintenance&nbsp;&nbsp;
                     <span class="icon-wrapper">
                         <i class="fa-solid fa-2xs fa-clock-rotate-left previous-icon"></i>
                     </span>
@@ -31,7 +31,7 @@
                     <span class="icon-wrapper">
                         <i class="fa-solid fa-2xs fa-clock-rotate-left previous-icon"></i>
                     </span>
-                    &nbsp;&nbsp;Entry & Scrap History
+                    &nbsp;&nbsp;History Maintenance
                 </h3>
             </div>
         </div>
@@ -46,43 +46,33 @@
                         <tr>
                             <th scope="col">No.</th>
                             <th scope="col">Asset Code</th>
-                            <th scope="col">Merk</th>
-                            <th scope="col">S/N</th>
                             <th scope="col">Date</th>
-                            <th scope="col">Action</th>
-                            <th scope="col">Documentation</th> <!-- New Documentation column -->
+                            <th scope="col">Condition</th>
+                            <th scope="col">Description</th> <!-- New Documentation column -->
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($asset_histories as $index => $history)
+                        @forelse ($history as $index => $histories)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $history->code }}</td>
-                                <td>{{ $history->merkDetail->name ?? 'N/A' }}</td>
-                                <!-- Ensure to use the correct property for merk -->
-                                <td>{{ $history->serial_number }}</td>
-                                <td>{{ \Carbon\Carbon::parse($history->action_time)->format('d-m-Y') }}</td>
+                                <td>{{ $histories->code }}</td>
+                                <td>{{ $histories->last_maintenance }}</td>
                                 <td>
-                                    @if ($history->action === 'INSERT')
+                                    @if ($histories->condition === 'Good')
                                         <span class="badge"
-                                            style="padding: 5px 15px; color: #fff; border-radius: 0.5em; background-color: #1bcfb4;">Entry</span>
-                                    @elseif ($history->action === 'DELETE')
+                                            style="padding: 5px 15px; color: #fff; border-radius: 0.5em; background-color: #1BCFB4;">Good</span>
+                                    @elseif ($histories->condition === 'Exception')
                                         <span class="badge"
-                                            style="padding: 5px 15px; color: #fff; border-radius: 0.5em; background-color: #fe7c96">Scrap</span>
+                                            style="padding: 5px 15px; color: #fff; border-radius: 0.5em; background-color: #FFDC3B">Exception</span>
+                                    @elseif ($histories->condition === 'Bad')
+                                        <span class="badge"
+                                            style="padding: 5px 15px; color: #fff; border-radius: 0.5em; background-color: #FE7C96">Bad</span>
                                     @else
                                         <span class="badge"
                                             style="padding: 5px 15px; color: #fff; border-radius: 0.5em; background-color: #4fb0f1">N/A</span>
                                     @endif
                                 </td>
-                                <td>
-                                    @if ($history->documentation)
-                                        <a href="{{ asset($history->documentation) }}" target="_blank" class="btn btn-sm"
-                                            style="background-color: #4fb0f1; color: #fff; font-weight: 600;"> <i
-                                                class="bi bi-file-earmark-image"></i> Documentation</a>
-                                    @else
-                                        <span class="text-muted">No Document</span>
-                                    @endif
-                                </td>
+                                <td>{{ $histories->note_maintenance }}</td>
                             </tr>
                         @empty
                         @endforelse
@@ -92,13 +82,18 @@
                     <ul class="list-unstyled legend-list">
                         <li>
                             <span class="badge legend-badge"
-                                style="padding: 5px 10px; color:#fff; background-color: #1bcfb4;">Entry</span> : <span
-                                class="legend-description">Assets added.</span>
+                                style="padding: 5px 10px; color:#fff; background-color: #1bcfb4;">Good</span> : <span
+                                class="legend-description">Assets are still good.</span>
                         </li>
                         <li>
                             <span class="badge legend-badge"
-                                style="padding: 5px 10px; color:#fff; background-color: #fe7c96;">Scrap</span> : <span
-                                class="legend-description">Assets have been removed or destroyed.</span>
+                                style="padding: 5px 10px; color:#fff; background-color: #FFDC3B;">Exception</span> :
+                            <span class="legend-description">The asset is still suitable for use.</span>
+                        </li>
+                        <li>
+                            <span class="badge legend-badge"
+                                style="padding: 5px 10px; color:#fff; background-color: #fe7c96;">Bad</span> : <span
+                                class="legend-description">Asset condition is bad.</span>
                         </li>
                     </ul>
                 </div>

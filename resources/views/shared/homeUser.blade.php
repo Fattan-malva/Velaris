@@ -5,7 +5,7 @@
 <link rel="icon" href="{{ asset('assets/img/velaris.png') }}" type="image/png">
 <main id="main">
     <!-- ======= User Assets Section ======= -->
-    <section id="user-assets" class="user-assets">
+    <section id="user-transactions" class="user-transactions">
         <br>
         <br>
         <h1 class="text-center ms-3 animate_animated animate_fadeInDown display-4 fw-bold">
@@ -30,9 +30,9 @@
 
                         <div class="card-body">
                             @if ($pendingAssets->isEmpty())
-                                <p class="text-center">No assets waiting for approval.</p>
+                                <p class="text-center">No transactions waiting for approval.</p>
                             @else
-                                <form action="{{ route('assets.bulkAction') }}" method="POST" id="bulkActionForm">
+                                <form action="{{ route('transactions.bulkAction') }}" method="POST" id="bulkActionForm">
                                     @csrf
                                     <div class="row">
                                         @foreach ($pendingAssets as $asset)
@@ -58,7 +58,7 @@
                                                                 class="badge" style="background-color: rgba({{ $asset->aksi == 'Handover' ? '27,207,180' : '' }} {{ $asset->aksi == 'Mutasi' ? '254,215,19' : '' }} {{ $asset->aksi == 'Return' ? '254,124,150' : '' }}); margin-left: {{ $asset->aksi == 'Return' ? '-90px' : '-105px' }};">
                                                                 {{ $asset->aksi }}
                                                             </span>
-                                                                <input type="checkbox" class="form-check-input" name="assets[]"
+                                                                <input type="checkbox" class="form-check-input" name="transactions[]"
                                                                     value="{{ $asset->id }}" id="asset-{{ $asset->id }}"
                                                                     style="transform: scale(1.5);">
                                                                 <label class="form-check-label"
@@ -93,12 +93,12 @@
                             <h2 style="text-align: center; margin-top:5px; font-weight: bold;">Approved Assets</h2>
                         </div>
                         <div class="card-body flex-column align-items-center">
-                            @if ($assets->isEmpty())
-                                <p class="text-center">No approved assets found.</p>
+                            @if ($transactions->isEmpty())
+                                <p class="text-center">No approved transactions found.</p>
                             @else
 
                                                     <div class="row justify-content-center">
-                                                        @foreach ($assets as $index => $asset)
+                                                        @foreach ($transactions as $index => $asset)
                                                                                     <div class="col-md-5 mb-3">
                                                                                         <div class="card"
                                                                                             style="background-color: rgb(218,181,255); border: none;">
@@ -256,7 +256,7 @@
 <script>
     // Toggle "Select All" functionality
     document.getElementById('selectAll').addEventListener('click', function () {
-        const checkboxes = document.querySelectorAll('input[name="assets[]"]');
+        const checkboxes = document.querySelectorAll('input[name="transactions[]"]');
         checkboxes.forEach(checkbox => {
             checkbox.checked = this.checked;
         });
@@ -269,7 +269,7 @@
     }
 
     function confirmReject() {
-        const confirmation = confirm("Are you sure you want to reject the selected assets?");
+        const confirmation = confirm("Are you sure you want to reject the selected transactions?");
         if (confirmation) {
             document.getElementById('action').value = 'reject';
             document.getElementById('bulkActionForm').submit();
@@ -277,7 +277,7 @@
     }
 
     function toggleActionButtons() {
-        const selectedAssets = document.querySelectorAll('input[name="assets[]"]:checked');
+        const selectedAssets = document.querySelectorAll('input[name="transactions[]"]:checked');
         const approveButton = document.getElementById('approveButton');
         const rejectButton = document.getElementById('rejectButton');
 
@@ -293,7 +293,7 @@
 
     // Call toggleActionButtons on page load and when checkboxes change
     document.addEventListener('DOMContentLoaded', toggleActionButtons);
-    document.querySelectorAll('input[name="assets[]"]').forEach(checkbox => {
+    document.querySelectorAll('input[name="transactions[]"]').forEach(checkbox => {
         checkbox.addEventListener('change', toggleActionButtons);
     });
 </script>

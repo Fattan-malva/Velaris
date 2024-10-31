@@ -47,7 +47,7 @@
                     </div>
                 </a> -->
                 <h3 class="assetList-title">
-                     Asset List&nbsp;&nbsp;
+                    Asset List&nbsp;&nbsp;
                     <span class="icon-wrapper">
                         <i class="fa-solid fa-2xs fa-list-ul previous-icon"></i>
                     </span>
@@ -77,12 +77,13 @@
                 </div>
             @endif
             <div class="table-responsive">
-                <table id="inventoryTable" class="table table-hover">
+                <table id="assetTable" class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col" style="width: 70px;">No.</th>
                             <th scope="col" style="width: 100px;">Asset Code</th>
                             <th scope="col">S/N</th>
+                            <th scope="col">Merk</th>
                             <!-- <th scope="col">Type</th>
                             <th scope="col">Merk</th> -->
                             <th scope="col" style="width: 200px;">Location</th>
@@ -93,79 +94,93 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($inventorys as $index => $inventory)
-                                                <tr data-bs-toggle="modal" data-bs-target="#detailsModal-{{ $inventory->id }}"
+                        @foreach ($assetss as $index => $asset)
+                                                <tr data-bs-toggle="modal" data-bs-target="#detailsModal-{{ $asset->id }}"
                                                     style="cursor: pointer;">
                                                     <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $inventory->tagging }}</td>
-                                                    <td>{{ $inventory->seri }}</td>
-                                                    <!-- <td>{{ $inventory->asets }}</td>
-                                                                                                                            <td>{{ $inventory->merk_name }}</td> -->
+                                                    <td>{{ $asset->code }}</td>
+                                                    <td>{{ $asset->serial_number }}</td>
+
+                                                    <td>{{ $asset->merk_name }}</td>
 
                                                     <td>
                                                         @php
-                                                            // Ambil nilai lokasi
-                                                            $lokasi = $inventory->lokasi ?? 'In Inventory';
+                                                            // Ambil nilai location
+                                                            $location = $asset->location ?? 'In Inventory';
 
-                                                            // Jika lokasi tidak kosong, ambil kata sebelum koma pertama
-                                                            if ($lokasi !== 'In Inventory') {
-                                                                $lokasi = strtok($lokasi, ',');
+                                                            // Jika location tidak kosong, ambil kata sebelum koma pertama
+                                                            if ($location !== 'In Inventory') {
+                                                                $location = strtok($location, ',');
                                                             }
                                                         @endphp
 
-                                                        {{ $lokasi }}
+                                                        {{ $location }}
                                                     </td>
-                                                    <td>{{ $inventory->name_holder ?? 'New Assets' }}</td>
+                                                    <td>{{ $asset->name_holder ?? 'New Assets' }}</td>
                                                     <td>
                                                         @php
-                                                            $tanggalMasuk = $inventory->tanggalmasuk;
-                                                            $tanggalMaintenance = $inventory->maintenance ?? null;
+                                                            $tanggalMasuk = $asset->entry_date;
+                                                            $tanggalMaintenance = $asset->last_maintenance ?? $tanggalMasuk;
 
-                                                            $tanggalAcuan = $tanggalMaintenance ?? $tanggalMasuk;
+                                                            // Konversi jadwal perawatan ke jumlah bulan
+                                                            switch ($asset->scheduling_maintenance) {
+                                                                case '3 Weeks':
+                                                                    $bulanJadwal = 0.75; // 3 minggu dalam bulan
+                                                                    break;
+                                                                case '1 Mont':
+                                                                    $bulanJadwal = 1;
+                                                                    break;
+                                                                case '1 Year':
+                                                                    $bulanJadwal = 12;
+                                                                    break;
+                                                                case '5 Years':
+                                                                    $bulanJadwal = 60;
+                                                                    break;
+                                                                default:
+                                                                    $bulanJadwal = 0; // Jika tidak ada jadwal
+                                                            }
 
+                                                            // Hitung waktu yang berlalu sejak terakhir maintenance
+                                                            $bulanSejakAcuan = now()->diffInMonths($tanggalMaintenance);
 
-                                                            $bulanSejakAcuan = now()->diffInMonths($tanggalAcuan);
-
-
-                                                            $tanggalMaintenanceFormatted = $tanggalMaintenance ? date('d-m-Y', strtotime($tanggalMaintenance)) : '-';
                                                         @endphp
 
-
-                                                        @if ($bulanSejakAcuan >= 1)
+                                                        @if ($bulanSejakAcuan >= $bulanJadwal)
                                                             <span class="badge text-center align-middle"
-                                                                style="padding: 5px; font-size: 0.9em;   background-color:#FE7C96;">
+                                                                style="padding: 5px; font-size: 0.9em; background-color:#FE7C96;">
                                                                 Need Maintenance
                                                             </span>
                                                         @else
                                                             <span class="badge text-center align-middle"
-                                                                style="padding: 5px 44px; font-size: 0.9em;  background-color:#B46EFF;">
+                                                                style="padding: 5px 44px; font-size: 0.9em; background-color:#B46EFF;">
                                                                 Done
                                                             </span>
                                                         @endif
                                                     </td>
 
 
+
                                                     <td class="text-center align-middle">
                                                         <!-- Status Badge -->
-                                                        @if ($inventory->status === 'Inventory')
+                                                        @if ($asset->status === 'Inventory')
                                                             <span class="badge bg-warning"
                                                                 style="padding: 5px 30  px;  font-size: 0.9em; background-color:#FED713;">Available</span>
-                                                        @elseif ($inventory->status === 'Operation')
+                                                        @elseif ($asset->status === 'Operation')
                                                             <span class="badge"
                                                                 style="padding: 5px 18px;  font-size: 0.9em; background-color:#1BCFB4;">In
                                                                 Use</span>
                                                         @endif
                                                     </td>
                                                     <!-- <td>
-                                                                                                                                <div class="action-buttons">
-                                                                                                                                    <button type="button" class="btn text-white" data-bs-toggle="modal"
-                                                                                                                                        data-bs-target="#detailsModal-{{ $inventory->id }}" title="Details"
-                                                                                                                                        style="background-color:#4FB0F1;">
-                                                                                                                                        <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
-                                                                                                                                    </button>
-                                                                                                                      
-                                                                                                                                </div>
-                                                                                                                            </td> -->
+                                                                                                                                                                                                        <div class="action-buttons">
+                                                                                                                                                                                                            <button type="button" class="btn text-white" data-bs-toggle="modal"
+                                                                                                                                                                                                                data-bs-target="#detailsModal-{{ $asset->id }}" title="Details"
+                                                                                                                                                                                                                style="background-color:#4FB0F1;">
+                                                                                                                                                                                                                <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
+                                                                                                                                                                                                            </button>
+
+                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                    </td> -->
                                                 </tr>
                         @endforeach
 
@@ -192,7 +207,7 @@
                                 style="padding: 5px 9px; margin-right: 5px; background-color: #fe7c96">Need
                                 Maintenance</span>
                             <span class="legend-colon">:</span>
-                            <span class="legend-description">Assets need maintenance.</span>
+                            <span class="legend-description">Assets need last_maintenance.</span>
                         </li>
                         <li>
                             <span class="badge legend-badge"
@@ -207,8 +222,8 @@
     </div>
 </div>
 
-@foreach ($inventorys as $inventory)
-    <div class="modal fade" id="detailsModal-{{ $inventory->id }}" tabindex="-1" aria-labelledby="detailsModalLabel"
+@foreach ($assetss as $asset)
+    <div class="modal fade" id="detailsModal-{{ $asset->id }}" tabindex="-1" aria-labelledby="detailsModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -224,19 +239,23 @@
                                 <tbody>
                                     <tr>
                                         <th><strong>Code</strong></th>
-                                        <td>{{ $inventory->tagging }}</td>
+                                        <td>{{ $asset->code }}</td>
                                     </tr>
                                     <tr>
                                         <th><strong>Type</strong></th>
-                                        <td>{{ $inventory->asets }}</td>
+                                        <td>{{ $asset->category }}</td>
                                     </tr>
                                     <tr>
                                         <th><strong>Merk</strong></th>
-                                        <td>{{ $inventory->merk_name }}</td>
+                                        <td>{{ $asset->merk_name }}</td>
                                     </tr>
                                     <tr>
                                         <th><strong>S/N</strong></th>
-                                        <td>{{ $inventory->seri }}</td>
+                                        <td>{{ $asset->serial_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th><strong>Condition</strong></th>
+                                        <td>{{ $asset->condition }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -248,14 +267,14 @@
                                 <tbody>
                                     <tr>
                                         <th><strong>Specification</strong></th>
-                                        <td>{{ $inventory->type }}</td>
+                                        <td>{{ $asset->spesification }}</td>
                                     </tr>
                                     <tr>
                                         <th><strong>Entry Date</strong></th>
                                         <td
                                             style="background-color: rgba(0, 0, 255, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
                                             @php
-                                                $tanggalMasuk = $inventory->tanggalmasuk;
+                                                $tanggalMasuk = $asset->entry_date;
                                                 echo date('d-m-Y', strtotime($tanggalMasuk));
                                             @endphp
                                         </td>
@@ -266,7 +285,7 @@
                                         <td
                                             style="background-color: rgba(0, 255, 0, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
                                             @php
-                                                $tanggalDiterima = $inventory->tanggal_diterima ?? '-';
+                                                $tanggalDiterima = $asset->handover_date ?? '-';
                                                 if ($tanggalDiterima === '0000-00-00 00:00:00' || $tanggalDiterima === '-') {
                                                     echo '-';
                                                 } else {
@@ -281,18 +300,54 @@
                                         <td
                                             style="background-color: rgba(255, 255, 0, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
                                             @php
-                                                $maintenanceDate = $inventory->maintenance ?? '-';
-                                                if ($maintenanceDate === '0000-00-00 00:00:00' || $maintenanceDate === '-') {
+                                                $last_maintenanceDate = $asset->last_maintenance ?? '-';
+                                                if ($last_maintenanceDate === '0000-00-00 00:00:00' || $last_maintenanceDate === '-') {
                                                     echo '-';
                                                 } else {
-                                                    echo date('d-m-Y', strtotime($maintenanceDate));
+                                                    echo date('d-m-Y', strtotime($last_maintenanceDate));
                                                 }
                                             @endphp
                                         </td>
                                     </tr>
 
+                                    <tr>
+    <th><strong>Next Maintenance</strong></th>
+    <td
+        style="background-color: rgba(255, 182, 193, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
+        @php
+            // Use last maintenance date or entry date if last maintenance is not available
+            $tanggalMaintenance = $asset->last_maintenance ?? $asset->entry_date;
+
+            // Convert maintenance schedule to months
+            switch ($asset->scheduling_maintenance) {
+                case '3 Weeks':
+                    $bulanJadwal = 0.75; // 3 weeks in months
+                    break;
+                case '1 Month':
+                    $bulanJadwal = 1;
+                    break;
+                case '1 Year':
+                    $bulanJadwal = 12;
+                    break;
+                case '5 Years':
+                    $bulanJadwal = 60;
+                    break;
+                default:
+                    $bulanJadwal = 0; // No schedule
+            }
+
+            // Calculate the next maintenance date by adding scheduling time to last maintenance date
+            $nextMaintenanceDate = Carbon\Carbon::parse($tanggalMaintenance)->addMonths($bulanJadwal);
+
+            // Output next maintenance date
+            echo $nextMaintenanceDate->format('d-m-Y'); // Display the date
+        @endphp
+    </td>
+</tr>
+
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>
@@ -300,13 +355,13 @@
                 <div class="modal-footer">
 
                     <button type="button" class="btn"
-                        onclick="window.open('{{ route('prints.qr', ['id' => $inventory->id]) }}', '_blank')"
+                        onclick="window.open('{{ route('prints.qr', ['id' => $asset->id]) }}', '_blank')"
                         style="background-color:#1BCFB4;">
                         <i class="bi bi-qr-code"></i> Print QR Code
                     </button>
                     <button type="button" class="btn  open-history-modal " style="background-color: #9A9A9A;"
-                        data-tagging="{{ $inventory->tagging }}" data-inventory-id="{{ $inventory->id }}"
-                        data-bs-toggle="modal" data-bs-target="#historyModal-{{ $inventory->id }}">
+                        data-code="{{ $asset->code }}" data-asset-id="{{ $asset->id }}" data-bs-toggle="modal"
+                        data-bs-target="#historyModal-{{ $asset->id }}">
                         <i class="bi bi-clock-history"></i>
                         View History
                     </button>
@@ -315,18 +370,19 @@
         </div>
     </div>
 
-    <!-- Modal structure for each inventory -->
-    <div class="modal fade" id="historyModal-{{ $inventory->id }}" tabindex="-1" aria-labelledby="historyModalLabel"
+    <!-- Modal structure for each asset -->
+    <div class="modal fade" id="historyModal-{{ $asset->id }}" tabindex="-1" aria-labelledby="historyModalLabel"
         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-black" id="historyModalLabel">History for Asset: {{ $inventory->tagging }}
-                    </h5>
+                    <h4 class="modal-title text-center fw-bold w-100" id="historyModalLabel">History for Asset:
+                        {{ $asset->code }}
+                    </h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>Activity</th>
@@ -334,16 +390,13 @@
                                 <th>User</th>
                                 <th>Reason</th>
                                 <th>Note</th>
-                                <th>Action</th>
+                                <th></th>
                             </tr>
                         </thead>
-                        <tbody id="history-body-{{ $inventory->id }}">
+                        <tbody id="history-body-{{ $asset->id }}">
                             <!-- Data history akan dimuat di sini -->
                         </tbody>
                     </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -356,20 +409,20 @@
 
             modalButtons.forEach(button => {
                 button.addEventListener('click', function () {
-                    const tagging = this.getAttribute('data-tagging'); // Get tagging from button attribute
-                    const inventoryId = this.getAttribute('data-inventory-id'); // Get inventory ID
+                    const code = this.getAttribute('data-code'); // Get code from button attribute
+                    const assetId = this.getAttribute('data-asset-id'); // Get asset ID
 
-                    // Call loadHistory with the correct tagging and inventory ID
-                    loadHistory(tagging, inventoryId);
+                    // Call loadHistory with the correct code and asset ID
+                    loadHistory(code, assetId);
                 });
             });
         });
 
-        function loadHistory(tagging, inventoryId) {
-            fetch(`{{ route('inventory.historyModal') }}?tagging=${tagging}`)
+        function loadHistory(code, assetId) {
+            fetch(`{{ route('asset.historyModal') }}?code=${code}`)
                 .then(response => response.json())
                 .then(data => {
-                    const historyBody = document.getElementById(`history-body-${inventoryId}`);
+                    const historyBody = document.getElementById(`history-body-${assetId}`);
                     historyBody.innerHTML = ''; // Clear previous data
                     console.log(data); // Log the fetched data to check the structure
 
@@ -396,42 +449,44 @@
                             if (item.action === 'CREATE') {
                                 actionBadge = '<span class="badge bg-success">Handover</span>';
                                 if (latestUpdateDocumentation) {
-                                    documentationLink = `<a href="{{ asset('storage/${latestUpdateDocumentation}') }}" target="_blank" class="btn btn-primary btn-sm">View Document</a>`;
+                                    documentationLink = `<a href="{{ asset('storage/${latestUpdateDocumentation}') }}" target="_blank" class="btn " style="background-color:#4fb0f1; border-radius:5px;"><i
+                                                            class="bi bi-file-earmark-image fa-2x"></i></a>`;
                                 } else {
-                                    documentationLink = `<button class="btn btn-secondary btn-sm" disabled>No Document</button>`;
+                                    documentationLink = `<button class="btn btn-secondary" disabled>No Document</button>`;
                                 }
                             } else if (item.action === 'DELETE' && item.keterangan) {
                                 // Show only 'Return' (DELETE) actions where 'reason' (keterangan) is filled
                                 actionBadge = '<span class="badge bg-danger">Return</span>';
                                 if (deleteDocumentation) {
-                                    documentationLink = `<a href="{{ asset('storage/${deleteDocumentation}') }}" target="_blank" class="btn btn-primary btn-sm">View Document</a>`;
+                                    documentationLink = `<a href="{{ asset('storage/${deleteDocumentation}') }}" target="_blank" class="btn" style="background-color:#4fb0f1; border-radius:5px;"><i
+                                                            class="bi bi-file-earmark-image fa-2x"></i></a>`;
                                 } else {
-                                    documentationLink = `<button class="btn btn-secondary btn-sm" disabled>No Document</button>`;
+                                    documentationLink = `<button class="btn btn-secondary " disabled>No Document</button>`;
                                 }
                             }
 
                             // Only generate rows for actions that have a badge (CREATE or DELETE with a reason)
                             if (actionBadge) {
                                 // Print button
-                                printButton = `<button type="button" class="btn btn-success btn-sm printButton" 
-                                                                                                        data-action="${item.action}" 
-                                                                                                        data-tagging="${item.asset_tagging}" 
-                                                                                                        data-changed-at="${item.changed_at}">
-                                                                                                        <i class="bi bi-printer"></i> Print Proof
-                                                                                                    </button>`;
+                                printButton = `<button type="button" class="btn printButton" style="background-color:#9E24F5; border-radius:5px;" 
+                                                                                                                    data-action="${item.action}" 
+                                                                                                                    data-code="${item.asset_code}" 
+                                                                                                                    data-changed-at="${item.changed_at}">
+                                                                                                                    <i class="bi bi-printer fa-2x"></i>
+                                                                                                                </button>`;
 
                                 // Generate the row
                                 const row = `<tr>
-                                                                                                            <td>${actionBadge}</td>
-                                                                                                            <td>${item.changed_at}</td>
-                                                                                                            <td>${item.nama_old || '-'}</td>
-                                                                                                            <td>${item.keterangan || '-'}</td>
-                                                                                                            <td>${item.note || '-'}</td>
-                                                                                                            <td>
-                                                                                                                ${documentationLink}
-                                                                                                                ${printButton}
-                                                                                                            </td>
-                                                                                                        </tr>`;
+                                                                                                                        <td>${actionBadge}</td>
+                                                                                                                        <td>${item.changed_at}</td>
+                                                                                                                        <td>${item.nama_old || '-'}</td>
+                                                                                                                        <td>${item.keterangan || '-'}</td>
+                                                                                                                        <td>${item.note || '-'}</td>
+                                                                                                                        <td>
+                                                                                                                            ${documentationLink}
+                                                                                                                            ${printButton}
+                                                                                                                        </td>
+                                                                                                                    </tr>`;
 
                                 historyBody.innerHTML += row;
                             }
@@ -441,7 +496,7 @@
                         document.querySelectorAll('.printButton').forEach(button => {
                             button.addEventListener('click', function () {
                                 var action = this.getAttribute('data-action');
-                                var assetTagging = this.getAttribute('data-tagging');
+                                var assetTagging = this.getAttribute('data-code');
                                 var changedAt = this.getAttribute('data-changed-at');
 
                                 // Extract the date part (yyyy-mm-dd)
@@ -461,7 +516,7 @@
                                 }
 
                                 if (route) {
-                                    var fullUrl = `${route}?asset_tagging=${encodeURIComponent(assetTagging)}&changed_at=${encodeURIComponent(formattedDate)}`;
+                                    var fullUrl = `${route}?asset_code=${encodeURIComponent(assetTagging)}&changed_at=${encodeURIComponent(formattedDate)}`;
                                     console.log('Opening URL: ' + fullUrl);
                                     window.open(fullUrl, '_blank');
                                 }

@@ -16,12 +16,12 @@ class TransactionsAdminController extends Controller
 {
     public function index()
     {
-        $assets = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id')
-            ->join('customer', 'assets.nama', '=', 'customer.id')
-            ->join('inventory', 'assets.asset_tagging', '=', 'inventory.id')
+        $transactions = DB::table('transactions')
+            ->join('merk', 'transactions.merk', '=', 'merk.id')
+            ->join('customer', 'transactions.nama', '=', 'customer.id')
+            ->join('inventory', 'transactions.asset_tagging', '=', 'inventory.id')
             ->select(
-                'assets.*',
+                'transactions.*',
                 'merk.name as merk_name',
                 'customer.name as customer_name',
                 'customer.mapping as customer_mapping',
@@ -29,73 +29,73 @@ class TransactionsAdminController extends Controller
             )
             ->get();
 
-        return view('transactions.index', compact('assets'));
+        return view('transactions.index', compact('transactions'));
     }
     public function indexmutasi(Request $request)
     {
         // Initialize the query builder
-        $query = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id')
-            ->join('customer', 'assets.nama', '=', 'customer.id')
-            ->join('inventory', 'assets.asset_tagging', '=', 'inventory.id')
+        $query = DB::table('transactions')
+            ->join('merk', 'transactions.merk', '=', 'merk.id')
+            ->join('customer', 'transactions.nama', '=', 'customer.id')
+            ->join('inventory', 'transactions.asset_tagging', '=', 'inventory.id')
             ->select(
-                'assets.*',
+                'transactions.*',
                 'merk.name as merk_name',
                 'customer.name as customer_name',
                 'customer.mapping as customer_mapping', // Select the mapping from customer
                 'inventory.tagging as tagging'
             )
-            ->where('assets.approval_status', 'Approved'); // Filter based on status 'Mutasi'
+            ->where('transactions.approval_status', 'Approved'); // Filter based on status 'Mutasi'
 
         // Apply search filter if provided
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('inventory.tagging', 'like', "%$search%")
-                    ->orWhere('assets.jenis_aset', 'like', "%$search%")
+                    ->orWhere('transactions.jenis_aset', 'like', "%$search%")
                     ->orWhere('merk.name', 'like', "%$search%")
                     ->orWhere('customer.name', 'like', "%$search%");
             });
         }
 
         // Execute the query and get the results
-        $assets = $query->get();
+        $transactions = $query->get();
 
-        // Return the view with assets
-        return view('transactions.indexmutasi', compact('assets'));
+        // Return the view with transactions
+        return view('transactions.indexmutasi', compact('transactions'));
     }
     public function indexreturn(Request $request)
     {
         // Initialize the query builder
-        $query = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id')
-            ->join('customer', 'assets.nama', '=', 'customer.id')
-            ->join('inventory', 'assets.asset_tagging', '=', 'inventory.id') // Join inventory to get tagging
+        $query = DB::table('transactions')
+            ->join('merk', 'transactions.merk', '=', 'merk.id')
+            ->join('customer', 'transactions.nama', '=', 'customer.id')
+            ->join('inventory', 'transactions.asset_tagging', '=', 'inventory.id') // Join inventory to get tagging
             ->select(
-                'assets.*',
+                'transactions.*',
                 'merk.name as merk_name',
                 'customer.name as customer_name',
                 'customer.mapping as customer_mapping', // Select the mapping from customer
                 'inventory.tagging as tagging'
             )
-            ->where('assets.approval_status', 'Approved'); // Filter based on status 'Mutasi'
+            ->where('transactions.approval_status', 'Approved'); // Filter based on status 'Mutasi'
 
         // Apply search filter if provided
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('inventory.tagging', 'like', "%$search%")
-                    ->orWhere('assets.jenis_aset', 'like', "%$search%")
+                    ->orWhere('transactions.jenis_aset', 'like', "%$search%")
                     ->orWhere('merk.name', 'like', "%$search%")
                     ->orWhere('customer.name', 'like', "%$search%");
             });
         }
 
         // Execute the query and get the results
-        $assets = $query->get();
+        $transactions = $query->get();
 
-        // Return the view with assets
-        return view('transactions.indexreturn', compact('assets'));
+        // Return the view with transactions
+        return view('transactions.indexreturn', compact('transactions'));
     }
 
 
@@ -109,9 +109,9 @@ class TransactionsAdminController extends Controller
         // Retrieve all merks
         $merks = Merk::all();
 
-        // Retrieve all inventories that have not been used in assets
-        $usedAssetTaggings = DB::table('assets')->pluck('asset_tagging')->toArray();
-        $inventories = Inventory::whereNotIn('id', $usedAssetTaggings)->get();
+        // Retrieve all inventories that have not been used in transactions
+        $usedAssetTaggings = DB::table('transactions')->pluck('asset_tagging')->toArray();
+        $inventories = Assets::whereNotIn('id', $usedAssetTaggings)->get();
 
         // Determine availability of asset taggings and names
         $assetTaggingAvailable = $inventories->isNotEmpty();
@@ -123,11 +123,11 @@ class TransactionsAdminController extends Controller
     public function edit($id)
     {
         // Mengambil data aset beserta merk dan pelanggan terkait
-        $asset = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id')
-            ->join('customer', 'assets.nama', '=', 'customer.id')
-            ->select('assets.*', 'merk.name as merk_name', 'customer.name as customer_name')
-            ->where('assets.id', $id)
+        $asset = DB::table('transactions')
+            ->join('merk', 'transactions.merk', '=', 'merk.id')
+            ->join('customer', 'transactions.nama', '=', 'customer.id')
+            ->select('transactions.*', 'merk.name as merk_name', 'customer.name as customer_name')
+            ->where('transactions.id', $id)
             ->first();
 
         // Mengambil semua merk
@@ -148,11 +148,11 @@ class TransactionsAdminController extends Controller
 
     public function pindah($id)
     {
-        $asset = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id')
-            ->join('customer', 'assets.nama', '=', 'customer.id')
-            ->select('assets.*', 'merk.name as merk_name', 'customer.name as customer_name')
-            ->where('assets.id', $id)
+        $asset = DB::table('transactions')
+            ->join('merk', 'transactions.merk', '=', 'merk.id')
+            ->join('customer', 'transactions.nama', '=', 'customer.id')
+            ->select('transactions.*', 'merk.name as merk_name', 'customer.name as customer_name')
+            ->where('transactions.id', $id)
             ->first();
 
         $merks = Merk::all();
@@ -215,7 +215,7 @@ class TransactionsAdminController extends Controller
         // Update the asset
         $asset->update($assetData);
 
-        return redirect()->route('assets.index')->with('success', 'Asset has been successfully mutated, waiting for user approval.');
+        return redirect()->route('transactions.index')->with('success', 'Asset has been successfully mutated, waiting for user approval.');
     }
 
 
@@ -251,7 +251,7 @@ class TransactionsAdminController extends Controller
             $documentationPath = 'documents/' . $filename;
         }
 
-        // Loop through each selected asset tagging and create assets
+        // Loop through each selected asset tagging and create transactions
         foreach ($request->input('asset_tagging') as $assetId) {
             $inventory = Inventory::find($assetId);
 
@@ -284,8 +284,8 @@ class TransactionsAdminController extends Controller
             // event(new AssetsDataChanged($asset, 'created'));
         }
 
-        // Redirect back to the assets index with a success message
-        return redirect()->route('assets.index')->with('success', 'Assets have been successfully handed over.');
+        // Redirect back to the transactions index with a success message
+        return redirect()->route('transactions.index')->with('success', 'Assets have been successfully handed over.');
     }
 
 
@@ -345,7 +345,7 @@ class TransactionsAdminController extends Controller
 
         $asset->update($assetData);
 
-        return redirect()->route('assets.index')->with('success', 'Asset updated successfully.');
+        return redirect()->route('transactions.index')->with('success', 'Asset updated successfully.');
     }
 
     public function destroy($id)
@@ -353,24 +353,24 @@ class TransactionsAdminController extends Controller
         $asset = Assets::findOrFail($id);
         $asset->delete();
 
-        return redirect()->route('assets.index')->with('success', 'The asset has been successfully returned to Inventory');
+        return redirect()->route('transactions.index')->with('success', 'The asset has been successfully returned to Inventory');
     }
 
 
     public function show($id)
     {
-        $asset = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id')
-            ->join('customer', 'assets.nama', '=', 'customer.id')
-            ->join('inventory', 'assets.asset_tagging', '=', 'inventory.id')
+        $asset = DB::table('transactions')
+            ->join('merk', 'transactions.merk', '=', 'merk.id')
+            ->join('customer', 'transactions.nama', '=', 'customer.id')
+            ->join('assets', 'transactions.asset_tagging', '=', 'assets.id')
             ->select(
-                'assets.*',
+                'transactions.*',
                 'merk.name as merk_name',
                 'customer.name as customer_name',
                 'customer.mapping as customer_mapping',
-                'inventory.tagging as tagging'
+                'assets.code as tagging'
             )
-            ->where('assets.id', $id)
+            ->where('transactions.id', $id)
             ->first();
 
         if (!$asset) {
@@ -387,7 +387,7 @@ class TransactionsAdminController extends Controller
             ->leftJoin('customer as old_customer', 'asset_history.nama_old', '=', 'old_customer.id')
             ->leftJoin('customer as new_customer', 'asset_history.nama_new', '=', 'new_customer.id')
             ->select(
-                'asset_history.asset_id', // Include asset_id
+                'asset_history.asset_id',
                 'inventory.tagging as asset_tagging',
                 'merk.name as merk',
                 'asset_history.jenis_aset_old',
@@ -397,7 +397,16 @@ class TransactionsAdminController extends Controller
                 'asset_history.action',
                 'asset_history.keterangan',
                 'asset_history.note',
-                'asset_history.documentation_old' // Field untuk pengecekan nanti
+                'asset_history.documentation_old',
+                // Select documentation_new only for UPDATE actions
+                DB::raw('(SELECT next.documentation_new 
+                FROM asset_history as next 
+                WHERE next.asset_tagging_old = asset_history.asset_tagging_old 
+                AND next.changed_at < asset_history.changed_at 
+                AND next.action = "UPDATE" 
+                ORDER BY next.changed_at DESC 
+                LIMIT 1) as documentation_new')
+
             )
             ->whereIn('asset_history.action', ['CREATE', 'UPDATE', 'DELETE'])
             ->orderBy('asset_history.changed_at', 'DESC')
@@ -406,21 +415,20 @@ class TransactionsAdminController extends Controller
             ->map(function ($items) {
                 // Filter out unchanged updates
                 $filteredItems = $items->filter(function ($item) {
-                    // Ambil data DELETE hanya jika documentation_old kosong
                     return $item->action === 'CREATE' ||
                         ($item->action === 'UPDATE' && $item->nama_old !== $item->nama_new) ||
                         ($item->action === 'DELETE' && empty($item->documentation_old));
                 });
 
-                // Jika ada record DELETE dengan documentation_old kosong, ambil nilai keterangan
+                // If there are DELETE records with empty documentation_old, get keterangan
                 $keterangan = $filteredItems->filter(function ($item) {
                     return $item->action === 'DELETE' && empty($item->documentation_old);
-                })->pluck('keterangan')->first(); // Ambil keterangan pertama yang memenuhi kondisi
-    
+                })->pluck('keterangan')->first();
+
                 $note = $filteredItems->filter(function ($item) {
                     return $item->action === 'DELETE' && empty($item->documentation_old);
-                })->pluck('note')->first(); // Ambil keterangan pertama yang memenuhi kondisi
-    
+                })->pluck('note')->first();
+
                 // Group by changed_at to remove duplicates
                 $uniqueItems = $filteredItems->groupBy('changed_at')->map(function ($itemsByTime) {
                     return $itemsByTime->unique(function ($item) {
@@ -428,10 +436,10 @@ class TransactionsAdminController extends Controller
                     })->values();
                 })->flatten()->sortBy('changed_at');
 
-                // Tambahkan field keterangan dari DELETE jika ada
+                // Add keterangan field from DELETE if available
                 $uniqueItems->each(function ($item) use ($keterangan, $note) {
                     if ($item->action === 'DELETE') {
-                        $item->keterangan = $keterangan; // Ganti dengan keterangan dari DELETE
+                        $item->keterangan = $keterangan;
                         $item->note = $note;
                     }
                 });
@@ -447,11 +455,11 @@ class TransactionsAdminController extends Controller
     public function returnAsset($id)
     {
         // Fetch the asset details including related merk and customer
-        $asset = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id')
-            ->join('customer', 'assets.nama', '=', 'customer.id')
-            ->select('assets.*', 'merk.name as merk_name', 'customer.name as customer_name')
-            ->where('assets.id', $id)
+        $asset = DB::table('transactions')
+            ->join('merk', 'transactions.merk', '=', 'merk.id')
+            ->join('customer', 'transactions.nama', '=', 'customer.id')
+            ->select('transactions.*', 'merk.name as merk_name', 'customer.name as customer_name')
+            ->where('transactions.id', $id)
             ->first();
 
         // If the asset is not found, abort with a 404 error
@@ -531,11 +539,11 @@ class TransactionsAdminController extends Controller
     public function data(Request $request)
     {
         if ($request->ajax()) {
-            $assets = Assets::query()
+            $transactions = Assets::query()
                 ->with('customer', 'merk') // Include relationships if needed
                 ->select(['id', 'tagging', 'customer_name', 'jenis_aset', 'merk_name', 'lokasi', 'status', 'approval_status']);
 
-            return DataTables::of($assets)
+            return DataTables::of($transactions)
                 ->addColumn('actions', function ($asset) {
                     return view('partials.datatables-actions', compact('asset'));
                 })
@@ -561,7 +569,7 @@ class TransactionsAdminController extends Controller
     }
     public function approveMultiple(Request $request)
     {
-        $selectedAssets = $request->input('assets'); // Get the selected asset IDs
+        $selectedAssets = $request->input('transactions'); // Get the selected asset IDs
 
         // Validate that at least one asset was selected
         if (empty($selectedAssets)) {
@@ -569,10 +577,10 @@ class TransactionsAdminController extends Controller
         }
 
         // Ensure the asset IDs exist in the database (optional)
-        $assets = Assets::whereIn('id', $selectedAssets)->get();
+        $transactions = Assets::whereIn('id', $selectedAssets)->get();
 
-        if ($assets->isEmpty()) {
-            return redirect()->back()->with('error', 'Selected assets do not exist.');
+        if ($transactions->isEmpty()) {
+            return redirect()->back()->with('error', 'Selected transactions do not exist.');
         }
 
         // Redirect to the serahterima view with the selected asset IDs
@@ -580,7 +588,7 @@ class TransactionsAdminController extends Controller
     }
     public function bulkAction(Request $request)
     {
-        $selectedAssets = $request->input('assets'); // Get the selected asset IDs
+        $selectedAssets = $request->input('transactions'); // Get the selected asset IDs
 
         // Validate that at least one asset was selected
         if (empty($selectedAssets)) {
@@ -590,16 +598,16 @@ class TransactionsAdminController extends Controller
         // Determine the action (approve or reject)
         if ($request->input('action') === 'approve') {
             // Redirect to serahterima for approval
-            return redirect()->route('assets.serahterima', ['ids' => implode(',', $selectedAssets)]);
+            return redirect()->route('transactions.serahterima', ['ids' => implode(',', $selectedAssets)]);
         } elseif ($request->input('action') === 'reject') {
-            // Reject the selected assets
+            // Reject the selected transactions
             foreach ($selectedAssets as $id) {
                 $asset = Assets::find($id);
                 if ($asset) {
                     $asset->update(['approval_status' => 'Rejected']);
                 }
             }
-            return redirect()->back()->with('status', 'Selected assets have been rejected.');
+            return redirect()->back()->with('status', 'Selected transactions have been rejected.');
         }
 
         return redirect()->back()->with('error', 'Unexpected action.');
@@ -615,7 +623,7 @@ class TransactionsAdminController extends Controller
 
         // Check if there is a previous customer name to roll back to
         if (!$asset->previous_customer_name) {
-            return redirect()->route('assets.index')->with('error', 'No previous customer name available for rollback.');
+            return redirect()->route('transactions.index')->with('error', 'No previous customer name available for rollback.');
         }
 
         // Rollback to the previous customer name

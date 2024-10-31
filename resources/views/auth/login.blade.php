@@ -30,7 +30,7 @@
             background-color: white;
         }
 
-        
+
 
         .left-section,
         .right-section {
@@ -43,22 +43,22 @@
         }
 
         .left-section {
-            background-color: #F2EDF3;
+            background-color: #FFF;
         }
 
         .right-section {
-            background: linear-gradient(to top right, #E5D3F6, #B86DFF);
+            background: linear-gradient(to top right, #fff, #FECE04);
         }
 
         .btn-primary {
-            background-color: #8d45d1;
+            background-color: #FEBD0D;
             border: none;
             margin-top: 15px;
             border-radius: 10px;
         }
 
         .btn-primary:hover {
-            background-color: #B86DFF;
+            background-color: #fcc735;
         }
 
         .form-group label {
@@ -71,7 +71,7 @@
         }
 
         .register-link a {
-            color: #8d45d1;
+            color: #ffc105;
             text-decoration: none;
         }
 
@@ -86,6 +86,7 @@
 
         h1 {
             font-size: 2.5rem;
+            margin-left: -10px;
             text-align: center;
             font-weight: bold;
         }
@@ -134,7 +135,7 @@
             left: 10px;
             top: 50%;
             transform: translateY(-50%);
-            color: #b66dff;
+            color: #A3A3A3;
         }
 
         .text-center {
@@ -142,14 +143,16 @@
         }
 
         /* Overlay and loading animation */
+
         .overlay {
+
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
             /* Redupkan background */
             z-index: 1000;
             justify-content: center;
@@ -157,6 +160,7 @@
         }
 
         .overlay.active {
+
             display: flex;
         }
 
@@ -282,11 +286,10 @@
             <div class="form-container">
                 <div class="welcome">
                     <div class="logo-text-wrapper">
-                        <img src="{{ asset('assets/img/velaris.png') }}" alt="Login Image">
-                        <h1>eLaris</h1>
+                        <img src="{{ asset('assets/img/assetslogo.png') }}" alt="Login Image">
+                        <h1>ssets</h1>
                     </div>
-                    <small class="form-text text-muted">Visionary Asset Lifecycle and Resource Intelligent
-                        System</small>
+                    <!-- <small class="form-text text-muted">Assest Management</small> -->
                 </div>
 
                 <div class="text-center">
@@ -355,15 +358,19 @@
         <div class="right-section">
             <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
                 type="module"></script>
-            <dotlottie-player src="https://lottie.host/f7367c7c-1cec-451a-8e45-77f553c80baf/ulfq6H1NiO.json"
-                background="transparent" speed="1" style="width: 550px; height: 550px; margin-bottom: 70px;" loop
+            <dotlottie-player src="https://lottie.host/56ee6e12-e749-4239-8018-870f5fe5b3f7/PzF5bCs6y7.json"
+                background="transparent" speed="1" style="width: 650px; height: 950px; margin-bottom: 70px;" loop
                 autoplay></dotlottie-player>
         </div>
     </div>
 
     <!-- Overlay and loading animation -->
     <div class="overlay" id="loadingOverlay">
-        <dotlottie-player src="https://lottie.host/19a1839c-74a1-49d3-ae7c-41b465f7f546/KLdGOA1RNO.json"
+
+        <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+            type="module"></script>
+
+        <dotlottie-player src="https://lottie.host/104f5ddb-9632-4973-a5d4-dd98659272dc/nrBfuqx8XO.json"
             background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
     </div>
 
@@ -376,6 +383,8 @@
             const rightSection = document.querySelector('.right-section');
             const loginForm = document.getElementById('loginForm');
             const overlay = document.getElementById('loadingOverlay');
+
+
             const microsoftLoginButton = document.getElementById('microsoftLoginButton');
 
             // Saat pengguna meninggalkan halaman, animasi keluar (menutup ke dalam) ditambahkan
@@ -387,11 +396,16 @@
             });
 
             // Saat form dikirim, tampilkan loading overlay
+
             loginForm.addEventListener('submit', function (event) {
                 overlay.classList.add('active'); // Tampilkan overlay dan animasi
+
+
             });
             microsoftLoginButton.addEventListener('click', function (event) {
                 overlay.classList.add('active'); // Tampilkan overlay dan animasi
+
+
             });
         });
 
