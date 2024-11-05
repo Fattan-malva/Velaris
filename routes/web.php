@@ -91,19 +91,19 @@ Route::middleware(['auth.check:admin'])->group(function () {
     Route::put('customer/{id}', [CustomerController::class, 'update'])->name('customer.update');
     Route::delete('customer/{id}', [CustomerController::class, 'destroy'])->name('customer.delete');
 
-    Route::resource('assets', TransactionsAdminController::class);
-    Route::get('assetsgsi', [TransactionsAdminController::class, 'index'])->name('transactions.index');
-    Route::get('assetsgsi/mutasi', [TransactionsAdminController::class, 'indexmutasi'])->name('transactions.indexmutasi');
-    Route::get('assetsgsi/return', [TransactionsAdminController::class, 'indexreturn'])->name('transactions.indexreturn');
-    Route::delete('assets/{id}', [TransactionsAdminController::class, 'destroy'])->name('transactions.delete');
-    Route::get('handover', [TransactionsAdminController::class, 'create'])->name('transactions.create');
-    Route::post('assetsgsi', [TransactionsAdminController::class, 'store'])->name('transactions.store');
-    Route::get('assets/{id}/edit', [TransactionsAdminController::class, 'edit'])->name('transactions.edit');
-    Route::get('assets/{id}/pindahtangan', [TransactionsAdminController::class, 'pindah'])->name('transactions.pindahtangan');
-    Route::put('/assets/{id}/pindah', [TransactionsAdminController::class, 'pindahUpdate'])->name('transactions.pindahUpdate');
-    Route::put('assets/{id}', [TransactionsAdminController::class, 'update'])->name('transactions.update');
-    Route::get('assets-history', [TransactionsAdminController::class, 'history'])->name('transactions.history');
-    Route::get('/assets/track/{id}', [TransactionsAdminController::class, 'track'])->name('transactions.track');
+    Route::resource('transaction', TransactionsAdminController::class);
+    Route::get('transactiongsi', [TransactionsAdminController::class, 'index'])->name('transactions.index');
+    Route::get('transactiongsi/mutasi', [TransactionsAdminController::class, 'indexmutasi'])->name('transactions.indexmutasi');
+    Route::get('transactiongsi/return', [TransactionsAdminController::class, 'indexreturn'])->name('transactions.indexreturn');
+    Route::delete('transaction/{id}', [TransactionsAdminController::class, 'destroy'])->name('transactions.delete');
+    Route::get('transaction/create', [TransactionsAdminController::class, 'create'])->name('transactions.handover');
+    Route::post('transactiongsi', [TransactionsAdminController::class, 'store'])->name('transactions.store');
+    Route::get('transaction/{id}/edit', [TransactionsAdminController::class, 'edit'])->name('transactions.edit');
+    Route::get('transaction/{id}/pindahtangan', [TransactionsAdminController::class, 'pindah'])->name('transactions.pindahtangan');
+    Route::put('/transaction/{id}/pindah', [TransactionsAdminController::class, 'pindahUpdate'])->name('transactions.pindahUpdate');
+    Route::put('transaction/{id}', [TransactionsAdminController::class, 'update'])->name('transactions.update');
+    Route::get('transaction-history', [TransactionsAdminController::class, 'history'])->name('transactions.history');
+    Route::get('/transaction/track/{id}', [TransactionsAdminController::class, 'track'])->name('transactions.track');
     Route::get('/history', [TransactionsAdminController::class, 'history'])->name('history');
     Route::get('/history/data', [TransactionsAdminController::class, 'getData'])->name('history.data');
 
@@ -113,7 +113,7 @@ Route::middleware(['auth.check:admin'])->group(function () {
     Route::delete('/saless/{id}', [SalesController::class, 'destroy'])->name('sales.destroy');
 
 
-    Route::get('/assets/return/{id}', [TransactionsAdminController::class, 'returnAsset'])->name('transactions.return');
+    Route::get('/assets/return/{id}', [TransactionsAdminController::class, 'returnAsset'])->name('transactions.returnform');
     Route::put('/assets/return/{id}', [TransactionsAdminController::class, 'returnUpdate'])->name('transactions.returnUpdate');
     Route::put('/assets/{id}/approvereturn', [TransactionsAdminController::class, 'approveReturn'])->name('transactions.approvereturn');
     Route::put('/assets/{id}/approvemutasi', [TransactionsAdminController::class, 'approveMutasi'])->name('transactions.approvemutasi');
@@ -121,30 +121,28 @@ Route::middleware(['auth.check:admin'])->group(function () {
     Route::post('/assets/rollbackMutasi/{id}', [TransactionsAdminController::class, 'rollbackMutasi'])->name('transactions.rollbackMutasi');
 
     Route::resource('assets', AssetsController::class);
-    Route::get('assets-list', [AssetsController::class, 'index'])->name('assets.index');
-    Route::get('assets-total', [AssetsTotalController::class, 'summary'])->name('assets.total');
-    Route::delete('assets/delete', [AssetsController::class, 'destroy'])->name('assets.delete');
+    Route::get('/assets-list', [AssetsController::class, 'index'])->name('assets.index');
+    Route::post('/assets/create', [AssetsController::class, 'store'])->name('assets.store');
     Route::get('assets/create', [AssetsController::class, 'create'])->name('assets.add-asset');
-    Route::post('assets', [AssetsController::class, 'store'])->name('assets.store');
+    Route::get('assetstotal', [AssetsTotalController::class, 'summary'])->name('assets.total');
+    Route::get('/assets-scrap', [AssetsController::class, 'showScrapForm'])->name('assets.scrap');
+    Route::delete('/assets-scrap', [AssetsController::class, 'destroy'])->name('assets.delete');
     Route::get('assets/edit', [AssetsController::class, 'edit'])->name('assets.edit');
-    Route::get('history-maintenance', [MaintenanceHistoryController::class, 'index'])->name('assets.historymaintenance');
-
-
-    // Route for updating multiple assets at once
     Route::post('assets/update', [AssetsController::class, 'update'])->name('assets.update');
     Route::get('/assets/{id}/detail', [AssetsController::class, 'show'])->name('assets.show');
     Route::get('assets-location', [AssetsLocationController::class, 'mapping'])->name('assets.location');
     Route::get('/scrap-history', [AssetsHistoryController::class, 'index'])->name('inventory.history');
-    Route::get('/asset-history-modal', [AssetsHistoryController::class, 'historyAssetModal'])->name('asset.historyModal');
-    Route::get('/assets-scrap', [AssetsController::class, 'showScrapForm'])->name('assets.scrap');
     Route::get('/maintenance', [AssetsController::class, 'showEditForm'])->name('assets.maintenance');
+
     Route::get('/assets/maintenance-needs', [AssetsController::class, 'maintenanceNeeds'])->name('assets.maintenance-needs');
+    Route::get('/asset-history-modal', [AssetsHistoryController::class, 'historyAssetModal'])->name('asset.historyModal');
+    Route::get('history-maintenance', [MaintenanceHistoryController::class, 'index'])->name('assets.historymaintenance');
 
 
     Route::resource('merk', MerkController::class);
     Route::get('/merks', [MerkController::class, 'index'])->name('merk.index');
-    Route::get('/merks/create', [MerkController::class, 'create'])->name('merk.create');
     Route::post('/merks', [MerkController::class, 'store'])->name('merk.store');
+    Route::get('/merks/create', [MerkController::class, 'create'])->name('merk.create');
     Route::get('/merks/{id}/edit', [MerkController::class, 'edit'])->name('merk.edit');
     Route::put('/merks/{id}', [MerkController::class, 'update'])->name('merk.update');
     Route::delete('/merks/{id}', [MerkController::class, 'destroy'])->name('merk.destroy');

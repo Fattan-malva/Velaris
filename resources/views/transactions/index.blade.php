@@ -65,7 +65,7 @@
             @endif
             <div class="mb-3">
                 <div class="d-flex flex-column flex-sm-row justify-content-start" style="margin-bottom: -50px;">
-                    <a href="{{ route('transactions.create') }}" class="btn btn-sm me-2 mb-2 mb-sm-0 handover-btn">
+                    <a href="{{ route('transactions.handover') }}" class="btn btn-sm me-2 mb-2 mb-sm-0 handover-btn">
                         <i class="fa-solid fa-hand-holding-dollar"></i> Handover
                     </a>
                     <a href="{{ route('transactions.indexreturn') }}" class="btn btn-sm me-2 mb-2 mb-sm-0 return-btn">
@@ -78,7 +78,7 @@
             </div>
 
             <div class="table-responsive">
-                <table id="assetTable" class="table table-hover">
+                <table id="transactionTable" class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col">No.</th>
@@ -92,23 +92,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($transactions as $index => $asset)
-                            <tr data-bs-toggle="modal" data-bs-target="#detailModal{{ $asset->id }}"
+                        @forelse ($transactions as $index => $transaction)
+                            <tr data-bs-toggle="modal" data-bs-target="#detailModal{{ $transaction->id }}"
                                 style="cursor: pointer;">
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $asset->tagging }}</td>
-                                <td>{{ $asset->customer_name }}</td>
-                                <td>{{ \Carbon\Carbon::parse($asset->created_at)->format('d-m-Y') }}</td>
-                                <td>{{ $asset->aksi }}</td>
+                                <td>{{ $transaction->tagging }}</td>
+                                <td>{{ $transaction->customer_name }}</td>
+                                <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('d-m-Y') }}</td>
+                                <td>{{ $transaction->type_transactions }}</td>
                                 <td>
                                     <!-- Approval Status Badge -->
-                                    @if ($asset->approval_status === 'Approved')
+                                    @if ($transaction->approval_status === 'Approved')
                                         <span class="badge"
                                             style="padding: 6px 10px; background-color: #1BCFB4;">Approved</span>
-                                    @elseif ($asset->approval_status === 'Pending')
+                                    @elseif ($transaction->approval_status === 'Pending')
                                         <span class="badge" style="padding: 6px 10px; background-color: #FED713;">Waiting
                                             Approval</span>
-                                    @elseif ($asset->approval_status === 'Rejected')
+                                    @elseif ($transaction->approval_status === 'Rejected')
                                         <span class="badge"
                                             style="padding: 6px 10px; background-color: #FE7C96;">Rejected</span>
                                     @else
@@ -119,13 +119,13 @@
                                     <div class="btn-group" role="group">
                                         <!-- Button to View Details -->
                                         <!-- <button type="button" class="btn btn-sm text-white" data-bs-toggle="modal"
-                                                            data-bs-target="#detailModal{{ $asset->id }}" title="Details"
+                                                            data-bs-target="#detailModal{{ $transaction->id }}" title="Details"
                                                             style="background-color:#4FB0F1; margin-right:5px;">
                                                             <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
                                                         </button> -->
                                         <!-- Conditional Button: Cancel Process -->
-                                        @if ($asset->approval_status === 'Rejected' && $asset->aksi === 'Handover')
-                                            <form action="{{ route('transactions.delete', ['id' => $asset->id]) }}"
+                                        @if ($transaction->approval_status === 'Rejected' && $transaction->type_transactions === 'Handover')
+                                            <form action="{{ route('transactions.delete', ['id' => $transaction->id]) }}"
                                                 method="POST" style="display:inline;" class="cancel-form">
                                                 @csrf
                                                 @method('DELETE')
@@ -136,8 +136,8 @@
                                             </form>
                                         @endif
 
-                                        @if ($asset->approval_status === 'Rejected' && ($asset->aksi === 'Mutasi' || $asset->aksi === 'Return'))
-                                            <form action="{{ route('transactions.rollbackMutasi', ['id' => $asset->id]) }}"
+                                        @if ($transaction->approval_status === 'Rejected' && ($transaction->type_transactions === 'Mutasi' || $transaction->type_transactions === 'Return'))
+                                            <form action="{{ route('transactions.rollbackMutasi', ['id' => $transaction->id]) }}"
                                                 method="POST" style="display:inline;" class="rollback-form">
                                                 @csrf
                                                 <button type="submit" class="btn btn-warning text-white" title="Rollback Name">
@@ -148,7 +148,7 @@
 
                                     </div>
 
-                                    <a href="{{ route('transactions.track', ['id' => $asset->id]) }}" class="btn"
+                                    <a href="{{ route('transactions.track', ['id' => $transaction->id]) }}" class="btn"
                                         style="background-color: #CB95E1; color: #fff; font-weight:500;"
                                         title="Track Asset">
                                         <i class="bi bi-geo-alt"></i> Track
@@ -166,20 +166,20 @@
                             <span class="badge legend-badge"
                                 style="padding: 5px 28px; background-color: #1BCFB4;">Approved</span>
                             <span class="legend-colon">:</span>
-                            <span class="legend-description">The asset has been approved by the user.</span>
+                            <span class="legend-description">The transaction has been approved by the user.</span>
                         </li>
                         <li>
                             <span class="badge legend-badge"
                                 style="padding: 5px 10px; background-color: #FED713">Waiting
                                 Approval</span>
                             <span class="legend-colon">:</span>
-                            <span class="legend-description">Waiting for the asset to be approved by the user.</span>
+                            <span class="legend-description">Waiting for the transaction to be approved by the user.</span>
                         </li>
                         <li>
                             <span class="badge legend-badge"
                                 style="padding: 5px 31px; background-color: #FE7C96;">Rejected</span>
                             <span class="legend-colon">:</span>
-                            <span class="legend-description">The asset is rejected by the user.</span>
+                            <span class="legend-description">The transaction is rejected by the user.</span>
                         </li>
                     </ul>
                 </div>
@@ -189,14 +189,14 @@
 </div>
 
 <!-- Modals -->
-@foreach ($transactions as $asset)
-    <div class="modal fade" id="detailModal{{ $asset->id }}" tabindex="-1"
-        aria-labelledby="detailModalLabel{{ $asset->id }}" aria-hidden="true">
+@foreach ($transactions as $transaction)
+    <div class="modal fade" id="detailModal{{ $transaction->id }}" tabindex="-1"
+        aria-labelledby="detailModalLabel{{ $transaction->id }}" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="d-flex justify-content-between align-items-center  modal-header">
                     <h4 class="modal-title text-center flex-grow-1 " style="font-weight: 600;"
-                        id="detailModalLabel{{ $asset->id }}">Approval Details</h4>
+                        id="detailModalLabel{{ $transaction->id }}">Approval Details</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <hr style="width: 90%; margin: auto;" />
@@ -208,23 +208,23 @@
                                 <tbody>
                                     <tr>
                                         <th scope="row">Asset Code</th>
-                                        <td>{{ $asset->tagging }}</td>
+                                        <td>{{ $transaction->tagging }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Name Holder</th>
-                                        <td>{{ $asset->customer_name }}</td>
+                                        <td>{{ $transaction->customer_name }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Position</th>
-                                        <td>{{ $asset->customer_mapping }}</td>
+                                        <td>{{ $transaction->customer_mapping }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Location</th>
-                                        <td>{{ $asset->lokasi }}</td>
+                                        <td>{{ $transaction->location }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Asset Type</th>
-                                        <td>{{ $asset->jenis_aset }}</td>
+                                        <td>{{ $transaction->category_asset }}</td>
                                     </tr>
 
                                 </tbody>
@@ -237,29 +237,29 @@
                                 <tbody>
                                     <tr>
                                         <th scope="row">Merk</th>
-                                        <td>{{ $asset->merk_name }}</td>
+                                        <td>{{ $transaction->merk_name }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Serial Number</th>
-                                        <td>{{ $asset->serial_number }}</td>
+                                        <td>{{ $transaction->serial_number }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Status</th>
-                                        <td>{{ $asset->status }}</td>
+                                        <td>{{ $transaction->status }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Condition</th>
-                                        <td>{{ $asset->kondisi }}</td>
+                                        <td>{{ $transaction->condition }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Transfer Date</th>
-                                        <td>{{ \Carbon\Carbon::parse($asset->created_at)->format('d-m-Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('d-m-Y') }}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Documentation</th>
                                         <td>
-                                            @if($asset->documentation)
-                                                <a href="{{ asset('storage/' . $asset->documentation) }}" target="_blank"
+                                            @if($transaction->documentation)
+                                                <a href="{{ asset('storage/' . $transaction->documentation) }}" target="_blank"
                                                     class="text-decoration-underline">View
                                                     Document</a>
                                             @else

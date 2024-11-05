@@ -38,7 +38,7 @@
                                         @foreach ($pendingAssets as $asset)
                                             <div class="col-md-12 mb-3">
                                                 <div class="card"
-                                                    style="background-color: rgba({{ $asset->aksi == 'Handover' ? '174,244,191' : '' }} {{ $asset->aksi == 'Mutasi' ? '255, 193, 7, 0.2' : '' }} {{ $asset->aksi == 'Return' ? '220, 53, 69, 0.2' : '' }}); border: 3px solid black;">
+                                                    style="background-color: rgba({{ $asset->type_transactions == 'Handover' ? '174,244,191' : '' }} {{ $asset->type_transactions == 'Mutasi' ? '255, 193, 7, 0.2' : '' }} {{ $asset->type_transactions == 'Return' ? '220, 53, 69, 0.2' : '' }}); border: 3px solid black;">
                                                     <div class="card-body" style="margin-top: 30px;">
                                                         <div class="d-flex align-items-center justify-content-between mb-4">
                                                             <img src="{{ asset('assets/img/pending.png') }}"
@@ -46,17 +46,17 @@
                                                                 style="width: 80px; height: 80px;">
                                                             <p class="card-text flex-grow-1">
                                                                 <strong>Asset Tag:</strong> {{ $asset->tagging }}<br>
-                                                                <strong>Jenis Aset:</strong> {{ $asset->jenis_aset }}<br>
+                                                                <strong>Jenis Aset:</strong> {{ $asset->category_asset }}<br>
                                                                 <strong>Merk:</strong> {{ $asset->merk_name }}
                                                             </p>
                                                             <!-- <span
-                                                                class="badge position-absolute top-0" style="background-color: rgba({{ $asset->aksi == 'Handover' ? '27,207,180' : '' }} {{ $asset->aksi == 'Mutasi' ? '254,215,19' : '' }} {{ $asset->aksi == 'Return' ? '254,124,150' : '' }});  margin-left: {{ $asset->aksi == 'Return' ? '260px' : '245px' }}; margin-top: 10px;">
-                                                                {{ $asset->aksi }}
+                                                                class="badge position-absolute top-0" style="background-color: rgba({{ $asset->type_transactions == 'Handover' ? '27,207,180' : '' }} {{ $asset->type_transactions == 'Mutasi' ? '254,215,19' : '' }} {{ $asset->type_transactions == 'Return' ? '254,124,150' : '' }});  margin-left: {{ $asset->type_transactions == 'Return' ? '260px' : '245px' }}; margin-top: 10px;">
+                                                                {{ $asset->type_transactions }}
                                                             </span> -->
                                                             <div class="form-check ms-auto position-absolute top-0 end-0 m-2 " style="margin-left: auto;">
                                                             <span
-                                                                class="badge" style="background-color: rgba({{ $asset->aksi == 'Handover' ? '27,207,180' : '' }} {{ $asset->aksi == 'Mutasi' ? '254,215,19' : '' }} {{ $asset->aksi == 'Return' ? '254,124,150' : '' }}); margin-left: {{ $asset->aksi == 'Return' ? '-90px' : '-105px' }};">
-                                                                {{ $asset->aksi }}
+                                                                class="badge" style="background-color: rgba({{ $asset->type_transactions == 'Handover' ? '27,207,180' : '' }} {{ $asset->type_transactions == 'Mutasi' ? '254,215,19' : '' }} {{ $asset->type_transactions == 'Return' ? '254,124,150' : '' }}); margin-left: {{ $asset->type_transactions == 'Return' ? '-90px' : '-105px' }};">
+                                                                {{ $asset->type_transactions }}
                                                             </span>
                                                                 <input type="checkbox" class="form-check-input" name="transactions[]"
                                                                     value="{{ $asset->id }}" id="asset-{{ $asset->id }}"
@@ -105,20 +105,20 @@
                                                                                             <div class="card-body">
                                                                                                 <div class="d-flex align-items-center mb-4">
                                                                                                     @php
-                                                                                                        // Determine the image file based on the jenis_aset
+                                                                                                        // Determine the image file based on the category_asset
                                                                                                         $iconMap = [
                                                                                                             'PC' => 'pc.png',
                                                                                                             'Tablet' => 'tablet.png',
                                                                                                             'Laptop' => 'laptop.png',
                                                                                                             // Add more mappings as needed
                                                                                                         ];
-                                                                                                        $iconFile = isset($iconMap[$asset->jenis_aset]) ? $iconMap[$asset->jenis_aset] : 'default.png'; // Fallback to default icon
+                                                                                                        $iconFile = isset($iconMap[$asset->category_asset]) ? $iconMap[$asset->category_asset] : 'default.png'; // Fallback to default icon
                                                                                                     @endphp
                                                                                                     <img src="{{ asset('assets/img/' . $iconFile) }}" alt="Asset Icon"
                                                                                                         class="me-3" style="width: 60px; height: 60px;">
                                                                                                     <p class="card-text">
                                                                                                         <strong>Asset Tag:</strong> {{ $asset->tagging }}<br>
-                                                                                                        <strong>Jenis Aset:</strong> {{ $asset->jenis_aset }}<br>
+                                                                                                        <strong>Jenis Aset:</strong> {{ $asset->category_asset }}<br>
                                                                                                         <strong>Merk:</strong> {{ $asset->merk_name }}<br>
                                                                                                     </p>
                                                                                                 </div>
@@ -153,7 +153,7 @@
             </tr>
             <tr>
                 <th style="border: none; font-size: 16px; width: 110px;">Jenis Aset :</th>
-                <td style="border: none;">{{ $asset->jenis_aset }}</td>
+                <td style="border: none;">{{ $asset->category_asset }}</td>
             </tr>
             <tr>
                 <th style="border: none; font-size: 16px; width: 110px;">Merk :</th>
@@ -161,7 +161,7 @@
             </tr>
             <tr>
                 <th style="border: none; font-size: 16px; width: 110px;">Location :</th>
-                <td style="border: none;">{{ $asset->lokasi }}</td>
+                <td style="border: none;">{{ $asset->location }}</td>
             </tr>
             <tr>
                 <th style="border: none; font-size: 16px; width: 110px;">Status :</th>
@@ -183,11 +183,11 @@
             </tr> -->
             <tr>
                 <th style="border: none; font-size: 16px; width: 110px;">Action :</th>
-                <td style="border: none;">{{ $asset->aksi }}</td>
+                <td style="border: none;">{{ $asset->type_transactions }}</td>
             </tr>
             <tr>
                 <th style="border: none; font-size: 16px; width: 110px;">Kondisi :</th>
-                <td style="border: none;">{{ $asset->kondisi }}</td>
+                <td style="border: none;">{{ $asset->condition }}</td>
             </tr>
             <tr>
                 <th style="border: none; font-size: 16px; width: 145px;">Documentation :</th>
@@ -206,15 +206,15 @@
                                                                                                             </div>
                                                                                                         </div>
                                                                                                         <!-- <div class="modal-footer">
-                                                                                                            @if($asset->aksi == 'Handover')
+                                                                                                            @if($asset->type_transactions == 'Handover')
                                                                                                                 <a href="{{ route('prints.handover', ['asset_tagging' => $asset->tagging]) }}"
                                                                                                                     class="btn btn-primary"><i class="bi bi-printer"></i>
                                                                                                                     Print</a>
-                                                                                                            @elseif($asset->aksi == 'Mutasi')
+                                                                                                            @elseif($asset->type_transactions == 'Mutasi')
                                                                                                                 <a href="{{ route('prints.mutation', ['asset_tagging' => $asset->tagging]) }}"
                                                                                                                     class="btn btn-primary"><i class="bi bi-printer"></i>
                                                                                                                     Print</a>
-                                                                                                            @elseif($asset->aksi == 'Return')
+                                                                                                            @elseif($asset->type_transactions == 'Return')
                                                                                                                 <a href="{{ route('prints.return', ['asset_tagging' => $asset->tagging]) }}"
                                                                                                                     class="btn btn-primary"><i class="bi bi-printer"></i>
                                                                                                                     Print</a>

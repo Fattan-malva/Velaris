@@ -11,24 +11,23 @@ class Transactions extends Model
 
     // Fillable fields
     protected $fillable = [
-        'asset_tagging',
-        'jenis_aset',
+        'type_transactions',
+        'asset_code',
+        'category_asset',
         'merk',
-        'type',
+        'spesification',
         'serial_number',
-        'nama',
-        'mapping',
-        'o365',
-        'lokasi',
-        'status',
-        'approval_status',
-        'aksi',
-        'kondisi',
-        'documentation',
-        'previous_customer_name',
+        'name_holder',
+        'position',
+        'location',
         'latitude',
         'longitude',
-        'keterangan',
+        'status',
+        'approval_status',
+        'condition',
+        'documentation',
+        'previous_customer_name',
+        'reason',
         'note'
     ];
 
@@ -46,7 +45,7 @@ class Transactions extends Model
     }
     public function inventory()
     {
-        return $this->belongsTo(Inventory::class, 'asset_tagging');
+        return $this->belongsTo(Assets::class, 'code');
     }
 
 

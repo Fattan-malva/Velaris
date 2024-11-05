@@ -11,10 +11,10 @@ class AssetsLocationController extends Controller
     {
         // Run the SQL query
         $data = DB::table('transactions')
-            ->select('lokasi', 'jenis_aset', DB::raw('COUNT(*) as jumlah_aset'))
-            ->groupBy('lokasi', 'jenis_aset')
-            ->orderBy('lokasi')
-            ->orderBy('jenis_aset')
+            ->select('location', 'category_asset', DB::raw('COUNT(*) as jumlah_aset'))
+            ->groupBy('location', 'category_asset')
+            ->orderBy('location')
+            ->orderBy('category_asset')
             ->get();
 
         // Pass the data to the view

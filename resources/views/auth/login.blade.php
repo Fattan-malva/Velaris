@@ -293,34 +293,12 @@
                 </div>
 
                 <div class="text-center">
-
-                    <script>
-                        @if(session('success'))
-                            Swal.fire({
-                                title: 'Success!',
-                                text: '{{ session('success') }}',
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            });
-                        @endif
-
-                        // Menampilkan pesan error validasi
-                        @if($errors->any())
-                            Swal.fire({
-                                title: 'Error!',
-                                text: '{{ session('error') }}',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
-                        @endif
-                    </script>
-
                     <form method="POST" action="{{ route('login') }}" id="loginForm">
                         @csrf
                         <div class="form-group">
                             <i class="fas fa-user icon"></i>
                             <input type="text" class="form-control" id="username" name="username"
-                                placeholder="Your email..." required>
+                                placeholder="JhonDoe@example.com" required>
                         </div>
                         <div class="form-group">
                             <i class="fas fa-lock icon"></i>
@@ -332,7 +310,7 @@
                                 </span>
                             </div>
                             <input type="password" class="form-control" id="password" name="password"
-                                placeholder="Your password..." required>
+                                placeholder="example123" required>
                         </div>
 
                         <div class="d-flex justify-content-between mb-3">
@@ -378,6 +356,26 @@
 
 
     <script>
+
+        @if(session('success'))
+            Swal.fire({
+                title: 'Success!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        @endif
+
+        // Menampilkan pesan error validasi
+        @if($errors->any())
+            Swal.fire({
+                title: 'Error!',
+                text: '{{ session('error') }}',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        @endif
+
         document.addEventListener("DOMContentLoaded", function () {
             const leftSection = document.querySelector('.left-section');
             const rightSection = document.querySelector('.right-section');

@@ -254,7 +254,7 @@ body.dark-mode .sidebar .nav-links li a .link_name {
 /* Active State Links in Sidebar */
 .sidebar .nav-links li a.active .link_name,
 .sidebar .nav-links li a.active i {
-    color: #b66dff;
+    color: #FB9F1D;
     /* Purple color for active state */
 }
 
@@ -271,7 +271,7 @@ body.dark-mode .sub-menu a {
 
 /* Hover State for Sub-menu Links */
 .sub-menu a:hover {
-    color: #b66dff;
+    color: #FB9F1D;
     /* Purple color for hover state */
     background-color: rgba(182, 109, 255, 0.1);
     /* Slight background for hover */
@@ -281,7 +281,7 @@ body.dark-mode .sub-menu a {
 
 /* Active State for Sub-menu Links */
 .sub-menu a.active {
-    color: #b66dff;
+    color: #FB9F1D;
     /* Purple color for active sub-menu link */
     font-weight: bold;
     /* Bold active sub-menu link */
@@ -567,6 +567,7 @@ section {
     color: #000;
     font-weight: 600;
     transition: opacity 0.3s ease;
+    margin-left: -14px;
 }
 
 .sidebar.close .logo-details .logo_name {
@@ -640,7 +641,7 @@ section {
     min-width: 78px;
     text-align: center;
     line-height: 50px;
-    color: #beabc2;
+    color: #d3c990;
     font-size: 18px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -679,22 +680,22 @@ section {
 
 /* Pewarnaan pada text menu apabila user berada di menu tsb */
 .sidebar .nav-links li a.active .link_name {
-    color: #b66dff;
+    color: #FB9F1D;
     /* Active color */
 }
 
 .sidebar .nav-links li a.active i {
-    color: #b66dff;
+    color: #FB9F1D;
     /* Active color for icon */
 }
 
 .sub-menu a.active {
-    color: #b66dff;
+    color: #FB9F1D;
     /* Active color for submenu link text */
 }
 
 .sub-menu a.active i {
-    color: #b66dff;
+    color: #FB9F1D;
     /* Active color for submenu icon, if any */
 }
 
@@ -1013,12 +1014,12 @@ section {
 
 /* Active link color */
 .bottom-nav a.active {
-    color: #b66dff;
+    color: #FB9F1D;
 }
 
 /* Hover effect */
 .bottom-nav a:hover {
-    color: #b66dff;
+    color: #FB9F1D;
 }
 
 /* Submenu that appears below its parent nav item */
@@ -1058,12 +1059,12 @@ section {
 }
 
 .submenu a:hover {
-    color: #b66dff;
+    color: #FB9F1D;
 }
 
 /* Active submenu link */
 .submenu a.active {
-    color: #b66dff;
+    color: #FB9F1D;
 }
 
 /* Adjust width of submenu to be narrower on smaller screens */
@@ -1098,7 +1099,7 @@ section {
 }
 
 .back-button:hover i {
-    color: #b66dff; /* Warna ikon saat di-hover */
+    color: #FB9F1D; /* Warna ikon saat di-hover */
 }
 
 .back-button i {

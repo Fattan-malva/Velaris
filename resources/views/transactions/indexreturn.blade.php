@@ -80,11 +80,11 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $asset->customer_name }}</td>
                                 <td>{{ $asset->tagging }}</td>
-                                <td>{{ $asset->jenis_aset }}</td>
+                                <td>{{ $asset->category_asset }}</td>
                                 <td>{{ $asset->merk_name }}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a href="{{ route('transactions.return', ['id' => $asset->id]) }}"
+                                        <a href="{{ route('transactions.returnform', ['id' => $asset->id]) }}"
                                             class="btn btn-sm form-return"
                                             style="background-color: #fe7c96; color: #fff; font-weight: 500;"
                                             title="Return">
@@ -110,15 +110,15 @@
                                                     <strong>Asset Tagging:</strong> {{ $asset->tagging }}<br>
                                                     <strong>Name Customer:</strong> {{ $asset->customer_name }}<br>
                                                     <strong>Position:</strong> {{ $asset->customer_mapping }}<br>
-                                                    <strong>Location:</strong> {{ $asset->lokasi }}<br>
-                                                    <strong>Jenis Aset:</strong> {{ $asset->jenis_aset }}<br>
+                                                    <strong>Location:</strong> {{ $asset->location }}<br>
+                                                    <strong>Jenis Aset:</strong> {{ $asset->category_asset }}<br>
                                                     <strong>Merk:</strong> {{ $asset->merk_name }}<br>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <strong>Serial Number:</strong> {{ $asset->serial_number }}<br>
                                                     <strong>O365:</strong> {{ $asset->o365 }}<br>
                                                     <strong>Status:</strong> {{ $asset->status }}<br>
-                                                    <strong>Kondisi:</strong> {{ $asset->kondisi }}<br>
+                                                    <strong>Kondisi:</strong> {{ $asset->condition }}<br>
                                                     <strong>Serah Terima:</strong>
                                                     {{ \Carbon\Carbon::parse($asset->created_at)->format('d-m-Y') }}<br>
                                                     <strong>Documentation:</strong>

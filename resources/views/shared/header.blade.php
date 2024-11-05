@@ -16,8 +16,8 @@
     <!-- DESKTOP VIEW -->
     <div class="sidebar close">
         <div class="logo-details">
-            <img src="{{ asset('assets/img/velaris.png') }}" alt="Global Service Indonesia Logo" class="sidebar-logo">
-            <span class="logo_name">eLaris</span>
+            <img src="{{ asset('assets/img/assetslogo.png') }}" alt="Global Service Indonesia Logo" class="sidebar-logo">
+            <span class="logo_name">ssets</span>
         </div>
         <ul class="nav-links">
             <li>
@@ -47,9 +47,9 @@
             <li>
                 <div class="iocn-link">
                     <a
-                        class="{{ request()->routeIs('transactions.index') || request()->routeIs('transactions.create') || request()->routeIs('transactions.indexreturn') ? 'active' : '' }}">
+                        class="{{ request()->routeIs('transactions.index') || request()->routeIs('transactions.handover') || request()->routeIs('transactions.indexreturn') ? 'active' : '' }}">
                         <i class='fa-solid fa-chart-column'
-                            class="{{ request()->routeIs('transactions.index') || request()->routeIs('transactions.create') || request()->routeIs('transactions.indexreturn') ? 'active' : '' }}"></i>
+                            class="{{ request()->routeIs('transactions.index') || request()->routeIs('transactions.handover') || request()->routeIs('transactions.indexreturn') ? 'active' : '' }}"></i>
                         <span class="link_name">Activity</span>
                     </a>
                     <i class='bx bxs-chevron-left arrow'></i>
@@ -57,8 +57,8 @@
                 <ul class="sub-menu">
                     <li><a href="{{ route('transactions.index') }}"
                             class="{{ request()->routeIs('transactions.index') ? 'active' : '' }}">Approval Status</a></li>
-                    <li><a href="{{ route('transactions.create') }}"
-                            class="{{ request()->routeIs('transactions.create') ? 'active' : '' }}">Handover</a></li>
+                    <li><a href="{{ route('transactions.handover') }}"
+                            class="{{ request()->routeIs('transactions.handover') ? 'active' : '' }}">Handover</a></li>
                     <li><a href="{{ route('transactions.indexreturn') }}"
                             class="{{ request()->routeIs('transactions.indexreturn') ? 'active' : '' }}">Return</a></li>
                     <li><a href="{{ route('assets.scrap') }}"
@@ -172,8 +172,8 @@
             <i class="fa-solid fa-circle-chevron-left"></i>
         </button>
         <div class="logo">
-            <img src="{{ asset('assets/img/velaris.png') }}" alt="Logo">
-            <span class="title">eLaris</span>
+            <img src="{{ asset('assets/img/assetslogo.png') }}" alt="Logo">
+            <span class="title">ssets</span>
         </div>
         <div class="profile">
             <img src="{{ asset('assets/img/admin.png') }}" alt="Admin Profile">
@@ -228,8 +228,8 @@
         <div id="activity-submenu" class="submenu">
             <a href="{{ route('transactions.index') }}"
                 class="{{ request()->routeIs('transactions.index') ? 'active' : '' }}">Approval Status</a>
-            <a href="{{ route('transactions.create') }}"
-                class="{{ request()->routeIs('transactions.create') ? 'active' : '' }}">Handover</a>
+            <a href="{{ route('transactions.handover') }}"
+                class="{{ request()->routeIs('transactions.handover') ? 'active' : '' }}">Handover</a>
             <a href="{{ route('transactions.indexreturn') }}"
                 class="{{ request()->routeIs('transactions.indexreturn') ? 'active' : '' }}">Return</a>
             <a href="{{ route('assets.scrap') }}"

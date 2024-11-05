@@ -298,7 +298,7 @@
                         <div class="form-group">
                             <i class="fas fa-id-card icon"></i>
                             <input type="text" class="form-control @error('nrp') is-invalid @enderror" id="nrp"
-                                name="nrp" placeholder="Your NRP..." value="{{ old('nrp') }}" required>
+                                name="nrp" placeholder="99999999" value="{{ old('nrp') }}" required>
                             @error('nrp')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -309,7 +309,7 @@
                         <div class="form-group">
                             <i class="fas fa-user icon"></i>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
-                                name="name" placeholder="Your name..." value="{{ old('name') }}" required>
+                                name="name" placeholder="JhonDoe" value="{{ old('name') }}" required>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -323,7 +323,7 @@
                         <div class="form-group">
                             <i class="fas fa-briefcase icon"></i>
                             <input type="text" class="form-control @error('mapping') is-invalid @enderror" id="mapping"
-                                name="mapping" placeholder="Your position..." value="{{ old('mapping') }}">
+                                name="mapping" placeholder="uservelaris" value="{{ old('mapping') }}">
                             @error('mapping')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -335,7 +335,7 @@
                         <div class="form-group">
                             <i class="fas fa-envelope icon"></i>
                             <input type="email" class="form-control @error('username') is-invalid @enderror"
-                                id="username" name="username" placeholder="Your email..." value="{{ old('username') }}"
+                                id="username" name="username" placeholder="JhonDoe@example.com" value="{{ old('username') }}"
                                 required>
                             @error('username')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -350,7 +350,7 @@
                                 <i class="fas fa-lock icon"
                                     style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);"></i>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                    id="password" name="password" placeholder="Your password..." required
+                                    id="password" name="password" placeholder="example123" required
                                     style="padding-left: 40px; padding-right: 40px;">
                                 <span
                                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color:#A3A3A3;"
@@ -371,7 +371,7 @@
                                 <i class="fas fa-lock icon"
                                     style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);"></i>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                    id="confirm_password" name="confirm_password" placeholder="Confirm Your password..."
+                                    id="confirm_password" name="confirm_password" placeholder="example123"
                                     required style="padding-left: 40px; padding-right: 40px;">
                                 <span
                                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color:#A3A3A3;"

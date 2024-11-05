@@ -476,36 +476,44 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const assetCodes = @json($assetCodes); // Convert PHP array to JavaScript array
-            const assetCodesString = assetCodes.join(', '); // Create a string of asset codes
 
-            // Create the SweetAlert with a custom class for styling
-            Swal.fire({
-                title: 'Maintenance Alert!',
-                html: 'The following assets need maintenance: <strong>' + assetCodesString + '</strong>', // Use 'html' to allow HTML tags
-                icon: 'warning',
-                position: 'top-end',
-                toast: true,
-                showConfirmButton: false,
-                timer: 10000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'custom-alert-popup' // Custom class for the popup
-                },
-                willClose: () => {
-                    // You can perform additional actions when the alert closes
-                }
-            }).then((result) => {
-                if (result.dismiss === Swal.DismissReason.timer) {
-                    // Additional actions when the timer runs out can be performed here
-                }
-            });
+            // Loop through each asset code and display a separate SweetAlert for each
+            assetCodes.forEach((code, index) => {
+                // Use setTimeout to stagger the alerts so they don't all show at once
+                setTimeout(() => {
+                    Swal.fire({
+                        title: 'Maintenance Alert!',
+                        html: 'Asset <strong>' + code + '</strong> needs maintenance.', // Show individual asset code
+                        icon: 'warning',
+                        position: 'top-end',
+                        toast: true,
+                        showConfirmButton: false,
+                        timer: 10000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'custom-alert-popup' // Custom class for the popup
+                        },
+                        willClose: () => {
+                            // You can perform additional actions when the alert closes
+                        }
+                    }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            // Additional actions when the timer runs out can be performed here
+                        }
+                    });
 
-            // Add click event to redirect on notification click
-            document.querySelector('.swal2-container').addEventListener('click', function () {
-                window.location.href = "{{ route('assets.maintenance') }}"; // Redirect to the maintenance route
+                    // Optional: Redirect when the alert closes
+                    // Note: This will redirect after each alert closes
+                    // If you want to keep it to the last alert, handle it differently
+                    document.querySelector('.swal2-container').addEventListener('click', function () {
+                        window.location.href = "{{ route('assets.maintenance') }}"; // Redirect to the maintenance route
+                    });
+                }, index * 1500); // Stagger the alerts by 1500 milliseconds (1.5 seconds)
             });
         });
     </script>
+
+
 
     <style>
         /* Custom styles for the SweetAlert popup */
@@ -681,8 +689,8 @@
                             <tbody>
                                 @foreach($operationSummaryData as $data)
                                     <tr>
-                                        <td>{{ explode(',', $data->lokasi)[0] }}</td>
-                                        <td>{{ $data->jenis_aset }}</td>
+                                        <td>{{ explode(',', $data->location)[0] }}</td>
+                                        <td>{{ $data->category_asset }}</td>
                                         <td>{{ $data->merk }}</td>
                                         <td>{!! nl2br(e(str_replace(', ', "\n", $data->asset_tagging))) !!}</td>
                                         <td>{{ $data->total_transactions }}</td>
@@ -764,8 +772,8 @@
                                     <tbody>
                                         @forelse ($assetQuantitiesByLocation as $item)
                                             <tr>
-                                                <td>{{ explode(',', $item->lokasi)[0] }}</td>
-                                                <td>{{ $item->jenis_aset }}</td>
+                                                <td>{{ explode(',', $item->location)[0] }}</td>
+                                                <td>{{ $item->category_asset}}</td>
                                                 <td>{{ $item->jumlah_aset }}</td>
                                             </tr>
                                         @empty

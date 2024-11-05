@@ -12,7 +12,7 @@
 
             <script>
                 // Menampilkan pesan sukses setelah redirect dari controller
-                @if(session('success'))
+                @if (session('success'))
                     Swal.fire({
                         title: 'Success!',
                         text: '{{ session('success') }}', // Pesan sukses dari session
@@ -22,7 +22,7 @@
                 @endif
 
                 // Menampilkan pesan error validasi
-                @if($errors->any())
+                @if ($errors->any())
                     Swal.fire({
                         title: 'Error!',
                         text: '{!! implode(', ', $errors->all()) !!}', // Menggabungkan semua pesan error
@@ -39,13 +39,13 @@
                         <span class="small-text">to previous page</span>
                     </div>
                 </div>
-                <!-- <a class="back-wrapper" id="back-icon" href="{{url()->previous()}}">
-                    <i class='bx bxs-chevron-left back-icon'></i>
-                    <div class="back-text">
-                        <span class="title">Back</span>
-                        <span class="small-text">to previous page</span>
-                    </div>
-                </a> -->
+                <!-- <a class="back-wrapper" id="back-icon" href="{{ url()->previous() }}">
+                                        <i class='bx bxs-chevron-left back-icon'></i>
+                                        <div class="back-text">
+                                            <span class="title">Back</span>
+                                            <span class="small-text">to previous page</span>
+                                        </div>
+                                    </a> -->
                 <h3 class="assetList-title">
                     Asset List&nbsp;&nbsp;
                     <span class="icon-wrapper">
@@ -85,7 +85,7 @@
                             <th scope="col">S/N</th>
                             <th scope="col">Merk</th>
                             <!-- <th scope="col">Type</th>
-                            <th scope="col">Merk</th> -->
+                                                <th scope="col">Merk</th> -->
                             <th scope="col" style="width: 200px;">Location</th>
                             <th scope="col" style="width: 130px;">Name Holder</th>
                             <th scope="col">Maintenance</th>
@@ -116,36 +116,46 @@
 
                                                         {{ $location }}
                                                     </td>
-                                                    <td>{{ $asset->name_holder ?? 'New Assets' }}</td>
+                                                    <td>{{ $asset->customer_name ?? 'Not Yet Handover' }}</td>
+
                                                     <td>
                                                         @php
-                                                            $tanggalMasuk = $asset->entry_date;
-                                                            $tanggalMaintenance = $asset->last_maintenance ?? $tanggalMasuk;
+                                                            // Get the entry date and last maintenance date
+                                                            $tanggalMaintenance = $asset->last_maintenance ?? $asset->entry_date;
 
-                                                            // Konversi jadwal perawatan ke jumlah bulan
-                                                            switch ($asset->scheduling_maintenance) {
-                                                                case '3 Weeks':
-                                                                    $bulanJadwal = 0.75; // 3 minggu dalam bulan
+                                                            // Parse the scheduling maintenance value
+                                                            [$intervalValue, $intervalUnit] = explode(
+                                                                ' ',
+                                                                $asset->scheduling_maintenance,
+                                                            );
+
+                                                            // Calculate the next maintenance date based on the interval and unit
+                                                            switch (strtolower($intervalUnit)) {
+                                                                case 'weeks':
+                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse(
+                                                                        $tanggalMaintenance,
+                                                                    )->addWeeks($intervalValue);
                                                                     break;
-                                                                case '1 Mont':
-                                                                    $bulanJadwal = 1;
+                                                                case 'months':
+                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse(
+                                                                        $tanggalMaintenance,
+                                                                    )->addMonths($intervalValue);
                                                                     break;
-                                                                case '1 Year':
-                                                                    $bulanJadwal = 12;
-                                                                    break;
-                                                                case '5 Years':
-                                                                    $bulanJadwal = 60;
+                                                                case 'years':
+                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse(
+                                                                        $tanggalMaintenance,
+                                                                    )->addYears($intervalValue);
                                                                     break;
                                                                 default:
-                                                                    $bulanJadwal = 0; // Jika tidak ada jadwal
+                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance); // If no valid scheduling unit, fallback
+                                                                    break;
                                                             }
 
-                                                            // Hitung waktu yang berlalu sejak terakhir maintenance
-                                                            $bulanSejakAcuan = now()->diffInMonths($tanggalMaintenance);
-
+                                                            // Determine if maintenance is due
+                                                            $maintenanceDue = now()->greaterThanOrEqualTo($nextMaintenanceDate);
                                                         @endphp
 
-                                                        @if ($bulanSejakAcuan >= $bulanJadwal)
+                                                        @if ($maintenanceDue)
                                                             <span class="badge text-center align-middle"
                                                                 style="padding: 5px; font-size: 0.9em; background-color:#FE7C96;">
                                                                 Need Maintenance
@@ -157,8 +167,6 @@
                                                             </span>
                                                         @endif
                                                     </td>
-
-
 
                                                     <td class="text-center align-middle">
                                                         <!-- Status Badge -->
@@ -172,15 +180,15 @@
                                                         @endif
                                                     </td>
                                                     <!-- <td>
-                                                                                                                                                                                                        <div class="action-buttons">
-                                                                                                                                                                                                            <button type="button" class="btn text-white" data-bs-toggle="modal"
-                                                                                                                                                                                                                data-bs-target="#detailsModal-{{ $asset->id }}" title="Details"
-                                                                                                                                                                                                                style="background-color:#4FB0F1;">
-                                                                                                                                                                                                                <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
-                                                                                                                                                                                                            </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="action-buttons">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn text-white" data-bs-toggle="modal"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            data-bs-target="#detailsModal-{{ $asset->id }}" title="Details"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            style="background-color:#4FB0F1;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </button>
 
-                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                    </td> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </td> -->
                                                 </tr>
                         @endforeach
 
@@ -207,7 +215,7 @@
                                 style="padding: 5px 9px; margin-right: 5px; background-color: #fe7c96">Need
                                 Maintenance</span>
                             <span class="legend-colon">:</span>
-                            <span class="legend-description">Assets need last_maintenance.</span>
+                            <span class="legend-description">Assets need Maintenance.</span>
                         </li>
                         <li>
                             <span class="badge legend-badge"
@@ -238,12 +246,12 @@
                             <table class="table no-border-table">
                                 <tbody>
                                     <tr>
-                                        <th><strong>Code</strong></th>
-                                        <td>{{ $asset->code }}</td>
+                                        <th><strong>Category</strong></th>
+                                        <td>{{ $asset->category }}</td>
                                     </tr>
                                     <tr>
-                                        <th><strong>Type</strong></th>
-                                        <td>{{ $asset->category }}</td>
+                                        <th><strong>Code</strong></th>
+                                        <td>{{ $asset->code }}</td>
                                     </tr>
                                     <tr>
                                         <th><strong>Merk</strong></th>
@@ -252,6 +260,10 @@
                                     <tr>
                                         <th><strong>S/N</strong></th>
                                         <td>{{ $asset->serial_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th><strong>Specification</strong></th>
+                                        <td>{{ $asset->spesification }}</td>
                                     </tr>
                                     <tr>
                                         <th><strong>Condition</strong></th>
@@ -266,10 +278,6 @@
                             <table class="table no-border-table">
                                 <tbody>
                                     <tr>
-                                        <th><strong>Specification</strong></th>
-                                        <td>{{ $asset->spesification }}</td>
-                                    </tr>
-                                    <tr>
                                         <th><strong>Entry Date</strong></th>
                                         <td
                                             style="background-color: rgba(0, 0, 255, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
@@ -282,26 +290,33 @@
 
                                     <tr>
                                         <th><strong>Handover Date</strong></th>
-                                        <td
-                                            style="background-color: rgba(0, 255, 0, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
-                                            @php
-                                                $tanggalDiterima = $asset->handover_date ?? '-';
-                                                if ($tanggalDiterima === '0000-00-00 00:00:00' || $tanggalDiterima === '-') {
-                                                    echo '-';
-                                                } else {
-                                                    echo date('d-m-Y', strtotime($tanggalDiterima));
-                                                }
-                                            @endphp
+                                        <td @php
+                                            $tanggalDiterima = $asset->handover_date ?? '-';
+                                        $bgColor = ($tanggalDiterima === '0000-00-00 00:00:00' || $tanggalDiterima === '-') ? 'rgba(128, 128, 128, 0.2)' : 'rgba(0, 255, 0, 0.2)'; @endphp
+                                            style="background-color: {{ $bgColor }}; border-radius: 20px; padding: 5px 10px; display: inline-block;">
+
+                                            @if ($tanggalDiterima === '0000-00-00 00:00:00' || $tanggalDiterima === '-')
+                                                Not Yet Handover
+                                            @else
+                                                {{ date('d-m-Y', strtotime($tanggalDiterima)) }}
+                                            @endif
                                         </td>
                                     </tr>
 
+                                    <tr>
+                                        <th><strong>Scheduling Maintenance</strong></th>
+                                        <td>{{ $asset->scheduling_maintenance }}</td>
+                                    </tr>
                                     <tr>
                                         <th><strong>Last Maintenance</strong></th>
                                         <td
                                             style="background-color: rgba(255, 255, 0, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
                                             @php
                                                 $last_maintenanceDate = $asset->last_maintenance ?? '-';
-                                                if ($last_maintenanceDate === '0000-00-00 00:00:00' || $last_maintenanceDate === '-') {
+                                                if (
+                                                    $last_maintenanceDate === '0000-00-00 00:00:00' ||
+                                                    $last_maintenanceDate === '-'
+                                                ) {
                                                     echo '-';
                                                 } else {
                                                     echo date('d-m-Y', strtotime($last_maintenanceDate));
@@ -309,41 +324,21 @@
                                             @endphp
                                         </td>
                                     </tr>
-
                                     <tr>
-    <th><strong>Next Maintenance</strong></th>
-    <td
-        style="background-color: rgba(255, 182, 193, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
-        @php
-            // Use last maintenance date or entry date if last maintenance is not available
-            $tanggalMaintenance = $asset->last_maintenance ?? $asset->entry_date;
-
-            // Convert maintenance schedule to months
-            switch ($asset->scheduling_maintenance) {
-                case '3 Weeks':
-                    $bulanJadwal = 0.75; // 3 weeks in months
-                    break;
-                case '1 Month':
-                    $bulanJadwal = 1;
-                    break;
-                case '1 Year':
-                    $bulanJadwal = 12;
-                    break;
-                case '5 Years':
-                    $bulanJadwal = 60;
-                    break;
-                default:
-                    $bulanJadwal = 0; // No schedule
-            }
-
-            // Calculate the next maintenance date by adding scheduling time to last maintenance date
-            $nextMaintenanceDate = Carbon\Carbon::parse($tanggalMaintenance)->addMonths($bulanJadwal);
-
-            // Output next maintenance date
-            echo $nextMaintenanceDate->format('d-m-Y'); // Display the date
-        @endphp
-    </td>
-</tr>
+                                        <th><strong>Next Maintenance</strong></th>
+                                        <td
+                                            style="background-color: rgba(255, 182, 193, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
+                                            @if ($asset->next_maintenance)
+                                                                                @php
+                                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse(
+                                                                                        $asset->next_maintenance,
+                                                                                    );
+                                                                                    echo $nextMaintenanceDate->format('d-m-Y');
+                                                                                @endphp
+                                            @else
+                                                <span>Not Scheduled</span>
+                                            @endif
+                                        </td>
 
                                 </tbody>
                             </table>
@@ -405,7 +400,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Event listener for all modal open buttons
-            const modalButtons = document.querySelectorAll('.open-history-modal'); // Ensure these buttons have this class
+            const modalButtons = document.querySelectorAll(
+                '.open-history-modal'); // Ensure these buttons have this class
 
             modalButtons.forEach(button => {
                 button.addEventListener('click', function () {
@@ -449,44 +445,50 @@
                             if (item.action === 'CREATE') {
                                 actionBadge = '<span class="badge bg-success">Handover</span>';
                                 if (latestUpdateDocumentation) {
-                                    documentationLink = `<a href="{{ asset('storage/${latestUpdateDocumentation}') }}" target="_blank" class="btn " style="background-color:#4fb0f1; border-radius:5px;"><i
-                                                            class="bi bi-file-earmark-image fa-2x"></i></a>`;
+                                    documentationLink =
+                                        `<a href="{{ asset('storage/${latestUpdateDocumentation}') }}" target="_blank" class="btn " style="background-color:#4fb0f1; border-radius:5px;"><i
+                                                                                                        class="bi bi-file-earmark-image fa-2x"></i></a>`;
                                 } else {
-                                    documentationLink = `<button class="btn btn-secondary" disabled>No Document</button>`;
+                                    documentationLink =
+                                        `<button class="btn btn-secondary" disabled>No Document</button>`;
                                 }
                             } else if (item.action === 'DELETE' && item.keterangan) {
                                 // Show only 'Return' (DELETE) actions where 'reason' (keterangan) is filled
                                 actionBadge = '<span class="badge bg-danger">Return</span>';
                                 if (deleteDocumentation) {
-                                    documentationLink = `<a href="{{ asset('storage/${deleteDocumentation}') }}" target="_blank" class="btn" style="background-color:#4fb0f1; border-radius:5px;"><i
-                                                            class="bi bi-file-earmark-image fa-2x"></i></a>`;
+                                    documentationLink =
+                                        `<a href="{{ asset('storage/${deleteDocumentation}') }}" target="_blank" class="btn" style="background-color:#4fb0f1; border-radius:5px;"><i
+                                                                                                        class="bi bi-file-earmark-image fa-2x"></i></a>`;
                                 } else {
-                                    documentationLink = `<button class="btn btn-secondary " disabled>No Document</button>`;
+                                    documentationLink =
+                                        `<button class="btn btn-secondary " disabled>No Document</button>`;
                                 }
                             }
 
                             // Only generate rows for actions that have a badge (CREATE or DELETE with a reason)
                             if (actionBadge) {
                                 // Print button
-                                printButton = `<button type="button" class="btn printButton" style="background-color:#9E24F5; border-radius:5px;" 
-                                                                                                                    data-action="${item.action}" 
-                                                                                                                    data-code="${item.asset_code}" 
-                                                                                                                    data-changed-at="${item.changed_at}">
-                                                                                                                    <i class="bi bi-printer fa-2x"></i>
-                                                                                                                </button>`;
+                                printButton =
+                                    `<button type="button" class="btn printButton" style="background-color:#9E24F5; border-radius:5px;" 
+                                                                                                                                                                data-action="${item.action}" 
+                                                                                                                                                                data-code="${item.asset_code}" 
+                                                                                                                                                                data-changed-at="${item.changed_at}">
+                                                                                                                                                                <i class="bi bi-printer fa-2x"></i>
+                                                                                                                                                            </button>`;
 
                                 // Generate the row
-                                const row = `<tr>
-                                                                                                                        <td>${actionBadge}</td>
-                                                                                                                        <td>${item.changed_at}</td>
-                                                                                                                        <td>${item.nama_old || '-'}</td>
-                                                                                                                        <td>${item.keterangan || '-'}</td>
-                                                                                                                        <td>${item.note || '-'}</td>
-                                                                                                                        <td>
-                                                                                                                            ${documentationLink}
-                                                                                                                            ${printButton}
-                                                                                                                        </td>
-                                                                                                                    </tr>`;
+                                const row =
+                                    `<tr>
+                                                                                                                                                                    <td>${actionBadge}</td>
+                                                                                                                                                                    <td>${item.changed_at}</td>
+                                                                                                                                                                    <td>${item.nama_old || '-'}</td>
+                                                                                                                                                                    <td>${item.keterangan || '-'}</td>
+                                                                                                                                                                    <td>${item.note || '-'}</td>
+                                                                                                                                                                    <td>
+                                                                                                                                                                        ${documentationLink}
+                                                                                                                                                                        ${printButton}
+                                                                                                                                                                    </td>
+                                                                                                                                                                </tr>`;
 
                                 historyBody.innerHTML += row;
                             }
@@ -516,7 +518,8 @@
                                 }
 
                                 if (route) {
-                                    var fullUrl = `${route}?asset_code=${encodeURIComponent(assetTagging)}&changed_at=${encodeURIComponent(formattedDate)}`;
+                                    var fullUrl =
+                                        `${route}?asset_code=${encodeURIComponent(assetTagging)}&changed_at=${encodeURIComponent(formattedDate)}`;
                                     console.log('Opening URL: ' + fullUrl);
                                     window.open(fullUrl, '_blank');
                                 }
@@ -530,10 +533,7 @@
                     console.error('Error fetching history:', error);
                 });
         }
-
-
     </script>
-
 @endforeach
 
 

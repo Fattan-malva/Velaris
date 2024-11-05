@@ -51,8 +51,8 @@
                     <tbody>
                         @forelse ($data as $index => $item)
                             <tr>
-                                <td>{{ $item->lokasi }}</td>
-                                <td>{{ $item->jenis_aset }}</td>
+                                <td>{{ $item->location }}</td>
+                                <td>{{ $item->category_asset }}</td>
                                 <td>{{ $item->jumlah_aset }}</td>
                             </tr>
                         @empty

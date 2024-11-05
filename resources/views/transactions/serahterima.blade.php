@@ -17,21 +17,21 @@
 
                 <div class="row">
                     @foreach($transactions as $asset)
-                                    @if($asset->aksi !== 'Return')
+                                    @if($asset->type_transactions !== 'Return')
 
                                                     <div class="asset-wrapper col-md-4 mb-2">
                                                         <div class="card" style="background-color: rgb(218, 181, 255);">
                                                             <div class="card-body">
                                                                 <div class="d-flex align-items-center mb-3">
                                                                     @php
-                                                                        // Determine the image file based on the jenis_aset
+                                                                        // Determine the image file based on the category_asset
                                                                         $iconMap = [
                                                                             'PC' => 'pc.png',
                                                                             'Tablet' => 'tablet.png',
                                                                             'Laptop' => 'laptop.png',
                                                                             // Add more mappings as needed
                                                                         ];
-                                                                        $iconFile = isset($iconMap[$asset->jenis_aset]) ? $iconMap[$asset->jenis_aset] : 'default.png'; // Fallback to default icon
+                                                                        $iconFile = isset($iconMap[$asset->category_asset]) ? $iconMap[$asset->category_asset] : 'default.png'; // Fallback to default icon
                                                                     @endphp
                                                                     <img src="{{ asset('assets/img/' . $iconFile) }}" alt="Asset Icon" class="me-3"
                                                                         style="width: 40px; height: 40px;"> <!-- Reduced icon size -->
@@ -39,25 +39,25 @@
                                                                     <div class="card-text" style="font-size: 0.9rem;"> <!-- Reduced font size -->
                                                                         <strong>Asset Tag:</strong>
                                                                         @php
-                                                                            $taggingValue = $inventories->where('id', $asset->asset_tagging)->first();
+                                                                            $taggingValue = $inventories->where('id', $asset->asset_code)->first();
                                                                         @endphp
-                                                                        {{ $taggingValue->tagging ?? 'N/A' }}<br>
+                                                                        {{ $taggingValue->code ?? 'N/A' }}<br>
 
                                                                         <strong>Name:</strong>
                                                                         @php
-                                                                            $customerName = $customers->where('id', $asset->nama)->first();
+                                                                            $customerName = $customers->where('id', $asset->name_holder)->first();
                                                                         @endphp
                                                                         {{ $customerName->name ?? 'N/A' }}<br>
 
-                                                                        <strong>Location:</strong> {{ $asset->lokasi }}
+                                                                        <strong>Location:</strong> {{ $asset->location }}
                                                                     </div>
                                                                 </div>
 
                                                                 <input type="hidden" name="transactions[]" value="{{ $asset->id }}">
-                                                                <input type="hidden" name="nama[]" value="{{ $asset->nama }}">
+                                                                <input type="hidden" name="name_holder[]" value="{{ $asset->name_holder }}">
                                                                 <input type="hidden" name="status[]" value="{{ $asset->status }}">
                                                                 <input type="hidden" name="o365[]" value="{{ $asset->o365 }}">
-                                                                <input type="hidden" name="kondisi[]" value="{{ $asset->kondisi }}">
+                                                                <input type="hidden" name="condition[]" value="{{ $asset->condition }}">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -67,7 +67,7 @@
                     @endforeach
                 </div>
 
-                @if($transactions->where('aksi', '!=', 'Return')->count() > 0)
+                @if($transactions->where('type_transactions', '!=', 'Return')->count() > 0)
                     <div class="form-group mb-4" style="padding: 0px 15px;">
                         <label for="documentation">Documentation</label>
                         <input type="file" class="form-control" id="documentation" name="documentation" accept="image/*">
@@ -89,20 +89,20 @@
 
                 <div class="row">
                     @foreach($transactions as $asset)
-                                    @if($asset->aksi === 'Return')
+                                    @if($asset->type_transactions === 'Return')
                                                     <div class="asset-wrapper col-md-4 mb-2"> <!-- Each card will occupy 4 columns on medium screens -->
                                                         <div class="card" style="background-color: rgb(218, 181, 255);">
                                                             <div class="card-body">
                                                                 <div class="d-flex align-items-center mb-3">
                                                                     @php
-                                                                        // Determine the image file based on the jenis_aset
+                                                                        // Determine the image file based on the category_asset
                                                                         $iconMap = [
                                                                             'PC' => 'pc.png',
                                                                             'Tablet' => 'tablet.png',
                                                                             'Laptop' => 'laptop.png',
                                                                             // Add more mappings as needed
                                                                         ];
-                                                                        $iconFile = isset($iconMap[$asset->jenis_aset]) ? $iconMap[$asset->jenis_aset] : 'default.png'; // Fallback to default icon
+                                                                        $iconFile = isset($iconMap[$asset->category_asset]) ? $iconMap[$asset->category_asset] : 'default.png'; // Fallback to default icon
                                                                     @endphp
                                                                     <img src="{{ asset('assets/img/' . $iconFile) }}" alt="Asset Icon" class="me-3"
                                                                         style="width: 40px; height: 40px;"> <!-- Reduced icon size -->
@@ -110,27 +110,27 @@
                                                                     <div class="card-text" style="font-size: 0.9rem;"> <!-- Reduced font size -->
                                                                         <strong>Asset Tag:</strong>
                                                                         <span>
-                                                                            {{ htmlspecialchars($inventories->where('id', $asset->asset_tagging)->first()->tagging ?? 'N/A', ENT_QUOTES) }}
+                                                                            {{ htmlspecialchars($inventories->where('id', $asset->asset_code)->first()->code ?? 'N/A', ENT_QUOTES) }}
                                                                         </span><br>
 
                                                                         <strong>Name:</strong>
                                                                         <span>
-                                                                            {{ htmlspecialchars($customers->where('id', $asset->nama)->first()->name ?? 'N/A', ENT_QUOTES) }}
+                                                                            {{ htmlspecialchars($customers->where('id', $asset->name_holder)->first()->name ?? 'N/A', ENT_QUOTES) }}
                                                                         </span><br>
 
                                                                         <strong>Location:</strong>
-                                                                        <span>{{ old('lokasi', $asset->lokasi) }}</span><br>
+                                                                        <span>{{ old('location', $asset->location) }}</span><br>
 
                                                                         <strong>Reason:</strong>
-                                                                        <span>{{ old('keterangan', $asset->keterangan) }}</span><br>
+                                                                        <span>{{ old('reason', $asset->reason) }}</span><br>
 
                                                                         <strong>Note:</strong>
                                                                         <span>{{ old('note', $asset->note) }}</span>
                                                                     </div>
                                                                 </div>
 
-                                                                <input type="hidden" name="asset_tagging[]" value="{{ $asset->asset_tagging }}">
-                                                                <input type="hidden" name="nama[]" value="{{ $asset->nama }}">
+                                                                <input type="hidden" name="asset_tagging[]" value="{{ $asset->asset_code }}">
+                                                                <input type="hidden" name="name_holder[]" value="{{ $asset->name_holder }}">
                                                                 <input type="hidden" name="transactions[]" value="{{ $asset->id }}">
                                                             </div>
                                                         </div>
@@ -140,7 +140,7 @@
                 </div>
 
 
-                @if($transactions->where('aksi', 'Return')->count() > 0)
+                @if($transactions->where('type_transactions', 'Return')->count() > 0)
                     <!-- Documentation upload field for a single file for all assets -->
                     <div class="form-group mt-4">
                         <label for="documentation_return">Documentation</label>

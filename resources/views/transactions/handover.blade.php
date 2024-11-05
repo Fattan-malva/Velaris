@@ -35,9 +35,8 @@
             @if ($assetTaggingAvailable && $namesAvailable)
                 <form action="{{ route('transactions.store') }}" method="POST" enctype="multipart/form-data" id="Handover">
                     @csrf
-
+                    <input type="hidden" name="type_transactions" value="Handover">
                     <input type="hidden" name="approval_status" value="Pending">
-                    <input type="hidden" name="aksi" value="Handover">
 
                     <!-- Row untuk membagi dua kolom -->
                     <div class="row">
@@ -45,10 +44,10 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="asset_tagging">Asset Code</label>
-                                <select class="form-control" id="asset_tagging" name="asset_tagging[]" multiple="multiple"
+                                <select class="form-control" id="asset_tagging" name="asset_code[]" multiple="multiple"
                                     required>
-                                    @foreach($inventories as $inventory)
-                                        <option style="color:black;" value="{{ $inventory->id }}">{{ $inventory->tagging }}
+                                    @foreach($assetss as $assets)
+                                        <option style="color:black;" value="{{ $assets->id }}">{{ $assets->code }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -56,7 +55,7 @@
 
                             <div class="form-group">
                                 <label for="nama">Name Holder</label>
-                                <select class="form-control" id="nama" name="nama" required>
+                                <select class="form-control" id="name_holder" name="name_holder" required>
                                     @foreach($customers as $customer)
                                         <option value="{{ $customer->id }}">{{ $customer->name }}</option>
                                     @endforeach
@@ -68,7 +67,7 @@
                                 <small>
                                     *Add here if you want to add a more specific location.
                                 </small>
-                                <input type="text" id="lokasi" class="form-control" name="lokasi"
+                                <input type="text" id="location" class="form-control" name="location"
                                     placeholder="Location details will be set here" required>
                             </div>
                         </div>
@@ -111,7 +110,7 @@
                     </div>
 
                     <div class="form-group">
-                        <select class="form-control" id="kondisi" name="kondisi" hidden>
+                        <select class="form-control" id="condition" name="condition" hidden>
                             <option value="New">New</option>
                             <option value="Good">Good</option>
                             <option value="Exception">Exception</option>
@@ -134,8 +133,8 @@
                     </div>
                 </form>
             @elseif (!$assetTaggingAvailable)
-                <p class="text-center">All assets have been used. <a href="{{ route('assets.create') }}"
-                        class="btn" style="background-color:#388df5; font-size:12px;">Add New Asset</a></p>
+                <p class="text-center">All assets have been used. <a href="{{ route('assets.add-asset') }}" class="btn"
+                        style="background-color:#388df5; font-size:12px;">Add New Asset</a></p>
             @elseif (!$namesAvailable)
                 <p class="text-center">There are no more users, register users anymore. <a
                         href="{{ route('customer.create') }}" class="btn btn-link">Register New User</a></p>

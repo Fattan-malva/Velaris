@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Assets extends Model
 {
     protected $table = 'assets';
-    protected $fillable = ['code','category', 'merk', 'serial_number','entry_date', 'spesification', 'condition','last_maintenance','scheduling_maintenance', 'note_maintenance'];
+    protected $fillable = ['code','category', 'merk', 'serial_number','entry_date', 'spesification', 'condition','last_maintenance','scheduling_maintenance', 'note_maintenance', 'next_maintenance','handover_date', 'status', 'name_holder', 'location'];
 
     public function merk()
     {

@@ -23,18 +23,16 @@
                 id="Return" class="return-form">
                 @csrf
                 @method('PUT')
-
-                <input type="hidden" name="aksi" value="Return">
-                <input type="hidden" name="asset_tagging" value="{{ $asset->asset_tagging }}">
-                <input type="hidden" name="nama" value="{{ $asset->nama }}">
-                <input type="hidden" name="lokasi" value="{{ $asset->lokasi }}">
+                <input type="hidden" name="asset_code" value="{{ $asset->asset_code }}">
+                <input type="hidden" name="name_holder" value="{{ $asset->name_holder }}">
+                <input type="hidden" name="location" value="{{ $asset->location }}">
 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="asset_tagging_display">Asset Code</label>
                             @php
-                                $taggingValue = $inventories->firstWhere('id', $asset->asset_tagging)->tagging ?? 'Not Found';
+                                $taggingValue = $inventories->firstWhere('id', $asset->asset_code)->code ?? 'Not Found';
                             @endphp
                             <input type="text" class="form-control" id="asset_tagging_display"
                                 value="{{ $taggingValue }}" readonly>
@@ -47,14 +45,14 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="keterangan">Reason for Return</label>
-                            <select class="form-select" id="keterangan" name="keterangan" required>
+                            <label for="reason">Reason for Return</label>
+                            <select class="form-select" id="reason" name="reason" required>
                                 <option value="" disabled selected>Choose a reason</option>
-                                <option value="Damaged" {{ $asset->keterangan == 'Damaged' ? 'selected' : '' }}>Damaged
+                                <option value="Damaged" {{ $asset->reason == 'Damaged' ? 'selected' : '' }}>Damaged
                                 </option>
-                                <option value="Service" {{ $asset->keterangan == 'Service' ? 'selected' : '' }}>Service
+                                <option value="Service" {{ $asset->reason == 'Service' ? 'selected' : '' }}>Service
                                 </option>
-                                <option value="Not yet given" {{ $asset->keterangan == 'Not yet given' ? 'selected' : '' }}>Not yet given</option>
+                                <option value="Not yet given" {{ $asset->reason == 'Not yet given' ? 'selected' : '' }}>Not yet given</option>
                             </select>
                         </div>
                     </div>
@@ -62,7 +60,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="lokasi_display">Location</label>
-                            <input type="text" class="form-control" id="lokasi_display" value="{{ $asset->lokasi }}"
+                            <input type="text" class="form-control" id="lokasi_display" value="{{ $asset->location }}"
                                 readonly>
                         </div>
 
