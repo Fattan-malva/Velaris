@@ -2,249 +2,248 @@
 @section('title', 'Maintenance')
 
 @section('content')
-    <br>
-    <div class="container">
-        <div>
-            <div class="container">
-                <div class="header-container">
-                    <div class="back-wrapper">
-                        <i class='bx bxs-chevron-left back-icon' id="back-icon"></i>
-                        <div class="back-text">
-                            <span class="title">Back</span>
-                            <span class="small-text">to previous page</span>
-                        </div>
+<br>
+<div class="container">
+    <div>
+        <div class="container">
+            <div class="header-container">
+                <div class="back-wrapper">
+                    <i class='bx bxs-chevron-left back-icon' id="back-icon"></i>
+                    <div class="back-text">
+                        <span class="title">Back</span>
+                        <span class="small-text">to previous page</span>
                     </div>
-                    <h3 class="maintenance-title">
-                        Maintenance&nbsp;&nbsp;
-                        <span class="icon-wrapper">
-                            <i class="fa-solid fa-2xs fa-screwdriver-wrench previous-icon"></i>
-                        </span>
-                    </h3>
                 </div>
-                <div class="header-container-mobile">
-                    <h3 class="maintenance-title">
-                        <span class="icon-wrapper">
-                            <i class="fa-solid fa-2xs fa-screwdriver-wrench previous-icon"></i>
-                        </span>
-                        &nbsp;&nbsp;Maintenance
-                    </h3>
-                </div>
-                <br>
+                <h3 class="maintenance-title">
+                    Maintenance&nbsp;&nbsp;
+                    <span class="icon-wrapper">
+                        <i class="fa-solid fa-2xs fa-screwdriver-wrench previous-icon"></i>
+                    </span>
+                </h3>
             </div>
+            <div class="header-container-mobile">
+                <h3 class="maintenance-title">
+                    <span class="icon-wrapper">
+                        <i class="fa-solid fa-2xs fa-screwdriver-wrench previous-icon"></i>
+                    </span>
+                    &nbsp;&nbsp;Maintenance
+                </h3>
+            </div>
+            <br>
         </div>
-
-        @if ($assetss->isEmpty())
-            <div class="alert alert-warning" role="alert">
-                No assets available for maintenance. Please add assets before proceeding.
-            </div>
-        @else
-            <div class="card">
-                <div class="card-body" style="padding: 30px;">
-                    <form method="POST" action="{{ route('assets.update') }}">
-                        @csrf
-                        @method('PUT')
-
-                        <div class="row mb-4">
-                            <div class="text-end">
-                                <a href="{{ route('assets.historymaintenance') }}" class="btn btn-sm history-btn"
-                                    style="background-color: #9A9A9A;">
-                                    <i class="fa-solid fa-clock"></i> History
-                                </a>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label for="code" class="form-label">Select Assets to Maintenance</label>
-                                <select class="form-control select-dark" id="code" name="ids[]" multiple="multiple"
-                                    required>
-                                    @foreach ($assetss as $assets)
-                                        @php
-                                            // Get the entry date and last maintenance date, defaulting to entry date if last maintenance is null
-                                            $tanggalMaintenance = $assets->last_maintenance ?? $assets->entry_date;
-
-                                            // Parse the scheduling maintenance value into interval and unit
-                                            [$intervalValue, $intervalUnit] = explode(
-                                                ' ',
-                                                $assets->scheduling_maintenance,
-                                            );
-
-                                            // Calculate the next maintenance date based on interval and unit
-                                            $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance);
-                                            switch (strtolower($intervalUnit)) {
-                                                case 'weeks':
-                                                    $nextMaintenanceDate->addWeeks($intervalValue);
-                                                    break;
-                                                case 'months':
-                                                    $nextMaintenanceDate->addMonths($intervalValue);
-                                                    break;
-                                                case 'years':
-                                                    $nextMaintenanceDate->addYears($intervalValue);
-                                                    break;
-                                                default:
-                                                    // If interval unit is invalid, skip the calculation
-                                                    $nextMaintenanceDate = null;
-                                                    break;
-                                            }
-
-                                            // Determine if maintenance is due
-                                            $maintenanceDue =
-                                                $nextMaintenanceDate &&
-                                                \Carbon\Carbon::now()->greaterThanOrEqualTo($nextMaintenanceDate);
-                                        @endphp
-
-                                        @if ($maintenanceDue)
-                                            <option value="{{ $assets->id }}">{{ $assets->code }}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-6 form-group">
-                                <label for="last_maintenance" class="form-label">Maintenance Date</label>
-                                <input type="date" class="form-control" id="last_maintenance" name="last_maintenance"
-                                    value="{{ old('last_maintenance') }}" required>
-                            </div>
-                        </div>
-
-                        <!-- New Row for Maintenance Note and Condition Side-by-Side -->
-                        <div class="row mb-4">
-                            <div class="col-md-6 form-group">
-                                <label for="note_maintenance" class="form-label">Maintenance Note</label>
-                                <input type="text" class="form-control" id="note_maintenance" name="note_maintenance"
-                                    value="{{ old('note_maintenance') }}" placeholder="Enter maintenance note" required>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label for="condition" class="form-label">Condition</label>
-                                <select id="condition" name="condition" class="form-select" required>
-                                    <option value="Good" {{ old('condition') == 'Good' ? 'selected' : '' }}>Good</option>
-                                    <option value="Exception" {{ old('condition') == 'Exception' ? 'selected' : '' }}>
-                                        Exception
-                                    </option>
-                                    <option value="Bad" {{ old('condition') == 'Bad' ? 'selected' : '' }}>Bad</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mt-4 mb-2 text-end">
-                            <button type="submit" class="btn" style="background-color:#1bcfb4;">Submit</button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        @endif
     </div>
 
-    <style>
-        .card {
-            box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
-        }
+    @if ($assetss->isEmpty())
+        <div class="alert alert-warning" role="alert">
+            No assets available for maintenance. Please add assets before proceeding.
+        </div>
+    @else
+        <div class="card">
+            <div class="card-body" style="padding: 30px;">
+                <form method="POST" action="{{ route('assets.update') }}">
+                    @csrf
+                    @method('PUT')
 
-        /* Header Styles */
-        .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px;
-            margin-top: 30px;
-        }
+                    <div class="row mb-4">
+                        <div class="text-end">
+                            <a href="{{ route('assets.historymaintenance') }}" class="btn btn-sm history-btn"
+                                style="background-color: #9A9A9A;">
+                                <i class="fa-solid fa-clock"></i> History
+                            </a>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="code" class="form-label">Select Assets to Maintenance</label>
+                            <select class="form-control select-dark" id="code" name="ids[]" multiple="multiple" required>
+                                @foreach ($assetss as $assets)
+                                                                                    @php
+                                                                                        // Get the entry date and last maintenance date, defaulting to entry date if last maintenance is null
+                                                                                        $tanggalMaintenance = $assets->last_maintenance ?? $assets->entry_date;
 
-        .back-icon {
-            cursor: pointer;
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
-            height: 36px;
-            width: 36px;
-            border-radius: 4px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
-            margin-right: auto;
-            transition: background 0.3s ease;
-            /* Transition untuk efek hover */
-        }
+                                                                                        // Parse the scheduling maintenance value into interval and unit
+                                                                                        [$intervalValue, $intervalUnit] = explode(
+                                                                                            ' ',
+                                                                                            $assets->scheduling_maintenance,
+                                                                                        );
 
-        .back-icon:hover {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #B100FF);
-            /* Warna gradien saat hover dengan putih sedikit di kiri */
-        }
+                                                                                        // Calculate the next maintenance date based on interval and unit
+                                                                                        $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance);
+                                                                                        switch (strtolower($intervalUnit)) {
+                                                                                            case 'weeks':
+                                                                                                $nextMaintenanceDate->addWeeks($intervalValue);
+                                                                                                break;
+                                                                                            case 'months':
+                                                                                                $nextMaintenanceDate->addMonths($intervalValue);
+                                                                                                break;
+                                                                                            case 'years':
+                                                                                                $nextMaintenanceDate->addYears($intervalValue);
+                                                                                                break;
+                                                                                            default:
+                                                                                                // If interval unit is invalid, skip the calculation
+                                                                                                $nextMaintenanceDate = null;
+                                                                                                break;
+                                                                                        }
 
-        .back-wrapper {
-            display: flex;
-            align-items: center;
-            /* Center vertically */
-            margin-right: auto;
-            /* Push the dashboard title to the right */
-        }
+                                                                                        // Determine if maintenance is due
+                                                                                        $maintenanceDue =
+                                                                                            $nextMaintenanceDate &&
+                                                                                            \Carbon\Carbon::now()->greaterThanOrEqualTo($nextMaintenanceDate);
+                                                                                    @endphp
 
-        .back-text {
-            display: flex;
-            flex-direction: column;
-            /* Stack text vertically */
-            margin-left: 10px;
-            /* Space between icon and text */
-        }
+                                                                                    @if ($maintenanceDue)
+                                                                                        <option value="{{ $assets->id }}">{{ $assets->code }}</option>
+                                                                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
 
-        .back-text .title {
-            font-weight: 600;
-            font-size: 17px;
-        }
+                        <div class="col-md-6 form-group">
+                            <label for="last_maintenance" class="form-label">Maintenance Date</label>
+                            <input type="date" class="form-control" id="last_maintenance" name="last_maintenance"
+                                value="{{ old('last_maintenance') }}" required>
+                        </div>
+                    </div>
 
-        .back-text .small-text {
-            font-size: 0.8rem;
-            /* Smaller font size for the second line */
-            color: #aaa;
-            /* Optional: a lighter color for the smaller text */
-            margin-top: -3px;
-        }
+                    <!-- New Row for Maintenance Note and Condition Side-by-Side -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 form-group">
+                            <label for="note_maintenance" class="form-label">Maintenance Note</label>
+                            <input type="text" class="form-control" id="note_maintenance" name="note_maintenance"
+                                value="{{ old('note_maintenance') }}" placeholder="Enter maintenance note" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="condition" class="form-label">Condition</label>
+                            <select id="condition" name="condition" class="form-select" required>
+                                <option value="Good" {{ old('condition') == 'Good' ? 'selected' : '' }}>Good</option>
+                                <option value="Exception" {{ old('condition') == 'Exception' ? 'selected' : '' }}>
+                                    Exception
+                                </option>
+                                <option value="Bad" {{ old('condition') == 'Bad' ? 'selected' : '' }}>Bad</option>
+                            </select>
+                        </div>
+                    </div>
 
-        .maintenance-title {
-            font-weight: bold;
-            font-size: 1.125rem;
-        }
+                    <div class="mt-4 mb-2 text-end">
+                        <button type="submit" class="btn" style="background-color:#1bcfb4;">Submit</button>
+                    </div>
+                </form>
+            </div>
 
-        .icon-wrapper {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
-            height: 36px;
-            width: 36px;
-            border-radius: 4px;
-            color: #fff;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
-        }
+        </div>
+    @endif
+</div>
 
-        .previous-icon {
-            font-size: 16px;
-        }
+<style>
+    .card {
+        box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+    }
 
-        .form-label {
-            font-weight: 550;
-        }
+    /* Header Styles */
+    .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        margin-top: 30px;
+    }
 
-        .form-control {
-            border: 1px solid #000;
-        }
+    .back-icon {
+        cursor: pointer;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
+        height: 36px;
+        width: 36px;
+        border-radius: 4px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
+        margin-right: auto;
+        transition: background 0.3s ease;
+        /* Transition untuk efek hover */
+    }
 
-        .btn-save {
-            background-color: transparent;
-            border: 1.3px solid #1bcfb4;
-            color: #1bcfb4;
-            transition: background-color 0.3s, color 0.3s;
-            font-weight: 500;
-            padding: 5px 25px;
-        }
+    .back-icon:hover {
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #FBCA07);
+        /* Warna gradien saat hover dengan putih sedikit di kiri */
+    }
 
-        .btn {
-            margin: 0 0.5rem;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-        }
+    .back-wrapper {
+        display: flex;
+        align-items: center;
+        /* Center vertically */
+        margin-right: auto;
+        /* Push the dashboard title to the right */
+    }
 
-        .history-btn {
-            background-color: #9A9A9A;
-            border-radius: 20PX;
-        }
-    </style>
+    .back-text {
+        display: flex;
+        flex-direction: column;
+        /* Stack text vertically */
+        margin-left: 10px;
+        /* Space between icon and text */
+    }
+
+    .back-text .title {
+        font-weight: 600;
+        font-size: 17px;
+    }
+
+    .back-text .small-text {
+        font-size: 0.8rem;
+        /* Smaller font size for the second line */
+        color: #aaa;
+        /* Optional: a lighter color for the smaller text */
+        margin-top: -3px;
+    }
+
+    .maintenance-title {
+        font-weight: bold;
+        font-size: 1.125rem;
+    }
+
+    .icon-wrapper {
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
+        height: 36px;
+        width: 36px;
+        border-radius: 4px;
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .previous-icon {
+        font-size: 16px;
+    }
+
+    .form-label {
+        font-weight: 550;
+    }
+
+    .form-control {
+        border: 1px solid #000;
+    }
+
+    .btn-save {
+        background-color: transparent;
+        border: 1.3px solid #1bcfb4;
+        color: #1bcfb4;
+        transition: background-color 0.3s, color 0.3s;
+        font-weight: 500;
+        padding: 5px 25px;
+    }
+
+    .btn {
+        margin: 0 0.5rem;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .history-btn {
+        background-color: #9A9A9A;
+        border-radius: 20PX;
+    }
+</style>
 @endsection

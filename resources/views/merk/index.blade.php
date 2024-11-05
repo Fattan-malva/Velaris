@@ -172,7 +172,7 @@
 
         .back-icon {
             cursor: pointer;
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
             height: 36px;
             width: 36px;
             border-radius: 4px;
@@ -186,7 +186,7 @@
         }
 
         .back-icon:hover {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #B100FF);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #FBCA07);
         }
 
         .back-wrapper {
@@ -218,7 +218,7 @@
         }
 
         .icon-wrapper {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
             height: 36px;
             width: 36px;
             border-radius: 4px;

@@ -41,7 +41,7 @@ Route::post('/login', [UserAuthController::class, 'login']);
 Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
 Route::get('/register', [UserAuthController::class, 'register'])->name('auth.register');
 Route::post('/register', [UserAuthController::class, 'storeregister'])->name('user.storeregister');
-Route::get('/print/qr/{id}', [PrintController::class, 'print'])->name('prints.qr');
+Route::get('/print/qr', [PrintController::class, 'print'])->name('printQR');
 Route::get('/auth/detailQR/{id}', [PrintController::class, 'showAssetDetail'])->name('auth.detailQR');
 
 Route::middleware(['auth.check'])->group(function () {
@@ -135,7 +135,7 @@ Route::middleware(['auth.check:admin'])->group(function () {
     Route::get('/maintenance', [AssetsController::class, 'showEditForm'])->name('assets.maintenance');
 
     Route::get('/assets/maintenance-needs', [AssetsController::class, 'maintenanceNeeds'])->name('assets.maintenance-needs');
-    Route::get('/asset-history-modal', [AssetsHistoryController::class, 'historyAssetModal'])->name('asset.historyModal');
+    Route::get('/transaction-history/{assetCode}', [AssetsHistoryController::class, 'historyByAssetCode'])->name('transaction.history.byAssetCode');
     Route::get('history-maintenance', [MaintenanceHistoryController::class, 'index'])->name('assets.historymaintenance');
 
 

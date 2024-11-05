@@ -16,37 +16,19 @@ class AssetsHistoryController extends Controller
         return view('assets.history', compact('asset_histories'));
     }
 
-    public function historyAssetModal(Request $request)
+    public function historyByAssetCode($assetCode)
     {
-        $tagging = $request->input('code'); // Get tagging from request
-        \Log::info('Fetching history for tagging: ' . $tagging); // Log the tagging value
-
-        $history = DB::table('transactions_history')
-            ->leftJoin('assets', 'transactions_history.asset_tagging_old', '=', 'assets.id')
-            ->leftJoin('merk', 'transactions_history.merk_old', '=', 'merk.id')
-            ->leftJoin('customer as old_customer', 'transactions_history.nama_old', '=', 'old_customer.id')
-            ->leftJoin('customer as new_customer', 'transactions_history.nama_new', '=', 'new_customer.id')
-            ->select(
-                'transactions_history.asset_id',
-                'assets.code as asset_tagging',
-                'merk.name as merk', // Ensure you are selecting the correct field for merk
-                'transactions_history.jenis_aset_old',
-                'old_customer.name as nama_old',
-                'new_customer.name as nama_new',
-                'transactions_history.changed_at',
-                'transactions_history.action',
-                'transactions_history.keterangan',
-                'transactions_history.note',
-                'transactions_history.documentation_old',
-                'transactions_history.documentation_new'
-            )
-            ->where('assets.code', $tagging)
-            ->whereIn('transactions_history.action', ['CREATE', 'UPDATE', 'DELETE'])
-            ->orderBy('transactions_history.changed_at', 'DESC')
+        // Retrieve transaction history for the specified asset code
+        $history = DB::table('transaction_history')
+            ->leftJoin('assets', 'transaction_history.asset_code', '=', 'assets.id')
+            ->leftJoin('merk', 'transaction_history.merk', '=', 'merk.id')
+            ->leftJoin('customer', 'transaction_history.name_holder', '=', 'customer.id')
+            ->select('transaction_history.*', 'merk.name as merk_name', 'customer.name as name_holder', 'assets.code as asset_code')
+            ->where('assets.code', $assetCode)
+            ->orderBy('transaction_history.created_at', 'DESC')
             ->get();
-
-        \Log::info('History data: ', $history->toArray()); // Log the history data
 
         return response()->json($history);
     }
+
 }

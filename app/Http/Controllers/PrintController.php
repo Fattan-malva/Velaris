@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Inventory;
+use Intervention\Image\Facades\Image;
 
 class PrintController extends Controller
 {
@@ -174,29 +175,38 @@ class PrintController extends Controller
             'tagging' => $inventory->tagging
         ]);
     }
-
-    public function print($id)
+    public function print(Request $request)
     {
-        // Fetch inventory with merk name
-        $inventory = DB::table('inventory')
-            ->join('merk', 'inventory.merk', '=', 'merk.id')
-            ->select('inventory.*', 'merk.name as merk_name')
-            ->where('inventory.id', $id)
-            ->first();
-
-        if (!$inventory) {
-            abort(404); // Handle not found case
+        // Get the IDs from the request
+        $ids = explode(',', $request->query('ids'));
+    
+        // Fetch inventories with their merk names
+        $inventories = DB::table('assets')
+            ->join('merk', 'assets.merk', '=', 'merk.id')
+            ->select('assets.*', 'merk.name as merk_name')
+            ->whereIn('assets.id', $ids)
+            ->get();
+    
+        // Handle not found case
+        if ($inventories->isEmpty()) {
+            return redirect()->back()->with('error', 'No assets found for the selected IDs.');
         }
-
-        // Generate the URL for asset detail
-        $url = route('auth.detailQR', ['id' => $inventory->id]);
-
-        // Generate the QR code that contains the URL
-        $qrCode = QrCode::size(200)->generate($url);
-
-        // Return the print view with QR code
-        return view('prints.qr_code', compact('qrCode', 'inventory'));
+    
+        // Generate QR codes for each inventory
+        $qrCodes = [];
+        foreach ($inventories as $inventory) {
+            $url = route('auth.detailQR', ['id' => $inventory->id]); // Adjust route name if necessary
+            $qrCodes[] = [
+                'inventory' => $inventory,
+                'qrCode' => QrCode::size(120)->generate($url), // Generate QR code with 200x200 pixels
+            ];
+        }
+    
+        // Return the print view with multiple QR codes
+        return view('prints.qr_code', compact('qrCodes'));
     }
+    
+
     // app/Http/Controllers/PrintController.php
     public function showAssetDetail($id)
     {

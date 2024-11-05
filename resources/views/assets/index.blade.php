@@ -76,125 +76,90 @@
                     {{ session('error') }}
                 </div>
             @endif
+            <div class="d-flex justify-content-between mb-3">
+                <button id="generateQRCodeButton" class="btn btn-primary">Generate QR Code</button>
+            </div>
             <div class="table-responsive">
                 <table id="assetTable" class="table table-hover">
                     <thead>
                         <tr>
+                            <th scope="col" style="width: 50px;">
+                                <input type="checkbox" id="selectAllCheckbox">
+                            </th>
                             <th scope="col" style="width: 70px;">No.</th>
                             <th scope="col" style="width: 100px;">Asset Code</th>
                             <th scope="col">S/N</th>
                             <th scope="col">Merk</th>
-                            <!-- <th scope="col">Type</th>
-                                                <th scope="col">Merk</th> -->
                             <th scope="col" style="width: 200px;">Location</th>
                             <th scope="col" style="width: 130px;">Name Holder</th>
                             <th scope="col">Maintenance</th>
                             <th scope="col" style="width: 100px;">Status</th>
-                            <!-- <th scope="col">Action</th> -->
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($assetss as $index => $asset)
                                                 <tr data-bs-toggle="modal" data-bs-target="#detailsModal-{{ $asset->id }}"
                                                     style="cursor: pointer;">
+                                                    <td>
+                                                        <input type="checkbox" class="assetCheckbox" value="{{ $asset->id }}"
+                                                            data-serial="{{ $asset->serial_number }}">
+                                                    </td>
                                                     <td>{{ $index + 1 }}</td>
                                                     <td>{{ $asset->code }}</td>
                                                     <td>{{ $asset->serial_number }}</td>
-
                                                     <td>{{ $asset->merk_name }}</td>
-
                                                     <td>
                                                         @php
-                                                            // Ambil nilai location
                                                             $location = $asset->location ?? 'In Inventory';
-
-                                                            // Jika location tidak kosong, ambil kata sebelum koma pertama
                                                             if ($location !== 'In Inventory') {
                                                                 $location = strtok($location, ',');
                                                             }
                                                         @endphp
-
                                                         {{ $location }}
                                                     </td>
                                                     <td>{{ $asset->customer_name ?? 'Not Yet Handover' }}</td>
-
                                                     <td>
                                                         @php
-                                                            // Get the entry date and last maintenance date
                                                             $tanggalMaintenance = $asset->last_maintenance ?? $asset->entry_date;
-
-                                                            // Parse the scheduling maintenance value
-                                                            [$intervalValue, $intervalUnit] = explode(
-                                                                ' ',
-                                                                $asset->scheduling_maintenance,
-                                                            );
-
-                                                            // Calculate the next maintenance date based on the interval and unit
+                                                            [$intervalValue, $intervalUnit] = explode(' ', $asset->scheduling_maintenance);
                                                             switch (strtolower($intervalUnit)) {
                                                                 case 'weeks':
-                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse(
-                                                                        $tanggalMaintenance,
-                                                                    )->addWeeks($intervalValue);
+                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance)->addWeeks($intervalValue);
                                                                     break;
                                                                 case 'months':
-                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse(
-                                                                        $tanggalMaintenance,
-                                                                    )->addMonths($intervalValue);
+                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance)->addMonths($intervalValue);
                                                                     break;
                                                                 case 'years':
-                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse(
-                                                                        $tanggalMaintenance,
-                                                                    )->addYears($intervalValue);
+                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance)->addYears($intervalValue);
                                                                     break;
                                                                 default:
-                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance); // If no valid scheduling unit, fallback
+                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance);
                                                                     break;
                                                             }
-
-                                                            // Determine if maintenance is due
                                                             $maintenanceDue = now()->greaterThanOrEqualTo($nextMaintenanceDate);
                                                         @endphp
-
                                                         @if ($maintenanceDue)
                                                             <span class="badge text-center align-middle"
-                                                                style="padding: 5px; font-size: 0.9em; background-color:#FE7C96;">
-                                                                Need Maintenance
-                                                            </span>
+                                                                style="padding: 5px; font-size: 0.9em; background-color:#FE7C96;">Need
+                                                                Maintenance</span>
                                                         @else
                                                             <span class="badge text-center align-middle"
-                                                                style="padding: 5px 44px; font-size: 0.9em; background-color:#B46EFF;">
-                                                                Done
-                                                            </span>
+                                                                style="padding: 5px 44px; font-size: 0.9em; background-color:#B46EFF;">Done</span>
                                                         @endif
                                                     </td>
-
                                                     <td class="text-center align-middle">
-                                                        <!-- Status Badge -->
                                                         @if ($asset->status === 'Inventory')
                                                             <span class="badge bg-warning"
-                                                                style="padding: 5px 30  px;  font-size: 0.9em; background-color:#FED713;">Available</span>
+                                                                style="padding: 5px 30px; font-size: 0.9em; background-color:#FED713;">Available</span>
                                                         @elseif ($asset->status === 'Operation')
                                                             <span class="badge"
-                                                                style="padding: 5px 18px;  font-size: 0.9em; background-color:#1BCFB4;">In
-                                                                Use</span>
+                                                                style="padding: 5px 18px; font-size: 0.9em; background-color:#1BCFB4;">In Use</span>
                                                         @endif
                                                     </td>
-                                                    <!-- <td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="action-buttons">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn text-white" data-bs-toggle="modal"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            data-bs-target="#detailsModal-{{ $asset->id }}" title="Details"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            style="background-color:#4FB0F1;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </button>
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </td> -->
                                                 </tr>
                         @endforeach
-
                     </tbody>
                 </table>
-                <!-- Legend for Status Badges -->
                 <div class="mt-4">
                     <ul class="list-unstyled legend-list">
                         <li>
@@ -342,7 +307,6 @@
 
                                 </tbody>
                             </table>
-
                         </div>
                     </div>
                 </div>
@@ -350,189 +314,107 @@
                 <div class="modal-footer">
 
                     <button type="button" class="btn"
-                        onclick="window.open('{{ route('prints.qr', ['id' => $asset->id]) }}', '_blank')"
+                        onclick="window.open('{{ route('printQR', ['id' => $asset->id]) }}', '_blank')"
                         style="background-color:#1BCFB4;">
                         <i class="bi bi-qr-code"></i> Print QR Code
                     </button>
-                    <button type="button" class="btn  open-history-modal " style="background-color: #9A9A9A;"
+                    <button type="button" class="btn open-history-modal" style="background-color: #9A9A9A;"
                         data-code="{{ $asset->code }}" data-asset-id="{{ $asset->id }}" data-bs-toggle="modal"
                         data-bs-target="#historyModal-{{ $asset->id }}">
                         <i class="bi bi-clock-history"></i>
                         View History
                     </button>
+
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal structure for each asset -->
+    <!-- History Modal -->
     <div class="modal fade" id="historyModal-{{ $asset->id }}" tabindex="-1" aria-labelledby="historyModalLabel"
-        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title text-center fw-bold w-100" id="historyModalLabel">History for Asset:
-                        {{ $asset->code }}
-                    </h4>
+                    <h5 class="modal-title text-center fw-bold w-100" id="historyModalLabel">
+                        Transaction History for
+                        <span class="asset-code">{{ $asset->code }}</span>
+                    </h5>
+
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Activity</th>
-                                <th>Date</th>
-                                <th>User</th>
-                                <th>Reason</th>
-                                <th>Note</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-body-{{ $asset->id }}">
-                            <!-- Data history akan dimuat di sini -->
-                        </tbody>
-                    </table>
+                    <!-- <div class="row">
+
+                                                                    </div> -->
+
+                    <div class="mt-4">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Transfer Date</th>
+                                    <th>Action</th>
+                                    <th>Holder</th>
+                                    <th>Note</th>
+                                    <th>Documentation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalHistoryBody-{{ $asset->id }}">
+                                <!-- History rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+
+
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Event listener for all modal open buttons
-            const modalButtons = document.querySelectorAll(
-                '.open-history-modal'); // Ensure these buttons have this class
-
-            modalButtons.forEach(button => {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.open-history-modal').forEach(button => {
                 button.addEventListener('click', function () {
-                    const code = this.getAttribute('data-code'); // Get code from button attribute
-                    const assetId = this.getAttribute('data-asset-id'); // Get asset ID
+                    var assetCode = this.getAttribute('data-code');
+                    var assetId = this.getAttribute('data-asset-id');
+                    var modalBody = document.getElementById('modalHistoryBody-' + assetId);
 
-                    // Call loadHistory with the correct code and asset ID
-                    loadHistory(code, assetId);
+                    // Fetch history for the specific asset code
+                    fetch(`/transaction-history/${assetCode}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Clear previous content
+                            modalBody.innerHTML = ''; // Clear previous content
+
+                            // Populate the modal with history data
+                            data.forEach(item => {
+                                // Determine badge color based on type_transactions
+                                let typeBadge;
+                                if (item.type_transactions === 'Return') {
+                                    typeBadge = '<span class="badge bg-danger">Return</span>';
+                                } else if (item.type_transactions === 'Handover') {
+                                    typeBadge = '<span class="badge bg-success">Handover</span>';
+                                } else {
+                                    typeBadge = `<span class="badge bg-secondary">${item.type_transactions}</span>`;
+                                }
+
+                                // Generate the row with conditional badge
+                                var row = `<tr>
+                                                                                <td>${item.created_at}</td>
+                                                                                <td>${typeBadge}</td>
+                                                                                <td>${item.name_holder}</td>
+                                                                                <td>${item.note}</td>
+                                                                                <td>${item.documentation ? `<a href="/storage/${item.documentation}" target="_blank">View Document</a>` : 'No document available'}</td>
+                                                                            </tr>`;
+                                modalBody.innerHTML += row;
+                            });
+                        });
                 });
             });
         });
 
-        function loadHistory(code, assetId) {
-            fetch(`{{ route('asset.historyModal') }}?code=${code}`)
-                .then(response => response.json())
-                .then(data => {
-                    const historyBody = document.getElementById(`history-body-${assetId}`);
-                    historyBody.innerHTML = ''; // Clear previous data
-                    console.log(data); // Log the fetched data to check the structure
 
-                    if (data.length > 0) {
-                        let latestUpdateDocumentation = null;
-                        let deleteDocumentation = null;
-
-                        // First pass: Identify the relevant documentation
-                        data.forEach(item => {
-                            if (item.action === 'UPDATE' && item.documentation_new) {
-                                latestUpdateDocumentation = item.documentation_new;
-                            }
-                            if (item.action === 'DELETE' && item.documentation_old) {
-                                deleteDocumentation = item.documentation_old;
-                            }
-                        });
-
-                        // Second pass: Display only the rows with badges (Handover or Return) and filter for 'Return' with a reason
-                        data.forEach(item => {
-                            let actionBadge = '';
-                            let documentationLink = '';
-                            let printButton = '';
-
-                            if (item.action === 'CREATE') {
-                                actionBadge = '<span class="badge bg-success">Handover</span>';
-                                if (latestUpdateDocumentation) {
-                                    documentationLink =
-                                        `<a href="{{ asset('storage/${latestUpdateDocumentation}') }}" target="_blank" class="btn " style="background-color:#4fb0f1; border-radius:5px;"><i
-                                                                                                        class="bi bi-file-earmark-image fa-2x"></i></a>`;
-                                } else {
-                                    documentationLink =
-                                        `<button class="btn btn-secondary" disabled>No Document</button>`;
-                                }
-                            } else if (item.action === 'DELETE' && item.keterangan) {
-                                // Show only 'Return' (DELETE) actions where 'reason' (keterangan) is filled
-                                actionBadge = '<span class="badge bg-danger">Return</span>';
-                                if (deleteDocumentation) {
-                                    documentationLink =
-                                        `<a href="{{ asset('storage/${deleteDocumentation}') }}" target="_blank" class="btn" style="background-color:#4fb0f1; border-radius:5px;"><i
-                                                                                                        class="bi bi-file-earmark-image fa-2x"></i></a>`;
-                                } else {
-                                    documentationLink =
-                                        `<button class="btn btn-secondary " disabled>No Document</button>`;
-                                }
-                            }
-
-                            // Only generate rows for actions that have a badge (CREATE or DELETE with a reason)
-                            if (actionBadge) {
-                                // Print button
-                                printButton =
-                                    `<button type="button" class="btn printButton" style="background-color:#9E24F5; border-radius:5px;" 
-                                                                                                                                                                data-action="${item.action}" 
-                                                                                                                                                                data-code="${item.asset_code}" 
-                                                                                                                                                                data-changed-at="${item.changed_at}">
-                                                                                                                                                                <i class="bi bi-printer fa-2x"></i>
-                                                                                                                                                            </button>`;
-
-                                // Generate the row
-                                const row =
-                                    `<tr>
-                                                                                                                                                                    <td>${actionBadge}</td>
-                                                                                                                                                                    <td>${item.changed_at}</td>
-                                                                                                                                                                    <td>${item.nama_old || '-'}</td>
-                                                                                                                                                                    <td>${item.keterangan || '-'}</td>
-                                                                                                                                                                    <td>${item.note || '-'}</td>
-                                                                                                                                                                    <td>
-                                                                                                                                                                        ${documentationLink}
-                                                                                                                                                                        ${printButton}
-                                                                                                                                                                    </td>
-                                                                                                                                                                </tr>`;
-
-                                historyBody.innerHTML += row;
-                            }
-                        });
-
-                        // Add event listeners for print buttons
-                        document.querySelectorAll('.printButton').forEach(button => {
-                            button.addEventListener('click', function () {
-                                var action = this.getAttribute('data-action');
-                                var assetTagging = this.getAttribute('data-code');
-                                var changedAt = this.getAttribute('data-changed-at');
-
-                                // Extract the date part (yyyy-mm-dd)
-                                var changedAtDate = changedAt.split(' ')[0];
-
-                                // Convert the date from 'yyyy-mm-dd' to 'd-m-Y'
-                                var dateParts = changedAtDate.split('-');
-                                var formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-
-                                var route = '';
-                                if (action === 'CREATE') {
-                                    route = '{{ route('prints.handover') }}';
-                                } else if (action === 'UPDATE') {
-                                    route = '{{ route('prints.mutation') }}';
-                                } else if (action === 'DELETE') {
-                                    route = '{{ route('prints.return') }}';
-                                }
-
-                                if (route) {
-                                    var fullUrl =
-                                        `${route}?asset_code=${encodeURIComponent(assetTagging)}&changed_at=${encodeURIComponent(formattedDate)}`;
-                                    console.log('Opening URL: ' + fullUrl);
-                                    window.open(fullUrl, '_blank');
-                                }
-                            });
-                        });
-                    } else {
-                        historyBody.innerHTML = '<tr><td colspan="6" class="text-center">No history found</td></tr>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching history:', error);
-                });
-        }
     </script>
 @endforeach
 
@@ -543,10 +425,42 @@
 <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-
-
 @endsection
 @endsection
+<!-- Include QRCode.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const generateQRCodeButton = document.getElementById('generateQRCodeButton');
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const assetCheckboxes = document.querySelectorAll('.assetCheckbox');
+
+        // Select/deselect all checkboxes
+        selectAllCheckbox.addEventListener('change', () => {
+            assetCheckboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+        });
+
+        // Function to gather selected IDs and redirect to print route
+        generateQRCodeButton.addEventListener('click', function () {
+            const selectedIds = Array.from(assetCheckboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value); // Get the asset ID from the checkbox value
+
+            if (selectedIds.length === 0) {
+                alert('Please select at least one asset.');
+                return;
+            }
+
+            // Redirect to the print route with selected IDs in a new tab
+            const idsString = selectedIds.join(',');
+            window.open(`{{ url('/print/qr') }}?ids=${idsString}`, '_blank');
+        });
+    });
+</script>
+
+
+
 
 <style>
     .card {
@@ -622,7 +536,7 @@
 
     .back-icon {
         cursor: pointer;
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
         height: 36px;
         width: 36px;
         border-radius: 4px;
@@ -637,7 +551,7 @@
     }
 
     .back-icon:hover {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #B100FF);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #FBCA07);
     }
 
     .back-text {
@@ -663,7 +577,7 @@
     }
 
     .icon-wrapper {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
         height: 36px;
         width: 36px;
         border-radius: 4px;
@@ -681,5 +595,16 @@
     .btn {
         margin: 0 0.5rem;
 
+    }
+
+    .asset-code {
+        background-color: rgba(128, 128, 128, 0.1);
+        /* Light gray with transparency */
+        padding: 4px 8px;
+        /* Optional: Adjust padding for spacing */
+        border-radius: 5px;
+        /* Rounded corners */
+        display: inline-block;
+        /* Keeps the span as an inline element */
     }
 </style>

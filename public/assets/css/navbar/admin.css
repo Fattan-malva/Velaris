@@ -641,7 +641,7 @@ section {
     min-width: 78px;
     text-align: center;
     line-height: 50px;
-    color: #d3c990;
+    color: #A3A6AB;
     font-size: 18px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -816,7 +816,7 @@ section {
 /* Style untuk Home Section */
 .home-section {
     position: relative;
-    background: #f2edf3;
+    background: #f6f6f3;
     min-height: 100vh;
     width: calc(100% - 260px);
     left: 260px;

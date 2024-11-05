@@ -19,8 +19,8 @@
         <h2 style="margin-top: 25px; margin-bottom: 20px; text-align: center; font-weight: 600;">Asset Return</h2>
         <hr style="width: 80%; margin: 0 auto;">
         <div class="card-body mt-3">
-            <form action="{{ route('transactions.returnUpdate', $asset->id) }}" method="POST" enctype="multipart/form-data"
-                id="Return" class="return-form">
+            <form action="{{ route('transactions.returnUpdate', $asset->id) }}" method="POST"
+                enctype="multipart/form-data" id="Return" class="return-form">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="asset_code" value="{{ $asset->asset_code }}">
@@ -52,7 +52,8 @@
                                 </option>
                                 <option value="Service" {{ $asset->reason == 'Service' ? 'selected' : '' }}>Service
                                 </option>
-                                <option value="Not yet given" {{ $asset->reason == 'Not yet given' ? 'selected' : '' }}>Not yet given</option>
+                                <option value="Not yet given" {{ $asset->reason == 'Not yet given' ? 'selected' : '' }}>
+                                    Not yet given</option>
                             </select>
                         </div>
                     </div>
@@ -158,7 +159,7 @@
 
     .back-icon {
         cursor: pointer;
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
         height: 36px;
         width: 36px;
         border-radius: 4px;
@@ -172,7 +173,7 @@
     }
 
     .back-icon:hover {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #B100FF);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #FBCA07);
     }
 
     .back-wrapper {
@@ -204,7 +205,7 @@
     }
 
     .icon-wrapper {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
         height: 36px;
         width: 36px;
         border-radius: 4px;

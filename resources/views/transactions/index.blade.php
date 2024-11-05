@@ -119,10 +119,10 @@
                                     <div class="btn-group" role="group">
                                         <!-- Button to View Details -->
                                         <!-- <button type="button" class="btn btn-sm text-white" data-bs-toggle="modal"
-                                                            data-bs-target="#detailModal{{ $transaction->id }}" title="Details"
-                                                            style="background-color:#4FB0F1; margin-right:5px;">
-                                                            <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
-                                                        </button> -->
+                                                                data-bs-target="#detailModal{{ $transaction->id }}" title="Details"
+                                                                style="background-color:#4FB0F1; margin-right:5px;">
+                                                                <i class="bi bi-file-earmark-text-fill text-white"></i> Detail
+                                                            </button> -->
                                         <!-- Conditional Button: Cancel Process -->
                                         @if ($transaction->approval_status === 'Rejected' && $transaction->type_transactions === 'Handover')
                                             <form action="{{ route('transactions.delete', ['id' => $transaction->id]) }}"
@@ -137,7 +137,8 @@
                                         @endif
 
                                         @if ($transaction->approval_status === 'Rejected' && ($transaction->type_transactions === 'Mutasi' || $transaction->type_transactions === 'Return'))
-                                            <form action="{{ route('transactions.rollbackMutasi', ['id' => $transaction->id]) }}"
+                                            <form
+                                                action="{{ route('transactions.rollbackMutasi', ['id' => $transaction->id]) }}"
                                                 method="POST" style="display:inline;" class="rollback-form">
                                                 @csrf
                                                 <button type="submit" class="btn btn-warning text-white" title="Rollback Name">
@@ -173,7 +174,8 @@
                                 style="padding: 5px 10px; background-color: #FED713">Waiting
                                 Approval</span>
                             <span class="legend-colon">:</span>
-                            <span class="legend-description">Waiting for the transaction to be approved by the user.</span>
+                            <span class="legend-description">Waiting for the transaction to be approved by the
+                                user.</span>
                         </li>
                         <li>
                             <span class="badge legend-badge"
@@ -405,7 +407,7 @@
 
     .back-icon {
         cursor: pointer;
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
         height: 36px;
         width: 36px;
         border-radius: 4px;
@@ -420,7 +422,7 @@
     }
 
     .back-icon:hover {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #B100FF);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -13%, #FBCA07);
         /* Warna gradien saat hover dengan putih sedikit di kiri */
     }
 
@@ -459,7 +461,7 @@
     }
 
     .icon-wrapper {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0) -30%, #B66DFF);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) -10%, #FCA918);
         height: 36px;
         width: 36px;
         border-radius: 4px;

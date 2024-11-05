@@ -1,4 +1,3 @@
-<!-- resources/views/prints/qr_code.blade.php -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,50 +6,59 @@
     <style>
         @media print {
             .container {
-                display: block;
+                display: flex;
+                flex-wrap: wrap; /* Allow wrapping of stickers */
                 margin: 0;
                 font-family: Arial, sans-serif;
+                justify-content: space-between; /* Distribute stickers evenly */
             }
             .sticker {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 border: 2px solid #000;
-                padding: 10px;
+                padding: 30; /* Remove padding for exact sizing */
                 background-color: #f9f9f9;
-                width: 100mm; /* Adjust for your size */
-                height: 100mm; /* Adjust for your size */
+                width: 40mm; /* Set width to 40mm */
+                height: 40mm; /* Set height to 40mm */
                 box-sizing: border-box;
                 page-break-inside: avoid;
+                margin: 2mm; /* Space between stickers */
                 position: relative; /* Position relative to contain absolute elements */
                 overflow: hidden;
             }
             .qr-code {
-                position: relative; /* Position relative to contain the logo */
+                display: flex;
+                justify-content: center; /* Center the QR code */
+                align-items: center; /* Center the QR code vertically */
+                width: 100%; /* Use full width */
+                height: 100%; /* Use full height */
             }
             .qr-code img {
-                width: 60mm; /* Adjust size for print */
-                height: 60mm; /* Adjust size for print */
+                max-width: 100%; /* Make the QR code image fit the container */
+                max-height: 100%; /* Make the QR code image fit the container */
             }
             .logo {
                 position: absolute;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                width: 20mm;
-                height: 20mm;
+                width: 150mm; /* Adjust size for print */
+                height: 150mm; /* Adjust size for print */
+                background-color: white;
+                border-radius: 20px;
             }
             .serial-number {
-                font-size: 12pt; 
+                font-size: 18pt; /* Adjust font size for smaller size */
                 font-weight: bold;
-                margin-top: 5mm;
+                margin-top: 2mm; /* Adjust spacing for smaller size */
             }
         }
+
         .container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
+            flex-wrap: wrap; /* Allow wrapping of stickers */
+            justify-content: center; /* Center the stickers in the container */
             margin: 0;
             font-family: Arial, sans-serif;
         }
@@ -59,45 +67,61 @@
             flex-direction: column;
             align-items: center;
             border: 2px solid #000;
-            padding: 10px;
+            padding: 0; /* Remove padding for exact sizing */
             background-color: #f9f9f9;
-            width: 250px; 
-            height: 265px;
+            width: 40mm; /* Set width to 40mm */
+            height: 40mm; /* Set height to 40mm */
             box-sizing: border-box;
-            position: relative;
+            margin: 2mm; /* Space between stickers */
         }
         .qr-code {
-            position: relative; 
+            display: flex; 
+            justify-content: center; /* Center the QR code */
+            align-items: center; /* Center the QR code vertically */
+            width: 100%; /* Use full width */
+            height: 100%; /* Use full height */
         }
         .qr-code img {
-            width: 100px; /* Adjust size for screen */
-            height: 100px; /* Adjust size for screen */
+            max-width: 100%; /* Make the QR code image fit the container */
+            max-height: 100%; /* Make the QR code image fit the container */
         }
         .logo {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 30px; /* Adjust size for screen */
-            height: 30px; /* Adjust size for screen */
+            transform: translate(-50%, -70%);
+            width: 7mm; /* Adjust size for screen */
+            height: 7mm; /* Adjust size for screen */
         }
         .serial-number {
-            font-size: 16px; /* Adjust font size for screen */
+            font-size: 8px; /* Adjust font size for screen */
             font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="sticker" id="sticker">
-            <div class="qr-code">
-                {!! $qrCode !!}
-                <img src="{{ asset('assets/img/GSI.png') }}" alt="GSI Logo" class="logo">
+        @foreach ($qrCodes as $item)
+            <!-- Create two identical stickers for each QR code -->
+            <div class="sticker">
+                <div class="qr-code">
+                    {!! $item['qrCode'] !!}
+                    <img src="{{ asset('assets/img/GSI.png') }}" alt="GSI Logo" class="logo">
+                </div>
+                <div class="serial-number">
+                    {{ $item['inventory']->serial_number }}
+                </div>
             </div>
-            <div class="serial-number">
-            {{ $inventory->seri }}
+            <div class="sticker">
+                <div class="qr-code">
+                    {!! $item['qrCode'] !!}
+                    <img src="{{ asset('assets/img/GSI.png') }}" alt="GSI Logo" class="logo">
+                </div>
+                <div class="serial-number">
+                    {{ $item['inventory']->serial_number }}
+                </div>
             </div>
-        </div>
+        @endforeach
     </div>
     <script>
         window.onload = function() {
