@@ -312,6 +312,67 @@
                 });
             });
 
+            $('.table-responsives').each(function () {
+                $(this).find('table').DataTable({
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    info: true,
+                    lengthChange: true,
+                    pageLength: 5,
+                    lengthMenu: [
+                        [5, 25, 50, -1],
+                        [5, 25, 50, "All"]
+                    ],
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search...",
+                        lengthMenu: "_MENU_",
+                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                        infoEmpty: "No entries available",
+                        infoFiltered: "(filtered from _MAX_ total entries)",
+                        paginate: {
+                            previous: "Prev",
+                            next: "Next"
+                        }
+                    },
+                    dom: '<"top"f>rt<"bottom"lp><"clear">',
+                    columnDefs: [
+                        { orderable: false, targets: [7] } // Disable sorting on columns 0 and 8
+                    ],
+                    createdRow: function (row, data, dataIndex) {
+                        $(row).find('td').addClass('text-center align-middle');
+                    },
+                    initComplete: function () {
+                        // Apply 'text-center' and 'align-middle' class to the header columns
+                        $(this).closest('.table').find('th').addClass('text-center align-middle');
+
+                        // Add sorting icons only to sortable headers
+                        $(this).closest('.table').find('th').not('.non-sortable').each(function () {
+                            $(this).append('<i class="fa-solid fa-arrow-up-z-a"></i>');
+                        });
+
+                        // Remove icons from non-sortable columns
+                        $(this).closest('.table').find('th.non-sortable i').remove();
+
+                        // Update icons on sorting
+                        $(this).on('click', 'th', function () {
+                            // Reset all icons first
+                            $(this).closest('thead').find('th i')
+                                .removeClass('fas fa-sort-up fas fa-sort-down')
+                                .addClass('fas fa-sort');
+
+                            // Change icon based on sorting order
+                            if ($(this).hasClass('sorting_asc')) {
+                                $(this).find('i').removeClass('fas fa-sort').addClass('fas fa-sort-up'); // Ascending
+                            } else if ($(this).hasClass('sorting_desc')) {
+                                $(this).find('i').removeClass('fas fa-sort').addClass('fas fa-sort-down'); // Descending
+                            }
+                        });
+                    }
+                });
+            });
+
 
 
             // Initialize Select2

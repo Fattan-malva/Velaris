@@ -50,7 +50,7 @@ class AssetsController extends Controller
             'scheduling_maintenance_unit' => 'required|string|in:Weeks,Months,Years',
             'spesification' => 'required|string|max:255',
             'condition' => 'required|in:Good,Exception,Bad,New',
-            'documentation' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
+            'documentation' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048'
         ]);
 
         // Convert entry date to standard format
@@ -120,7 +120,7 @@ class AssetsController extends Controller
         ]);
 
         // Redirect to the index page with success message
-        return redirect()->route('assets.index')->with('success', 'Asset created successfully.');
+        return redirect()->route('assets.add-asset')->with('success', 'Asset created successfully.');
     }
 
 

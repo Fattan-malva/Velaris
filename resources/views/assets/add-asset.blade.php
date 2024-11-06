@@ -33,6 +33,27 @@
         </div>
         <div class="card">
             <div class="card-body" style="padding: 30px;">
+            <script>
+                // Menampilkan pesan sukses setelah redirect dari controller
+                @if (session('success'))
+                    Swal.fire({
+                        title: 'Success!',
+                        text: '{{ session('success') }}', // Pesan sukses dari session
+                        icon: 'success', // Ikon sukses
+                        confirmButtonText: 'OK' // Tombol OK
+                    });
+                @endif
+
+                // Menampilkan pesan error validasi
+                @if ($errors->any())
+                    Swal.fire({
+                        title: 'Error!',
+                        text: '{!! implode(', ', $errors->all()) !!}', // Menggabungkan semua pesan error
+                        icon: 'error', // Ikon error
+                        confirmButtonText: 'OK' // Tombol OK
+                    });
+                @endif
+            </script>
                 <form action="{{ route('assets.store') }}" method="POST" enctype="multipart/form-data" id="addAsset">
                     @csrf
                     <div class="row">

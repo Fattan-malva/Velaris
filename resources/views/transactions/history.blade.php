@@ -92,9 +92,6 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="6" class="text-center">No transaction history available.</td>
-                            </tr>
                         @endforelse
                     </tbody>
                 </table>

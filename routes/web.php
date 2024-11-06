@@ -42,6 +42,8 @@ Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
 Route::get('/register', [UserAuthController::class, 'register'])->name('auth.register');
 Route::post('/register', [UserAuthController::class, 'storeregister'])->name('user.storeregister');
 Route::get('/print/qr', [PrintController::class, 'print'])->name('printQR');
+Route::get('/export/excel', [PrintController::class, 'exportToExcel']);
+
 Route::get('/auth/detailQR/{id}', [PrintController::class, 'showAssetDetail'])->name('auth.detailQR');
 
 Route::middleware(['auth.check'])->group(function () {

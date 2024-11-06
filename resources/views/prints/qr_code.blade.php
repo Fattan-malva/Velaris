@@ -94,7 +94,8 @@
             height: 7mm; /* Adjust size for screen */
         }
         .serial-number {
-            font-size: 8px; /* Adjust font size for screen */
+            margin-top: -5px;
+            font-size: 16px; /* Adjust font size for screen */
             font-weight: bold;
         }
     </style>

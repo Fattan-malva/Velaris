@@ -76,38 +76,42 @@
                     {{ session('error') }}
                 </div>
             @endif
-            <div class="d-flex justify-content-between mb-3">
-                <button id="generateQRCodeButton" class="btn btn-primary">Generate QR Code</button>
+            <div class="d-flex justify-content-between">
+
             </div>
-            <div class="table-responsive">
+            <div class="d-flex">
+                <button id="generateQRCodeButton" class="btn btn-secondary" style="display: none;">
+                    <i class="fa-solid fa-qrcode fa-lg"></i> QR-Code
+                </button>
+                <button id="exportToExcelButton" class="btn btn-success" style="display: none;">
+                    <i class="fa-solid fa-file-excel fa-lg"></i> Export to Excel
+                </button>
+            </div>
+            <div class="table-responsives">
                 <table id="assetTable" class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 50px;">
-                                <input type="checkbox" id="selectAllCheckbox">
-                            </th>
-                            <th scope="col" style="width: 70px;">No.</th>
-                            <th scope="col" style="width: 100px;">Asset Code</th>
+
+                            <th scope="col" style="width: 50px;">No.</th>
+                            <th scope="col" style="width: 150px;">Asset Code</th>
                             <th scope="col">S/N</th>
-                            <th scope="col">Merk</th>
                             <th scope="col" style="width: 200px;">Location</th>
                             <th scope="col" style="width: 130px;">Name Holder</th>
                             <th scope="col">Maintenance</th>
                             <th scope="col" style="width: 100px;">Status</th>
+                            <th scope="col" style="width: 50px;" class="non-sortable">
+                                <input type="checkbox" id="selectAllCheckbox">
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($assetss as $index => $asset)
                                                 <tr data-bs-toggle="modal" data-bs-target="#detailsModal-{{ $asset->id }}"
                                                     style="cursor: pointer;">
-                                                    <td>
-                                                        <input type="checkbox" class="assetCheckbox" value="{{ $asset->id }}"
-                                                            data-serial="{{ $asset->serial_number }}">
-                                                    </td>
+
                                                     <td>{{ $index + 1 }}</td>
                                                     <td>{{ $asset->code }}</td>
                                                     <td>{{ $asset->serial_number }}</td>
-                                                    <td>{{ $asset->merk_name }}</td>
                                                     <td>
                                                         @php
                                                             $location = $asset->location ?? 'In Inventory';
@@ -150,11 +154,15 @@
                                                     <td class="text-center align-middle">
                                                         @if ($asset->status === 'Inventory')
                                                             <span class="badge bg-warning"
-                                                                style="padding: 5px 30px; font-size: 0.9em; background-color:#FED713;">Available</span>
+                                                                style="padding: 5px 10px; font-size: 0.9em; background-color:#FED713;">Available</span>
                                                         @elseif ($asset->status === 'Operation')
                                                             <span class="badge"
                                                                 style="padding: 5px 18px; font-size: 0.9em; background-color:#1BCFB4;">In Use</span>
                                                         @endif
+                                                    </td>
+                                                    <td>
+                                                        <input type="checkbox" class="assetCheckbox" value="{{ $asset->id }}"
+                                                            data-serial="{{ $asset->serial_number }}">
                                                     </td>
                                                 </tr>
                         @endforeach
@@ -312,12 +320,6 @@
                 </div>
 
                 <div class="modal-footer">
-
-                    <button type="button" class="btn"
-                        onclick="window.open('{{ route('printQR', ['id' => $asset->id]) }}', '_blank')"
-                        style="background-color:#1BCFB4;">
-                        <i class="bi bi-qr-code"></i> Print QR Code
-                    </button>
                     <button type="button" class="btn open-history-modal" style="background-color: #9A9A9A;"
                         data-code="{{ $asset->code }}" data-asset-id="{{ $asset->id }}" data-bs-toggle="modal"
                         data-bs-target="#historyModal-{{ $asset->id }}">
@@ -346,7 +348,7 @@
                 <div class="modal-body">
                     <!-- <div class="row">
 
-                                                                    </div> -->
+                                                                                            </div> -->
 
                     <div class="mt-4">
                         <table class="table table-hover">
@@ -374,48 +376,61 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.open-history-modal').forEach(button => {
-                button.addEventListener('click', function () {
-                    var assetCode = this.getAttribute('data-code');
-                    var assetId = this.getAttribute('data-asset-id');
-                    var modalBody = document.getElementById('modalHistoryBody-' + assetId);
+            const generateQRCodeButton = document.getElementById('generateQRCodeButton');
+            const exportToExcelButton = document.getElementById('exportToExcelButton');
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const assetCheckboxes = document.querySelectorAll('.assetCheckbox');
 
-                    // Fetch history for the specific asset code
-                    fetch(`/transaction-history/${assetCode}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            // Clear previous content
-                            modalBody.innerHTML = ''; // Clear previous content
+            function toggleActionButtons() {
+                const isAnyCheckboxChecked = Array.from(assetCheckboxes).some(checkbox => checkbox.checked);
+                generateQRCodeButton.style.display = isAnyCheckboxChecked ? 'inline-block' : 'none';
+                exportToExcelButton.style.display = isAnyCheckboxChecked ? 'inline-block' : 'none';
+            }
 
-                            // Populate the modal with history data
-                            data.forEach(item => {
-                                // Determine badge color based on type_transactions
-                                let typeBadge;
-                                if (item.type_transactions === 'Return') {
-                                    typeBadge = '<span class="badge bg-danger">Return</span>';
-                                } else if (item.type_transactions === 'Handover') {
-                                    typeBadge = '<span class="badge bg-success">Handover</span>';
-                                } else {
-                                    typeBadge = `<span class="badge bg-secondary">${item.type_transactions}</span>`;
-                                }
+            // Toggle button visibility on 'Select All' checkbox change
+            selectAllCheckbox.addEventListener('change', () => {
+                assetCheckboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+                toggleActionButtons();
+            });
 
-                                // Generate the row with conditional badge
-                                var row = `<tr>
-                                                                                <td>${item.created_at}</td>
-                                                                                <td>${typeBadge}</td>
-                                                                                <td>${item.name_holder}</td>
-                                                                                <td>${item.note}</td>
-                                                                                <td>${item.documentation ? `<a href="/storage/${item.documentation}" target="_blank">View Document</a>` : 'No document available'}</td>
-                                                                            </tr>`;
-                                modalBody.innerHTML += row;
-                            });
-                        });
-                });
+            // Toggle button visibility on individual checkbox changes
+            assetCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', toggleActionButtons);
+            });
+
+            // QR Code button click handler
+            generateQRCodeButton.addEventListener('click', function () {
+                const selectedIds = Array.from(assetCheckboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+
+                if (selectedIds.length === 0) {
+                    alert('Please select at least one asset.');
+                    return;
+                }
+
+                const idsString = selectedIds.join(',');
+                window.open(`{{ url('/print/qr') }}?ids=${idsString}`, '_blank');
+            });
+
+            // Export to Excel button click handler
+            exportToExcelButton.addEventListener('click', function () {
+                const selectedIds = Array.from(assetCheckboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+
+                if (selectedIds.length === 0) {
+                    alert('Please select at least one asset.');
+                    return;
+                }
+
+                // Send a request to the export route with selected IDs
+                const idsString = selectedIds.join(',');
+                window.location.href = `{{ url('/export/excel') }}?ids=${idsString}`;
             });
         });
-
-
     </script>
+
 @endforeach
 
 
@@ -433,19 +448,32 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const generateQRCodeButton = document.getElementById('generateQRCodeButton');
+        const exportToExcelButton = document.getElementById('exportToExcelButton');
         const selectAllCheckbox = document.getElementById('selectAllCheckbox');
         const assetCheckboxes = document.querySelectorAll('.assetCheckbox');
 
-        // Select/deselect all checkboxes
+        function toggleActionButtons() {
+            const isAnyCheckboxChecked = Array.from(assetCheckboxes).some(checkbox => checkbox.checked);
+            generateQRCodeButton.style.display = isAnyCheckboxChecked ? 'inline-block' : 'none';
+            exportToExcelButton.style.display = isAnyCheckboxChecked ? 'inline-block' : 'none';
+        }
+
+        // Toggle button visibility on 'Select All' checkbox change
         selectAllCheckbox.addEventListener('change', () => {
             assetCheckboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+            toggleActionButtons();
         });
 
-        // Function to gather selected IDs and redirect to print route
+        // Toggle button visibility on individual checkbox changes
+        assetCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', toggleActionButtons);
+        });
+
+        // QR Code button click handler
         generateQRCodeButton.addEventListener('click', function () {
             const selectedIds = Array.from(assetCheckboxes)
                 .filter(checkbox => checkbox.checked)
-                .map(checkbox => checkbox.value); // Get the asset ID from the checkbox value
+                .map(checkbox => checkbox.value);
 
             if (selectedIds.length === 0) {
                 alert('Please select at least one asset.');
@@ -456,8 +484,25 @@
             const idsString = selectedIds.join(',');
             window.open(`{{ url('/print/qr') }}?ids=${idsString}`, '_blank');
         });
+
+        // Export to Excel button click handler
+        exportToExcelButton.addEventListener('click', function () {
+            const selectedIds = Array.from(assetCheckboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+
+            if (selectedIds.length === 0) {
+                alert('Please select at least one asset.');
+                return;
+            }
+
+            // Redirect to the export route with selected IDs
+            const idsString = selectedIds.join(',');
+            window.location.href = `{{ url('/export/excel') }}?ids=${idsString}`;
+        });
     });
 </script>
+
 
 
 
