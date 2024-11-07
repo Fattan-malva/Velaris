@@ -62,9 +62,10 @@ Route::middleware(['auth.check'])->group(function () {
     Route::post('/assets/approve-multiple', [TransactionsAdminController::class, 'approveMultiple'])->name('transactions.approve_multiple');
     Route::post('/assets/bulk-action', [TransactionsAdminController::class, 'bulkAction'])->name('transactions.bulkAction');
 
-    Route::get('/prints/handover', [PrintController::class, 'handover'])->name('prints.handover');
     Route::get('/prints/mutation', [PrintController::class, 'mutation'])->name('prints.mutation');
-    Route::get('/prints/return', [PrintController::class, 'return'])->name('prints.return');
+    Route::get('/prints/handover/{id}', [PrintController::class, 'handover'])->name('prints.handover');
+    Route::get('/prints/return/{id}', [PrintController::class, 'return'])->name('prints.return');
+    
     Route::post('/assets/approve-selected', [TransactionsUserController::class, 'approveSelected'])->name('transactions.approveSelected');
 
     Route::get('edit/profile/{id}', [CustomerController::class, 'editUser'])->name('customer.editUser');

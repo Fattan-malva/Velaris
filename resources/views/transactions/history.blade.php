@@ -54,25 +54,17 @@
                                 data-changedat="{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y H:i:s') }}"
                                 data-type_transactions="{{ $item->type_transactions }}" data-reason="{{ $item->reason }}"
                                 data-note="{{ $item->note }}" data-document="{{ $item->documentation }}"
-                                data-serial-number="{{ $item->serial_number }}" style="cursor:pointer;">
+                                data-serial-number="{{ $item->serial_number }}" data-handover-id="{{ $item->id }}"
+                                style="cursor:pointer;">
                                 <td>{{ $item->category_asset }}</td>
                                 <td>{{ $item->asset_code }}</td>
                                 <td>{{ $item->merk_name }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y H:i:s') }}</td>
                                 <td>
-                                    @if ($item->type_transactions === 'Handover')
-                                        <span class="badge badge-custom"
-                                            style="font-size: 0.8rem; padding: 0.2em 1em; color: white; border-radius: 0.5em; background-color:#1BCFB4;">Handover</span>
-                                    @elseif ($item->type_transactions === 'UPDATE')
-                                        <span class="badge badge-custom bg-warning"
-                                            style="font-size: 0.8rem; padding: 0.2em 1em; color: white; border-radius: 0.5em;">Mutasi</span>
-                                    @elseif ($item->type_transactions === 'Return')
-                                        <span class="badge badge-custom"
-                                            style="font-size: 0.8rem; padding: 0.2em 1em; color: white; border-radius: 0.5em; background-color:#FE7C96;">Return</span>
-                                    @else
-                                        <span class="badge badge-custom bg-secondary"
-                                            style="font-size: 0.8rem; padding: 0.2em 1em; color: white; border-radius: 0.5em;">N/A</span>
-                                    @endif
+                                    <span class="badge badge-custom"
+                                        style="font-size: 0.8rem; padding: 0.2em 1em; color: white; border-radius: 0.5em; {{ $item->type_transactions === 'Handover' ? 'background-color:#1BCFB4;' : ($item->type_transactions === 'UPDATE' ? 'background-color: #ffc107;' : 'background-color:#FE7C96;') }}">
+                                        {{ $item->type_transactions }}
+                                    </span>
                                 </td>
                                 <td>
                                     @if ($item->type_transactions === 'Handover')
@@ -92,25 +84,12 @@
                                 </td>
                             </tr>
                         @empty
+                            <tr>
+                                <td colspan="6" class="text-center">No activity history found</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
-
-                <div class="mt-4">
-                    <ul class="list-unstyled legend-list">
-                        <li>
-                            <span class="badge legend-badge"
-                                style="color:white; background-color:#1BCFB4;">Handover</span> : <span
-                                class="legend-description">The asset has been approved by the user.</span>
-                        </li>
-
-                        <li>
-                            <span class="badge legend-badge"
-                                style="color:white; background-color:#FE7C96;">Return</span> : <span
-                                class="legend-description">The asset is rejected by the user.</span>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
@@ -158,7 +137,6 @@
                     <div class="col-md-6">
                         <table class="table table-borderless no-border-table">
                             <tbody>
-
                                 <tr>
                                     <th scope="row">Transfer Date</th>
                                     <td id="modalChangedAt"></td>
@@ -185,8 +163,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <!-- Print Button -->
-                <button type="button" class="btn text-white" id="printButton" style="background-color:#6B07C2">
+                <button type="button" class="btn text-white" id="printButton" style="background-color:#6B07C2"
+                    onclick="printProof()">
                     <i class="bi bi-printer"></i> Print Proof
                 </button>
             </div>
@@ -195,64 +173,75 @@
 </div>
 
 <script>
-    // Event listener for the modal
     document.addEventListener('DOMContentLoaded', function () {
-        var detailModal = document.getElementById('detailModal');
+        const detailModal = document.getElementById('detailModal');
+
         detailModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget; // Button that triggered the modal
+            const button = event.relatedTarget;
+            document.getElementById('modalAssetCode').textContent = button.getAttribute('data-code');
+            document.getElementById('modalMerk').textContent = button.getAttribute('data-merk');
+            document.getElementById('modalJenisCategory').textContent = button.getAttribute('data-category');
+            document.getElementById('modalHolder').textContent = button.getAttribute('data-holder');
+            document.getElementById('modalSerialNumber').textContent = button.getAttribute('data-serial-number');
+            document.getElementById('modalChangedAt').textContent = button.getAttribute('data-changedat');
+            document.getElementById('modalAction').textContent = button.getAttribute('data-type_transactions');
+            document.getElementById('modalReason').textContent = button.getAttribute('data-reason');
+            document.getElementById('modalNote').textContent = button.getAttribute('data-note');
+            document.getElementById('modalDocument').innerHTML = button.getAttribute('data-document')
+                ? `<a href="{{ asset('storage/') }}/${button.getAttribute('data-document')}" target="_blank">View Document</a>`
+                : 'No document available';
 
-            // Get data attributes from the clicked row
-            var assetCode = button.getAttribute('data-code');
-            var merk = button.getAttribute('data-merk');
-            var category = button.getAttribute('data-category');
-            var holder = button.getAttribute('data-holder');
-            var changedAt = button.getAttribute('data-changedat');
-            var typeTransactions = button.getAttribute('data-type_transactions');
-            var reason = button.getAttribute('data-reason');
-            var note = button.getAttribute('data-note');
-            var documentation = button.getAttribute('data-document');
-            var serialNumber = button.getAttribute('data-serial-number');
-
-            // Update the modal's content
-            document.getElementById('modalAssetCode').textContent = assetCode;
-            document.getElementById('modalMerk').textContent = merk;
-            document.getElementById('modalJenisCategory').textContent = category;
-            document.getElementById('modalHolder').textContent = holder;
-            document.getElementById('modalSerialNumber').textContent = serialNumber;
-
-            document.getElementById('modalChangedAt').textContent = changedAt;
-            document.getElementById('modalAction').textContent = typeTransactions;
-            document.getElementById('modalReason').textContent = reason;
-            document.getElementById('modalNote').textContent = note;
-            document.getElementById('modalDocument').innerHTML = documentation ? `<a href="{{ asset('storage/') }}/${documentation}" target="_blank">View Document</a>` : 'No document available';
-        });
-
-        document.getElementById('printButton').addEventListener('click', function () {
-            var action = this.getAttribute('data-action');
-            var assetTagging = document.getElementById('modalAssetTagging').textContent;
-            var changedAt = document.getElementById('modalChangedAt').textContent; // Format: yyyy-mm-dd hh:mm:ss
-
-            // Extract the date part (yyyy-mm-dd)
-            var changedAtDate = changedAt.split(' ')[0];
-
-            var route = '';
-
-            if (action === 'CREATE') {
-                route = '{{ route('prints.handover') }}';
-            } else if (action === 'UPDATE') {
-                route = '{{ route('prints.mutation') }}';
-            } else if (action === 'DELETE') {
-                route = '{{ route('prints.return') }}';
-            }
-
-            if (route) {
-                var fullUrl = route + '?asset_code=' + encodeURIComponent(assetTagging) + '&changed_at=' + encodeURIComponent(changedAtDate);
-                console.log('Opening URL: ' + fullUrl); // Debug URL
-                window.open(fullUrl, '_blank');
-            }
+            detailModal.dataset.handoverId = button.getAttribute('data-handover-id');
+            detailModal.dataset.typeTransaction = button.getAttribute('data-type_transactions');
         });
     });
+    function printHandoverProof() {
+        const handoverId = document.getElementById('detailModal').dataset.handoverId;
+
+        if (handoverId) {
+            const route = `/prints/handover/${handoverId}`;
+            window.open(route, '_blank');
+        } else {
+            console.error("Missing handoverId for print.");
+        }
+    }
+
+    function printReturnProof() {
+        const handoverId = document.getElementById('detailModal').dataset.handoverId;
+
+        if (handoverId) {
+            const route = `/prints/return/${handoverId}`;
+            window.open(route, '_blank');
+        } else {
+            console.error("Missing handoverId for print.");
+        }
+    }
+
+    function printHandoverProof() {
+        const handoverId = document.getElementById('detailModal').dataset.handoverId;
+
+        if (handoverId) {
+            const route = `/prints/handover/${handoverId}`;
+            window.open(route, '_blank');
+        } else {
+            console.error("Missing handoverId for print.");
+        }
+    }
+    function printProof() {
+        const handoverId = document.getElementById('detailModal').dataset.handoverId;
+        const typeTransaction = document.getElementById('detailModal').dataset.typeTransaction;
+
+        if (typeTransaction === 'Handover') {
+            printHandoverProof();
+        } else if (typeTransaction === 'Return') {
+            printReturnProof();
+        } else {
+            console.error("Unknown transaction type for print.");
+        }
+    }
+
 </script>
+
 <style>
     /* CSS for table row borders */
     .table-hover tbody tr td,

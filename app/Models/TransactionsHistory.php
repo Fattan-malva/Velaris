@@ -25,13 +25,20 @@ class TransactionsHistory extends Model
         'documentation',
         'reason',
         'note',
-     
-        
- 
+
+
+
     ];
-    public function merkDetail()
+    public function customer()
     {
-        return $this->belongsTo(Merk::class, 'merk'); // Adjust 'merk' to the column in the inventory_history table
+        return $this->belongsTo(Customer::class, 'name_holder'); // 'name_holder' is the foreign key
     }
+
+    // Define the relationship with the Merk model
+    public function merk()
+    {
+        return $this->belongsTo(Merk::class);
+    }
+ 
     public $timestamps = false;
 }

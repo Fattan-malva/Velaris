@@ -76,9 +76,6 @@
                     {{ session('error') }}
                 </div>
             @endif
-            <div class="d-flex justify-content-between">
-
-            </div>
             <div class="d-flex">
                 <button id="generateQRCodeButton" class="btn btn-secondary" style="display: none;">
                     <i class="fa-solid fa-qrcode fa-lg"></i> QR-Code
@@ -91,8 +88,7 @@
                 <table id="assetTable" class="table table-hover">
                     <thead>
                         <tr>
-
-                            <th scope="col" style="width: 50px;">No.</th>
+                            <th scope="col" style="width: 70px;">No.</th>
                             <th scope="col" style="width: 150px;">Asset Code</th>
                             <th scope="col">S/N</th>
                             <th scope="col" style="width: 200px;">Location</th>
@@ -108,10 +104,10 @@
                         @foreach ($assetss as $index => $asset)
                                                 <tr data-bs-toggle="modal" data-bs-target="#detailsModal-{{ $asset->id }}"
                                                     style="cursor: pointer;">
-
                                                     <td>{{ $index + 1 }}</td>
                                                     <td>{{ $asset->code }}</td>
                                                     <td>{{ $asset->serial_number }}</td>
+
                                                     <td>
                                                         @php
                                                             $location = $asset->location ?? 'In Inventory';
@@ -320,6 +316,12 @@
                 </div>
 
                 <div class="modal-footer">
+
+                    <button type="button" class="btn"
+                        onclick="window.open('{{ route('printQR', ['id' => $asset->id]) }}', '_blank')"
+                        style="background-color:#1BCFB4;">
+                        <i class="bi bi-qr-code"></i> Print QR Code
+                    </button>
                     <button type="button" class="btn open-history-modal" style="background-color: #9A9A9A;"
                         data-code="{{ $asset->code }}" data-asset-id="{{ $asset->id }}" data-bs-toggle="modal"
                         data-bs-target="#historyModal-{{ $asset->id }}">
@@ -348,7 +350,7 @@
                 <div class="modal-body">
                     <!-- <div class="row">
 
-                                                                                            </div> -->
+                                                                                    </div> -->
 
                     <div class="mt-4">
                         <table class="table table-hover">
@@ -376,59 +378,70 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const generateQRCodeButton = document.getElementById('generateQRCodeButton');
-            const exportToExcelButton = document.getElementById('exportToExcelButton');
-            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
-            const assetCheckboxes = document.querySelectorAll('.assetCheckbox');
+            document.querySelectorAll('.open-history-modal').forEach(button => {
+                button.addEventListener('click', function () {
+                    var assetCode = this.getAttribute('data-code');
+                    var assetId = this.getAttribute('data-asset-id');
+                    var modalBody = document.getElementById('modalHistoryBody-' + assetId);
 
-            function toggleActionButtons() {
-                const isAnyCheckboxChecked = Array.from(assetCheckboxes).some(checkbox => checkbox.checked);
-                generateQRCodeButton.style.display = isAnyCheckboxChecked ? 'inline-block' : 'none';
-                exportToExcelButton.style.display = isAnyCheckboxChecked ? 'inline-block' : 'none';
-            }
+                    // Fetch history for the specific asset code
+                    fetch(`/transaction-history/${assetCode}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Clear previous content
+                            modalBody.innerHTML = ''; // Clear previous content
 
-            // Toggle button visibility on 'Select All' checkbox change
-            selectAllCheckbox.addEventListener('change', () => {
-                assetCheckboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
-                toggleActionButtons();
-            });
+                            // Populate the modal with history data
+                            data.forEach(item => {
+                                // Determine badge color based on type_transactions
+                                let typeBadge;
+                                let printButton = ''; // Variable to hold print button HTML
+                                let docIcon = ''; // Variable to hold document icon HTML
 
-            // Toggle button visibility on individual checkbox changes
-            assetCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', toggleActionButtons);
-            });
+                                if (item.type_transactions === 'Return') {
+                                    typeBadge = '<span class="badge bg-danger">Return</span>';
+                                    printButton = `<button class="btn btn-sm btn-success" style="margin-left:-100px;" onclick="printReturnProof(${item.id})"><i class="fas fa-print"></i></button>`;
+                                } else if (item.type_transactions === 'Handover') {
+                                    typeBadge = '<span class="badge bg-success">Handover</span>';
+                                    printButton = `<button class="btn btn-sm btn-success" style="margin-left:-100px;" onclick="printHandoverProof(${item.id})"><i class="fas fa-print"></i></button>`;
+                                } else {
+                                    typeBadge = `<span class="badge bg-secondary">${item.type_transactions}</span>`;
+                                }
 
-            // QR Code button click handler
-            generateQRCodeButton.addEventListener('click', function () {
-                const selectedIds = Array.from(assetCheckboxes)
-                    .filter(checkbox => checkbox.checked)
-                    .map(checkbox => checkbox.value);
+                                // Display the document icon if it exists
+                                if (item.documentation) {
+                                    docIcon = `<a href="/storage/${item.documentation}" target="_blank" class="btn btn-sm btn-info"><i class="fas fa-file-alt"></i></a>`;
+                                } else {
+                                    docIcon = '<span class="text-muted"><i class="fas fa-times"></i></span>'; // Show a 'no file' icon if no document is available
+                                }
 
-                if (selectedIds.length === 0) {
-                    alert('Please select at least one asset.');
-                    return;
-                }
-
-                const idsString = selectedIds.join(',');
-                window.open(`{{ url('/print/qr') }}?ids=${idsString}`, '_blank');
-            });
-
-            // Export to Excel button click handler
-            exportToExcelButton.addEventListener('click', function () {
-                const selectedIds = Array.from(assetCheckboxes)
-                    .filter(checkbox => checkbox.checked)
-                    .map(checkbox => checkbox.value);
-
-                if (selectedIds.length === 0) {
-                    alert('Please select at least one asset.');
-                    return;
-                }
-
-                // Send a request to the export route with selected IDs
-                const idsString = selectedIds.join(',');
-                window.location.href = `{{ url('/export/excel') }}?ids=${idsString}`;
+                                // Generate the row with conditional badge, document icon, and print button
+                                var row = `<tr>
+                                            <td>${item.created_at}</td>
+                                            <td>${typeBadge}</td>
+                                            <td>${item.name_holder}</td>
+                                            <td>${item.note}</td>
+                                            <td>${docIcon}</td> <!-- Document Icon -->
+                                            <td>${printButton}</td> <!-- Print Button -->
+                                        </tr>`;
+                                modalBody.innerHTML += row;
+                            });
+                        });
+                });
             });
         });
+
+        // Print Handover Proof
+        function printHandoverProof(transactionId) {
+            const route = `/prints/handover/${transactionId}`;
+            window.open(route, '_blank');
+        }
+
+        // Print Return Proof
+        function printReturnProof(transactionId) {
+            const route = `/prints/return/${transactionId}`;
+            window.open(route, '_blank');
+        }
     </script>
 
 @endforeach
@@ -444,6 +457,7 @@
 @endsection
 <!-- Include QRCode.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -480,7 +494,6 @@
                 return;
             }
 
-            // Redirect to the print route with selected IDs in a new tab
             const idsString = selectedIds.join(',');
             window.open(`{{ url('/print/qr') }}?ids=${idsString}`, '_blank');
         });
@@ -496,13 +509,12 @@
                 return;
             }
 
-            // Redirect to the export route with selected IDs
+            // Send a request to the export route with selected IDs
             const idsString = selectedIds.join(',');
             window.location.href = `{{ url('/export/excel') }}?ids=${idsString}`;
         });
     });
 </script>
-
 
 
 

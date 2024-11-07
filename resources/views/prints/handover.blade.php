@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Handover Documentation')</title>
-    <link rel="icon" href="{{ asset('assets/img/velaris.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('assets/img/assetslogo.png') }}" type="image/png">
     <style>
         /* General Styles */
         body {
@@ -142,25 +142,25 @@
     <div class="print-container">
         <h1>Handover Asset</h1>
 
-        @if(isset($handover))
+        @if(isset($history))
             <table>
                 <!-- Kop Surat -->
                 <tr>
                     <th>Name User</th>
-                    <td>{{ $handover->customer_name }}</td>
+                    <td>{{ $history->customer_name }}</td>
                 </tr>
                 <tr>
                     <th>NRP</th>
-                    <td>{{ $handover->customer_nrp }}</td>
+                    <td>{{ $history->customer_nrp }}</td>
                 </tr>
 
                 <tr>
                     <th>Departemen</th>
-                    <td>{{ $handover->customer_mapping }}</td>
+                    <td>{{ $history->position }}</td>
                 </tr>
                 <tr>
                     <th>Location</th>
-                    <td>{{ $handover->lokasi_old }}</td>
+                    <td>{{ $history->location }}</td>
                 </tr>
             </table>
 
@@ -169,7 +169,7 @@
 
             <!-- Teks Pengantar -->
             <div class="content">
-                <p>Pada hari Senin, tanggal {{ \Carbon\Carbon::parse($handover->changed_at)->format('d-m-Y') }}, Unit Kerja
+                <p>Pada hari Senin, tanggal {{ \Carbon\Carbon::parse($history->created_at)->format('d-m-Y') }}, Unit Kerja
                     IT telah melakukan serah terima perangkat dengan spesifikasi sebagai berikut:</p>
             </div>
 
@@ -177,23 +177,23 @@
             <table>
                 <tr>
                     <th>Type Device</th>
-                    <td>{{ $handover->jenis_aset_old }} {{ $handover->merk_name }} {{ $handover->type_old }}</td>
+                    <td>{{ $history->category_asset }} {{ $history->merk_name }} {{ $history->specification }}</td>
                 </tr>
                 <tr>
                     <th>S/N Device</th>
-                    <td>{{ $handover->serial_number_old }}</td>
+                    <td>{{ $history->serial_number }}</td>
                 </tr>
                 <tr>
-                    <th>Asset Tagging</th>
-                    <td>{{ $tagging }}</td>
+                    <th>Asset Code</th>
+                    <td>{{ $history -> asset_code }}</td>
                 </tr>
                 <tr>
-                    <th>Kondisi</th>
-                    <td>{{ $handover->kondisi_old }}</td>
+                    <th>Condition</th>
+                    <td>{{ $history->asset_condition }}</td>
                 </tr>
                 <tr>
                     <th>Transfer Date</th>
-                    <td>{{ \Carbon\Carbon::parse($handover->changed_at)->format('d-m-Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($history->created_at)->format('d-m-Y') }}</td>
                 </tr>
             </table>
 
@@ -234,8 +234,8 @@
             <div class="signatures">
                 <div class="signature-box">
                     <p>Asset Holder</p>
-                    <p>{{ $handover->customer_name }}</p>
-                    <p>{{ $handover->customer_mapping }}</p>
+                    <p>{{ $history->customer_name }}</p>
+                    <p>{{ $history->position }}</p>
                     <div class="signature-line"></div>
                 </div>
                 <div class="signature-box">
@@ -249,11 +249,12 @@
             <p>Data not found</p>
         @endif
     </div>
+
+    <script>
+        window.onload = function () {
+            window.print();
+        }
+    </script>
 </body>
 
 </html>
-<script>
-    window.onload = function () {
-        window.print();
-    }
-</script>

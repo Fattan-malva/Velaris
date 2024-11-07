@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Return Documentation')</title>
-    <link rel="icon" href="{{ asset('assets/img/velaris.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('assets/img/assetslogo.png') }}" type="image/png">
     <style>
         /* General Styles */
         body {
@@ -159,7 +159,7 @@
     <div class="print-container">
         <h1>Return Asset</h1>
 
-        @if(isset($return))
+        @if(isset($history))
 
             <!-- Introduction Text -->
             <div class="content">
@@ -171,9 +171,9 @@
 
             <div class="content">
                 <p>Telah menerima pengembalian Asset IT yang digunakan oleh:</p>
-                <p><strong>Name:</strong> {{ $return->customer_name }}</p>
-                <p><strong>NRP:</strong> {{ $return->customer_nrp }}</p>
-                <p><strong>Department:</strong> {{ $return->customer_mapping }}</p>
+                <p><strong>Name:</strong> {{ $history->customer_name }}</p>
+                <p><strong>NRP:</strong> {{ $history->customer_nrp }}</p>
+                <p><strong>Department:</strong> {{ $history->position }}</p>
             </div>
 
             <div class="content">
@@ -184,21 +184,21 @@
             <table>
                 <tr>
                     <th>Device Name</th>
-                    <th>Asset Tagging</th>
+                    <th>Asset Code</th>
                     <th>Device S/N</th>
-                    <th>Charger / Adaptor</th>
+                    <th>Note</th>
                 </tr>
                 <tr>
-                    <td>{{ $return->jenis_aset_old }} {{ $return->merk_name }} {{ $return->type_old }}</td>
-                    <td>{{ $tagging }}</td>
-                    <td>{{ $return->serial_number_old }}</td>
-                    <td>Included</td>
+                    <td>{{ $history->category_asset }} {{ $history->merk_name }} {{ $history->specification }}</td>
+                    <td>{{ $history->asset_code }}</td>
+                    <td>{{ $history->serial_number}}</td>
+                    <td>{{ $history->note}}</td>
                 </tr>
             </table>
 
             <!-- Return Statement -->
             <div class="content">
-                <p><strong>Tanggal Pengembalian:</strong> {{ \Carbon\Carbon::parse($return->changed_at)->format('d-m-Y') }}
+                <p><strong>Tanggal Pengembalian:</strong> {{ \Carbon\Carbon::parse($history->created_at)->format('d-m-Y') }}
                 </p>
             </div>
 
@@ -206,8 +206,8 @@
             <div class="signatures">
                 <div class="signature-box">
                     <p><strong>Diserahkan Oleh :</strong></p>
-                    <p>{{ $return->customer_name }}</p>
-                    <p>{{ $return->customer_mapping }}</p>
+                    <p>{{ $history->customer_name }}</p>
+                    <p>{{ $history->position }}</p>
                     <div class="signature-line"></div>
                 </div>
                 <div class="signature-box">

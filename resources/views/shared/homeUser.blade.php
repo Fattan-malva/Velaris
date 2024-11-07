@@ -205,27 +205,6 @@
 
                                                                                                             </div>
                                                                                                         </div>
-                                                                                                        <!-- <div class="modal-footer">
-                                                                                                            @if($asset->type_transactions == 'Handover')
-                                                                                                                <a href="{{ route('prints.handover', ['asset_tagging' => $asset->tagging]) }}"
-                                                                                                                    class="btn btn-primary"><i class="bi bi-printer"></i>
-                                                                                                                    Print</a>
-                                                                                                            @elseif($asset->type_transactions == 'Mutasi')
-                                                                                                                <a href="{{ route('prints.mutation', ['asset_tagging' => $asset->tagging]) }}"
-                                                                                                                    class="btn btn-primary"><i class="bi bi-printer"></i>
-                                                                                                                    Print</a>
-                                                                                                            @elseif($asset->type_transactions == 'Return')
-                                                                                                                <a href="{{ route('prints.return', ['asset_tagging' => $asset->tagging]) }}"
-                                                                                                                    class="btn btn-primary"><i class="bi bi-printer"></i>
-                                                                                                                    Print</a>
-                                                                                                            @else
-
-                                                                                                
-                                                                                                                <a href="#" class="btn btn-secondary" disabled>Print Not
-                                                                                                                    Available</a>
-                                                                                                            @endif
-
-                                                                                                        </div> -->
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
