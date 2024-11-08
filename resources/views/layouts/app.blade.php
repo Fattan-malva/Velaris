@@ -338,7 +338,7 @@
                     },
                     dom: '<"top"f>rt<"bottom"lp><"clear">',
                     columnDefs: [
-                        { orderable: false, targets: [7] } // Disable sorting on columns 0 and 8
+                        { orderable: false, targets: [8] } // Disable sorting on columns 0 and 8
                     ],
                     createdRow: function (row, data, dataIndex) {
                         $(row).find('td').addClass('text-center align-middle');

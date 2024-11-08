@@ -93,14 +93,19 @@
                     </thead>
                     <tbody>
                         @forelse ($transactions as $index => $transaction)
-                            <tr data-bs-toggle="modal" data-bs-target="#detailModal{{ $transaction->id }}"
+                            <tr>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailModal{{ $transaction->id }}"
+                                style="cursor: pointer;">{{ $index + 1 }}</td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailModal{{ $transaction->id }}"
+                                style="cursor: pointer;">{{ $transaction->tagging }}</td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailModal{{ $transaction->id }}"
+                                style="cursor: pointer;">{{ $transaction->customer_name }}</td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailModal{{ $transaction->id }}"
+                                style="cursor: pointer;">{{ \Carbon\Carbon::parse($transaction->created_at)->format('d-m-Y') }}</td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailModal{{ $transaction->id }}"
+                                style="cursor: pointer;">{{ $transaction->type_transactions }}</td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailModal{{ $transaction->id }}"
                                 style="cursor: pointer;">
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $transaction->tagging }}</td>
-                                <td>{{ $transaction->customer_name }}</td>
-                                <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('d-m-Y') }}</td>
-                                <td>{{ $transaction->type_transactions }}</td>
-                                <td>
                                     <!-- Approval Status Badge -->
                                     @if ($transaction->approval_status === 'Approved')
                                         <span class="badge"
@@ -118,7 +123,7 @@
                                 <td>
                                     <div class="btn-group" role="group">
                                         <!-- Button to View Details -->
-                                        <!-- <button type="button" class="btn btn-sm text-white" data-bs-toggle="modal"
+                                        <!-- <button type="button" class="btn btn-sm text-white" data-bs-toggle="modal" title="Click to view details"
                                                                 data-bs-target="#detailModal{{ $transaction->id }}" title="Details"
                                                                 style="background-color:#4FB0F1; margin-right:5px;">
                                                                 <i class="bi bi-file-earmark-text-fill text-white"></i> Detail

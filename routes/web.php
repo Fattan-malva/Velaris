@@ -41,9 +41,6 @@ Route::post('/login', [UserAuthController::class, 'login']);
 Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
 Route::get('/register', [UserAuthController::class, 'register'])->name('auth.register');
 Route::post('/register', [UserAuthController::class, 'storeregister'])->name('user.storeregister');
-Route::get('/print/qr', [PrintController::class, 'print'])->name('printQR');
-Route::get('/export/excel', [PrintController::class, 'exportToExcel']);
-
 Route::get('/auth/detailQR/{id}', [PrintController::class, 'showAssetDetail'])->name('auth.detailQR');
 
 Route::middleware(['auth.check'])->group(function () {
@@ -65,7 +62,7 @@ Route::middleware(['auth.check'])->group(function () {
     Route::get('/prints/mutation', [PrintController::class, 'mutation'])->name('prints.mutation');
     Route::get('/prints/handover/{id}', [PrintController::class, 'handover'])->name('prints.handover');
     Route::get('/prints/return/{id}', [PrintController::class, 'return'])->name('prints.return');
-    
+
     Route::post('/assets/approve-selected', [TransactionsUserController::class, 'approveSelected'])->name('transactions.approveSelected');
 
     Route::get('edit/profile/{id}', [CustomerController::class, 'editUser'])->name('customer.editUser');
@@ -125,8 +122,11 @@ Route::middleware(['auth.check:admin'])->group(function () {
 
     Route::resource('assets', AssetsController::class);
     Route::get('/assets-list', [AssetsController::class, 'index'])->name('assets.index');
+    Route::get('/print/qr', [PrintController::class, 'print'])->name('printQR');
+    Route::get('/export/excel', [PrintController::class, 'exportToExcel']);
     Route::post('/assets/create', [AssetsController::class, 'store'])->name('assets.store');
     Route::get('assets/create', [AssetsController::class, 'create'])->name('assets.add-asset');
+    Route::get('/asset/{asset_code}/depreciation', [AssetsController::class, 'getDepreciation'])->name('asset.depreciation');
     Route::get('assetstotal', [AssetsTotalController::class, 'summary'])->name('assets.total');
     Route::get('/assets-scrap', [AssetsController::class, 'showScrapForm'])->name('assets.scrap');
     Route::delete('/assets-scrap', [AssetsController::class, 'destroy'])->name('assets.delete');
@@ -139,6 +139,7 @@ Route::middleware(['auth.check:admin'])->group(function () {
 
     Route::get('/assets/maintenance-needs', [AssetsController::class, 'maintenanceNeeds'])->name('assets.maintenance-needs');
     Route::get('/transaction-history/{assetCode}', [AssetsHistoryController::class, 'historyByAssetCode'])->name('transaction.history.byAssetCode');
+    Route::get('/depreciation/{assetCode}', [AssetsHistoryController::class, 'depreciationByAssetCode'])->name('depreciation.byAssetCode');
     Route::get('history-maintenance', [MaintenanceHistoryController::class, 'index'])->name('assets.historymaintenance');
 
 

@@ -31,4 +31,19 @@ class AssetsHistoryController extends Controller
         return response()->json($history);
     }
 
+    public function depreciationByAssetCode($assetCode)
+    {
+        // Ambil data depresiasi berdasarkan asset_code
+        $depreciation = DB::table('depreciation')
+            ->where('asset_code', $assetCode) // Pastikan untuk mencocokkan asset_code dari depreciation
+            ->orderBy('date', 'ASC') // Urutkan berdasarkan tanggal pembuatan
+            ->get(['date', 'depreciation_price']); // Ambil hanya kolom yang dibutuhkan
+    
+        // Kembalikan data dalam format JSON
+        return response()->json($depreciation);
+    }
+    
+
+
+
 }

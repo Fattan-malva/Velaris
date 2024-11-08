@@ -91,8 +91,9 @@
                             <th scope="col" style="width: 70px;">No.</th>
                             <th scope="col" style="width: 150px;">Asset Code</th>
                             <th scope="col">S/N</th>
-                            <th scope="col" style="width: 200px;">Location</th>
+                            <th scope="col" style="width: 100px;">Location</th>
                             <th scope="col" style="width: 130px;">Name Holder</th>
+                            <th scope="col">Value (Rp)</th>
                             <th scope="col">Maintenance</th>
                             <th scope="col" style="width: 100px;">Status</th>
                             <th scope="col" style="width: 50px;" class="non-sortable">
@@ -102,13 +103,16 @@
                     </thead>
                     <tbody>
                         @foreach ($assetss as $index => $asset)
-                                                <tr data-bs-toggle="modal" data-bs-target="#detailsModal-{{ $asset->id }}"
-                                                    style="cursor: pointer;">
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $asset->code }}</td>
-                                                    <td>{{ $asset->serial_number }}</td>
+                                                <tr>
+                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                                    style="cursor: pointer;">{{ $index + 1 }}</td>
+                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                                    style="cursor: pointer;">{{ $asset->code }}</td>
+                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                                    style="cursor: pointer;">{{ $asset->serial_number }}</td>
 
-                                                    <td>
+                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                                    style="cursor: pointer;">
                                                         @php
                                                             $location = $asset->location ?? 'In Inventory';
                                                             if ($location !== 'In Inventory') {
@@ -117,7 +121,11 @@
                                                         @endphp
                                                         {{ $location }}
                                                     </td>
-                                                    <td>{{ $asset->customer_name ?? 'Not Yet Handover' }}</td>
+                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                                    style="cursor: pointer;">{{ $asset->customer_name ?? 'Not Yet Handover' }}</td>
+                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                                    style="cursor: pointer;">{{ number_format($asset->depreciation_price, 0, ',', '.') }}</td>
+
                                                     <td>
                                                         @php
                                                             $tanggalMaintenance = $asset->last_maintenance ?? $asset->entry_date;
@@ -139,15 +147,18 @@
                                                             $maintenanceDue = now()->greaterThanOrEqualTo($nextMaintenanceDate);
                                                         @endphp
                                                         @if ($maintenanceDue)
+                                                            <a href="{{ route('assets.maintenance') }}" title="Click to Maintenance" style="cursor: pointer;">
                                                             <span class="badge text-center align-middle"
                                                                 style="padding: 5px; font-size: 0.9em; background-color:#FE7C96;">Need
                                                                 Maintenance</span>
+                                                            </a>
                                                         @else
                                                             <span class="badge text-center align-middle"
                                                                 style="padding: 5px 44px; font-size: 0.9em; background-color:#B46EFF;">Done</span>
                                                         @endif
                                                     </td>
-                                                    <td class="text-center align-middle">
+                                                    <td>
+                                                    <a href="{{ route('transactions.index') }}" title="Click to view transactions" style="cursor: pointer;">
                                                         @if ($asset->status === 'Inventory')
                                                             <span class="badge bg-warning"
                                                                 style="padding: 5px 10px; font-size: 0.9em; background-color:#FED713;">Available</span>
@@ -155,10 +166,11 @@
                                                             <span class="badge"
                                                                 style="padding: 5px 18px; font-size: 0.9em; background-color:#1BCFB4;">In Use</span>
                                                         @endif
+                                                    </a>
                                                     </td>
                                                     <td>
-                                                        <input type="checkbox" class="assetCheckbox" value="{{ $asset->id }}"
-                                                            data-serial="{{ $asset->serial_number }}">
+                                                        <input type="checkbox" style="cursor: pointer;" class="assetCheckbox" value="{{ $asset->id }}"
+                                                            id="checkbox-{{ $asset->id }}" data-serial="{{ $asset->serial_number }}">
                                                     </td>
                                                 </tr>
                         @endforeach
@@ -316,18 +328,23 @@
                 </div>
 
                 <div class="modal-footer">
-
-                    <button type="button" class="btn"
-                        onclick="window.open('{{ route('printQR', ['id' => $asset->id]) }}', '_blank')"
-                        style="background-color:#1BCFB4;">
-                        <i class="bi bi-qr-code"></i> Print QR Code
+                    <button type="button" class="btn open-history-modal" style="background-color: #FFC107;"
+                        data-code="{{ $asset->code }}" data-asset-id="{{ $asset->id }}" data-bs-toggle="modal"
+                        data-bs-target="#DepreciationModal-{{ $asset->id }}">
+                        <i class="bi bi-calculator"></i>
+                        View Depreciation
                     </button>
                     <button type="button" class="btn open-history-modal" style="background-color: #9A9A9A;"
                         data-code="{{ $asset->code }}" data-asset-id="{{ $asset->id }}" data-bs-toggle="modal"
-                        data-bs-target="#historyModal-{{ $asset->id }}">
+                        data-bs-target="#historyModal-{{ $asset->id }}"
+                        onclick="loadTransactionHistory('{{ $asset->code }}', '{{ $asset->id }}')">
                         <i class="bi bi-clock-history"></i>
                         View History
                     </button>
+             
+
+
+
 
                 </div>
             </div>
@@ -348,10 +365,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- <div class="row">
-
-                                                                                    </div> -->
-
                     <div class="mt-4">
                         <table class="table table-hover">
                             <thead>
@@ -373,78 +386,155 @@
         </div>
     </div>
 
+    <div class="modal fade" id="DepreciationModal-{{ $asset->id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Depreciation History for {{ $asset->code }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Asset Value</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalDepreciationBody-{{ $asset->id }}">
+                            <!-- Data akan dimuat di sini -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
 
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.open-history-modal').forEach(button => {
-                button.addEventListener('click', function () {
-                    var assetCode = this.getAttribute('data-code');
-                    var assetId = this.getAttribute('data-asset-id');
-                    var modalBody = document.getElementById('modalHistoryBody-' + assetId);
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.open-history-modal').forEach(button => {
+            button.addEventListener('click', function () {
+                var assetCode = this.getAttribute('data-code');
+                var assetId = this.getAttribute('data-asset-id');
 
-                    // Fetch history for the specific asset code
-                    fetch(`/transaction-history/${assetCode}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            // Clear previous content
-                            modalBody.innerHTML = ''; // Clear previous content
+                // Load transaction history
+                loadTransactionHistory(assetCode, assetId);
 
-                            // Populate the modal with history data
-                            data.forEach(item => {
-                                // Determine badge color based on type_transactions
-                                let typeBadge;
-                                let printButton = ''; // Variable to hold print button HTML
-                                let docIcon = ''; // Variable to hold document icon HTML
-
-                                if (item.type_transactions === 'Return') {
-                                    typeBadge = '<span class="badge bg-danger">Return</span>';
-                                    printButton = `<button class="btn btn-sm btn-success" style="margin-left:-100px;" onclick="printReturnProof(${item.id})"><i class="fas fa-print"></i></button>`;
-                                } else if (item.type_transactions === 'Handover') {
-                                    typeBadge = '<span class="badge bg-success">Handover</span>';
-                                    printButton = `<button class="btn btn-sm btn-success" style="margin-left:-100px;" onclick="printHandoverProof(${item.id})"><i class="fas fa-print"></i></button>`;
-                                } else {
-                                    typeBadge = `<span class="badge bg-secondary">${item.type_transactions}</span>`;
-                                }
-
-                                // Display the document icon if it exists
-                                if (item.documentation) {
-                                    docIcon = `<a href="/storage/${item.documentation}" target="_blank" class="btn btn-sm btn-info"><i class="fas fa-file-alt"></i></a>`;
-                                } else {
-                                    docIcon = '<span class="text-muted"><i class="fas fa-times"></i></span>'; // Show a 'no file' icon if no document is available
-                                }
-
-                                // Generate the row with conditional badge, document icon, and print button
-                                var row = `<tr>
-                                            <td>${item.created_at}</td>
-                                            <td>${typeBadge}</td>
-                                            <td>${item.name_holder}</td>
-                                            <td>${item.note}</td>
-                                            <td>${docIcon}</td> <!-- Document Icon -->
-                                            <td>${printButton}</td> <!-- Print Button -->
-                                        </tr>`;
-                                modalBody.innerHTML += row;
-                            });
-                        });
-                });
+                // Load depreciation data
+                loadDepreciationData(assetCode, assetId);
             });
         });
+    });
 
-        // Print Handover Proof
-        function printHandoverProof(transactionId) {
-            const route = `/prints/handover/${transactionId}`;
-            window.open(route, '_blank');
-        }
+    // Function to load transaction history
+    function loadTransactionHistory(assetCode, assetId) {
+        var modalBody = document.getElementById('modalHistoryBody-' + assetId);
 
-        // Print Return Proof
-        function printReturnProof(transactionId) {
-            const route = `/prints/return/${transactionId}`;
-            window.open(route, '_blank');
-        }
-    </script>
+        fetch(`/transaction-history/${assetCode}`)
+            .then(response => response.json())
+            .then(data => {
+                modalBody.innerHTML = '';
+
+                data.forEach(item => {
+                    let typeBadge;
+                    let printButton = '';
+                    let docIcon = '';
+
+                    if (item.type_transactions === 'Return') {
+                        typeBadge = '<span class="badge bg-danger">Return</span>';
+                        printButton = `<button class="btn btn-sm btn-success" onclick="printReturnProof(${item.id})"><i class="fas fa-print"></i></button>`;
+                    } else if (item.type_transactions === 'Handover') {
+                        typeBadge = '<span class="badge bg-success">Handover</span>';
+                        printButton = `<button class="btn btn-sm btn-success" onclick="printHandoverProof(${item.id})"><i class="fas fa-print"></i></button>`;
+                    } else {
+                        typeBadge = `<span class="badge bg-secondary">${item.type_transactions}</span>`;
+                    }
+
+                    if (item.documentation) {
+                        docIcon = `<a href="/storage/${item.documentation}" target="_blank" class="btn btn-sm btn-info"><i class="fas fa-file-alt"></i></a>`;
+                    } else {
+                        docIcon = '<span class="text-muted"><i class="fas fa-times"></i></span>';
+                    }
+
+                    var row = `<tr>
+                                    <td>${item.created_at}</td>
+                                    <td>${typeBadge}</td>
+                                    <td>${item.name_holder}</td>
+                                    <td>${item.note}</td>
+                                    <td>${docIcon}</td> 
+                                    <td>${printButton}</td> 
+                                </tr>`;
+                    modalBody.innerHTML += row;
+                });
+            });
+    }
+
+    // Function to load depreciation data
+    function loadDepreciationData(assetCode, assetId) {
+        var modalBody = document.getElementById('modalDepreciationBody-' + assetId);
+
+        console.log('Asset Code:', assetCode);
+
+        fetch(`/depreciation/${assetCode}`)
+            .then(response => response.json())
+            .then(data => {
+                modalBody.innerHTML = '';
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(item => {
+                        var currentDate = new Date();
+                        var depreciationDate = new Date(item.date);
+
+                        var status = (depreciationDate > currentDate) ? 'Has not depreciated' : 'Depreciated';
+                        var badgeClass = (status === 'Depreciated') ? 'badge bg-danger' : 'badge bg-success';
+
+                        var row = `<tr>
+                                        <td>${item.date}</td>
+                                        <td>${formatNumber(item.depreciation_price)}</td>
+                                        <td><span class="${badgeClass}">${status}</span></td>
+                                    </tr>`;
+                        modalBody.innerHTML += row;
+                    });
+                } else {
+                    modalBody.innerHTML = '<tr><td colspan="3">No depreciation data available</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching depreciation data:', error);
+                modalBody.innerHTML = '<tr><td colspan="3">Error loading data</td></tr>';
+            });
+    }
+
+    // Basic number formatting function if formatNumber is not defined
+    function formatNumber(number) {
+        return new Intl.NumberFormat().format(number);
+    }
+
+    // Print Handover Proof
+    function printHandoverProof(transactionId) {
+        const route = `/prints/handover/${transactionId}`;
+        window.open(route, '_blank');
+    }
+
+    // Print Return Proof
+    function printReturnProof(transactionId) {
+        const route = `/prints/return/${transactionId}`;
+        window.open(route, '_blank');
+    }
+</script>
+
+
 
 @endforeach
+
 
 
 
@@ -515,6 +605,9 @@
         });
     });
 </script>
+
+
+
 
 
 
