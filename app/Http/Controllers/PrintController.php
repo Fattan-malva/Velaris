@@ -127,11 +127,11 @@ class PrintController extends Controller
     public function showAssetDetail($id)
     {
         $asset = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id') // Gabungkan dengan tabel merk untuk mendapatkan nama merk
-            ->leftJoin('customer', 'assets.name_holder', '=', 'customer.id') // Gabungkan dengan tabel customer untuk mendapatkan nama pemegang aset
-            ->leftJoin('depreciation', 'assets.code', '=', 'depreciation.asset_code') // Gabungkan dengan tabel depreciation untuk mendapatkan nilai depresiasi
+            ->join('merk', 'assets.merk', '=', 'merk.id')
+            ->leftJoin('customer', 'assets.name_holder', '=', 'customer.id')
+            ->leftJoin('depreciation', 'assets.code', '=', 'depreciation.asset_code')
             ->select(
-                'assets.id', // Select specific columns from the assets table
+                'assets.id',
                 'assets.code',
                 'assets.name_holder',
                 'assets.merk',
@@ -141,10 +141,11 @@ class PrintController extends Controller
                 'assets.spesification',
                 'assets.next_maintenance',
                 'assets.condition',
+                'assets.asset_age',
                 'assets.last_maintenance',
                 'assets.entry_date',
                 'assets.scheduling_maintenance',
-                'assets.location', // add all columns you want to use
+                'assets.location',
                 'merk.name as merk_name',
                 'customer.name as customer_name',
                 DB::raw('
@@ -170,9 +171,9 @@ class PrintController extends Controller
                          LIMIT 1)
                     ) as depreciation_price'
                 ),
-                DB::raw('MAX(depreciation.date) as depreciation_date') // Ambil tanggal depresiasi terbaru
+                DB::raw('MAX(depreciation.date) as depreciation_date')
             )
-            ->where('assets.id', '=', $id) // Filter by asset ID
+            ->where('assets.id', '=', $id)
             ->groupBy(
                 'assets.id',
                 'assets.code',
@@ -183,19 +184,34 @@ class PrintController extends Controller
                 'assets.next_maintenance',
                 'assets.spesification',
                 'assets.condition',
+                'assets.asset_age',
                 'assets.category',
                 'assets.scheduling_maintenance',
                 'assets.last_maintenance',
                 'assets.entry_date',
-                'assets.location', // Include all assets columns
+                'assets.location',
                 'merk.name',
-                'customer.name' // Include merk and customer columns in GROUP BY
+                'customer.name'
             )
-            ->first(); // Use first() instead of get() to return a single asset detail
-
-        // Return the view with asset details
-        return view('auth.detailQR', compact('asset'));
+            ->first();
+            
+        // Fetch all depreciation records for the specific asset code
+        $depreciationRecords = DB::table('depreciation')
+            ->where('asset_code', $asset->code)
+            ->select('date', 'depreciation_price')
+            ->orderBy('date', 'asc')
+            ->get();
+    
+        $maintenanceRecords = DB::table('maintenance_history')
+            ->where('code', $asset->code)
+            ->select('last_maintenance', 'condition', 'note_maintenance')
+            ->orderBy('last_maintenance', 'desc')
+            ->get();
+    
+        // Pass both $asset and $depreciationRecords to the view
+        return view('auth.detailQR', compact('asset', 'depreciationRecords','maintenanceRecords'));
     }
+    
 
 
 
