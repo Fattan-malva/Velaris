@@ -321,7 +321,7 @@
                     </div>
                     <div class="form-group">
                         <label>Name Holder:</label>
-                        <input type="text" value="{{$asset->name_holder ?? 'Not Yet Handover'}}" readonly />
+                        <input type="text" value="{{$asset->customer_name ?? 'Not Yet Handover'}}" readonly />
                     </div>
                 </div>
                 <div class="row">
