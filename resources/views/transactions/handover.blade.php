@@ -72,7 +72,6 @@
                             </div>
                         </div>
 
-                        <!-- Kolom Kanan -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="location">Location</label>
@@ -80,16 +79,20 @@
                                     <input type="text" id="location-input" class="form-control"
                                         placeholder="Search for a location" required>
                                     <div class="input-group-append">
-                                        <button type="button" class="btn btn-primary" id="enter-location"><i
-                                                class="bi bi-search"></i> Search</button>
+                                        <button type="button" class="btn btn-warning" id="enter-location" style="margin-right:-5px;">
+                                            <i class="bi bi-search"></i> Search
+                                        </button>
+                                        <button type="button" class="btn btn-success" id="current-location">
+                                            <i class="bi bi-geo-alt"></i> Current Location
+                                        </button>
                                     </div>
                                 </div>
                                 <div id="map" style="height: 300px; width: 100%; margin-top:10px;"></div>
                                 <input type="hidden" id="latitude" name="latitude">
                                 <input type="hidden" id="longitude" name="longitude">
                             </div>
-
                         </div>
+
                     </div>
 
                     <!-- Form lainnya di bawah row -->
@@ -157,27 +160,38 @@
     document.addEventListener('DOMContentLoaded', function () {
         var map = L.map('map').setView([-6.2088, 106.8456], 13); // Default coordinates for Jakarta
 
+        // Add tile layer to the map
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
         var geocoder = L.Control.Geocoder.nominatim();
+        var locationName = ''; // Store the location name from the search
+        var marker = L.marker([-6.2088, 106.8456], { draggable: true }).addTo(map);
 
+        // Update latitude and longitude on marker drag
+        marker.on('moveend', function (e) {
+            var latlng = e.target.getLatLng();
+            document.getElementById('latitude').value = latlng.lat;
+            document.getElementById('longitude').value = latlng.lng;
+        });
+
+        // Handle geocode results
         function onGeocodeResult(results) {
             if (results.length > 0) {
                 var result = results[0];
                 var latlng = result.center;
 
-                // Update the input fields for latitude, longitude, and location
+                // Update inputs
                 document.getElementById('latitude').value = latlng.lat;
                 document.getElementById('longitude').value = latlng.lng;
                 document.getElementById('location-input').value = result.name;
 
-                // Store the location value in a variable but don't add it to the detail input directly
+                // Store the location name
                 locationName = result.name;
 
-                // Add a marker on the map
-                L.marker(latlng).addTo(map)
+                // Update marker
+                marker.setLatLng(latlng)
                     .bindPopup(result.name)
                     .openPopup();
 
@@ -188,14 +202,7 @@
             }
         }
 
-        var locationName = ''; // Store the location name from the search
-        var marker = L.marker([-6.2088, 106.8456], { draggable: true }).addTo(map);
-        marker.on('moveend', function (e) {
-            var latlng = e.target.getLatLng();
-            document.getElementById('latitude').value = latlng.lat;
-            document.getElementById('longitude').value = latlng.lng;
-        });
-
+        // Search for a location
         document.getElementById('enter-location').addEventListener('click', function () {
             var location = document.getElementById('location-input').value;
             geocoder.geocode(location, function (results) {
@@ -203,10 +210,48 @@
             });
         });
 
+        // Handle Enter key press in the location input field
         document.getElementById('location-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 document.getElementById('enter-location').click();
+            }
+        });
+
+        // Handle current location button click
+        document.getElementById('current-location').addEventListener('click', function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        var lat = position.coords.latitude;
+                        var lng = position.coords.longitude;
+
+                        // Update inputs
+                        document.getElementById('latitude').value = lat;
+                        document.getElementById('longitude').value = lng;
+
+                        // Update marker and map
+                        marker.setLatLng([lat, lng])
+                            .bindPopup("Your Current Location")
+                            .openPopup();
+                        map.setView([lat, lng], 13);
+
+                        // Reverse geocode to get the location name
+                        geocoder.reverse({ lat: lat, lng: lng }, map.getZoom(), function (results) {
+                            if (results.length > 0) {
+                                var result = results[0];
+                                document.getElementById('location-input').value = result.name;
+                                document.getElementById('lokasi').value = result.name; // Update the "lokasi" field
+                                locationName = result.name; // Update global locationName
+                            }
+                        });
+                    },
+                    function (error) {
+                        alert('Unable to retrieve your location. Please check your permissions.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser.');
             }
         });
 
@@ -223,8 +268,9 @@
                 document.getElementById('lokasi').value = locationName;
             }
         });
-
     });
+
+
 
     // Event listener untuk form submit
     document.getElementById('Handover').addEventListener('submit', function (event) {
@@ -284,6 +330,8 @@
         height: 400px;
         width: 100%;
         margin-top: 10px;
+        z-index: 0;
+        position: relative;
     }
 
     .btn-primary {

@@ -14,36 +14,36 @@ body.dark-mode {
 }
 
 body.dark-mode .card {
-    background-color: #2c2b47;
+    background-color: #0b0b0d;
     color: #fff;
-    border: 1px solid #39385e;
+    border: 1px solid #000000;
     border-radius: 10px;
 }
 body.dark-mode .modal-content {
-    background-color: #2c2b47;
+    background-color: #0b0b0d;
     color: #fff;
     border: 1px solid #000;
     border-radius: 10px;
 }
 
 body.dark-mode .table {
-    background-color: #2c2b47;
+    background-color: #0b0b0d;
     color: #fff;
 }
 
 body.dark-mode .table th {
-    background-color: #2c2b47;
+    background-color: #0b0b0d;
     color: #fff;
 }
 
 body.dark-mode .table td {
-    background-color: #2c2b47;
+    background-color: #0b0b0d;
     color: #fff;
     border-color: #000;
 }
 
 body.dark-mode .table tbody tr:hover {
-    background-color: #2c2b47;
+    background-color: #0b0b0d;
     border-radius: 20px;
 }
 
@@ -67,9 +67,9 @@ body.dark-mode .modal-header .btn-close {
 /* Dark mode styling for DataTable search and pagination */
 
 body.dark-mode .dataTables_wrapper .dataTables_filter input {
-    background-color: #2c2b47; /* Background color for input */
+    background-color: #0b0b0d; /* Background color for input */
     color: #fff; /* Text color in input */
-    border: 1px solid #39385e; /* Border color */
+    border: 1px solid #494949; /* Border color */
 }
 
 body.dark-mode .dataTables_wrapper .dataTables_filter input::placeholder {
@@ -83,13 +83,13 @@ body.dark-mode .dataTables_wrapper .dataTables_length select {
 }
 
 body.dark-mode .dataTables_wrapper .dataTables_length select {
-    background-color: #2c2b47; /* Background color for the dropdown */
+    background-color: #0b0b0d; /* Background color for the dropdown */
     color: #fff; /* Text color for options in dropdown */
-    border: 1px solid #39385e; /* Border color */
+    border: 1px solid #494949; /* Border color */
 }
 
 body.dark-mode .dataTables_wrapper .dataTables_length select option {
-    background-color: #2c2b47; /* Background color for dropdown options */
+    background-color: #0b0b0d; /* Background color for dropdown options */
     color: #fff; /* Text color for dropdown options */
 }
 
@@ -107,9 +107,9 @@ body.dark-mode div.dataTables_wrapper div.dataTables_filter input {
     filter: invert(
         1
     ); /* This will invert the colors of the entire background image */
-    background-color: #2c2b47;
+    background-color: #39393e;
     color: #fff;
-    border: 1px solid #39385e;
+    border: 1px solid #494949;
 }
 /* Dark mode styling for form group */
 body.dark-mode .form-group label {
@@ -117,32 +117,58 @@ body.dark-mode .form-group label {
 }
 
 body.dark-mode .form-group select.form-control {
-    background-color: #2c2b47; /* Dark background for select dropdown */
+    background-color: #0b0b0d; /* Dark background for select dropdown */
     color: #fff; /* Text color for selected option */
-    border: 1px solid #39385e; /* Border color for select */
+    border: 1px solid #494949; /* Border color for select */
     border-radius: 10px; /* Rounded corners for select */
 }
 
 body.dark-mode .form-group select.form-control option {
-    background-color: #2c2b47; /* Dark background for dropdown options */
+    background-color: #0b0b0d; /* Dark background for dropdown options */
     color: #fff; /* Text color for dropdown options */
 }
 /* Dark mode styling for file input container */
 /* Dark mode styling for text inputs */
 body.dark-mode .form-group input[type="text"],
 body.dark-mode .form-group input[type="date"],
+body.dark-mode .form-group input[type="number"],
 body.dark-mode .form-group input[type="select"],
 body.dark-mode .form-group input[type="file"] {
-    background-color: #2c2b47; /* Dark background color */
+    background-color: #0b0b0d; /* Dark background color */
     color: #fff; /* Text color */
-    border: 1px solid #39385e; /* Border color */
+    border: 1px solid #494949; /* Border color */
     border-radius: 10px; /* Rounded corners */
     padding: 10px; /* Padding for better spacing */
+}
+
+body.dark-mode .input-group-text {
+    background-color: #494949; /* Background color for the 'Rp' symbol */
+    color: #fff; /* Text color */
+    border: 1px solid #494949; /* Border color */
+    border-radius: 10px 0 0 10px; /* Rounded corners for the left part */
+}
+
+body.dark-mode .input-group .form-control {
+    border-radius: 0 10px 10px 0; /* Rounded corners for the right part */
+}
+
+body.dark-mode .form-group input[type="file"]::-webkit-file-upload-button {
+    background-color: #494949; /* File button background */
+    color: #fff; /* File button text color */
+    border: none; /* Remove default border */
+    padding: 7px 12px; /* Button padding */
+    border-radius: 5px; /* Rounded corners for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+body.dark-mode .form-group input[type="file"]:hover::-webkit-file-upload-button {
+    background-color: #333; /* Darker background on hover */
 }
 
 /* Dark mode styling for placeholder text */
 body.dark-mode .form-group input[type="text"]::placeholder,
 body.dark-mode .form-group input[type="select"]::placeholder,
+body.dark-mode .form-group input[type="number"]::placeholder,
 body.dark-mode .form-group input[type="date"]::placeholder,
 body.dark-mode .form-group input[type="file"]::placeholder {
     color: #b3b3b3; /* Lighter color for placeholder text */
@@ -154,22 +180,22 @@ body.dark-mode .form-group .text-danger {
 }
 /* Dark mode styling for select dropdown */
 body.dark-mode .form-group select.form-select {
-    background-color: #2c2b47; /* Dark background for select */
+    background-color: #0b0b0d; /* Dark background for select */
     color: #fff; /* White text color */
-    border: 1px solid #39385e; /* Border color */
+    border: 1px solid #494949; /* Border color */
     border-radius: 10px;
 }
 
 /* Dark mode styling for each option */
 body.dark-mode .form-group select.form-select option {
-    background-color: #2c2b47; /* Dark background for options */
+    background-color: #0b0b0d; /* Dark background for options */
     color: #fff; /* White text color for options */
 }
 /* Dark mode styling for Select2 container */
 body.dark-mode .select2-container .select2-selection--multiple {
-    background-color: #2c2b47; /* Dark background */
+    background-color: #0b0b0d; /* Dark background */
     color: #fff; /* White text color */
-    border: 1px solid #39385e; /* Border color */
+    border: 1px solid #494949; /* Border color */
     border-radius: 10px;
 }
 
@@ -178,7 +204,7 @@ body.dark-mode
     .select2-container--default
     .select2-selection--multiple
     .select2-selection__choice {
-    background-color: #39385e; /* Slightly lighter dark background for tags */
+    background-color: #494949; /* Slightly lighter dark background for tags */
     color: #fff; /* White text color for tags */
     border: none; /* Remove borders for cleaner look */
     border-radius: 4px;
@@ -186,14 +212,14 @@ body.dark-mode
 
 /* Dark mode styling for Select2 dropdown options */
 body.dark-mode .select2-container--default .select2-results__option {
-    background-color: #2c2b47; /* Dark background for dropdown */
+    background-color: #0b0b0d; /* Dark background for dropdown */
     color: #fff; /* White text color */
 }
 
 body.dark-mode
     .select2-container--default
     .select2-results__option--highlighted[aria-selected] {
-    background-color: #39385e; /* Darker background when an option is highlighted */
+    background-color: #494949; /* Darker background when an option is highlighted */
     color: #fff;
 }
 
@@ -202,9 +228,9 @@ body.dark-mode
     .select2-container
     .select2-search--dropdown
     .select2-search__field {
-    background-color: #2c2b47; /* Dark background for search input */
+    background-color: #0b0b0d; /* Dark background for search input */
     color: #fff; /* White text color */
-    border: 1px solid #39385e; /* Border color */
+    border: 1px solid #494949; /* Border color */
 }
 
 /* Sidebar Styles */
@@ -215,7 +241,7 @@ body.dark-mode
 }
 
 body.dark-mode .sidebar {
-    background: #2c2b47;
+    background: #0b0b0d;
     /* Dark background for dark mode */
 }
 
@@ -225,7 +251,7 @@ body.dark-mode .sidebar {
 }
 
 body.dark-mode .sidebar .nav-links li:hover {
-    background: #59586b;
+    background: #000000;
     /* Hover color for dark mode */
 }
 
@@ -254,7 +280,7 @@ body.dark-mode .sidebar .nav-links li a .link_name {
 /* Active State Links in Sidebar */
 .sidebar .nav-links li a.active .link_name,
 .sidebar .nav-links li a.active i {
-    color: #FB9F1D;
+    color: #fb9f1d;
     /* Purple color for active state */
 }
 
@@ -271,7 +297,7 @@ body.dark-mode .sub-menu a {
 
 /* Hover State for Sub-menu Links */
 .sub-menu a:hover {
-    color: #FB9F1D;
+    color: #fb9f1d;
     /* Purple color for hover state */
     background-color: rgba(182, 109, 255, 0.1);
     /* Slight background for hover */
@@ -281,7 +307,7 @@ body.dark-mode .sub-menu a {
 
 /* Active State for Sub-menu Links */
 .sub-menu a.active {
-    color: #FB9F1D;
+    color: #fb9f1d;
     /* Purple color for active sub-menu link */
     font-weight: bold;
     /* Bold active sub-menu link */
@@ -295,9 +321,16 @@ body.dark-mode .sub-menu a {
 }
 
 body.dark-mode .home-section {
-    background: #1d1b31;
+    background: #000000;
     /* Dark background for home section in dark mode */
 }
+body.dark-mode .card-ticket {
+    background: #222222;
+    border-radius: 10px;
+    /* Dark background for home section in dark mode */
+}
+
+
 
 .home-content {
     background: #fff;
@@ -305,7 +338,7 @@ body.dark-mode .home-section {
 }
 
 body.dark-mode .home-content {
-    background: #2c2b47;
+    background: #0b0b0d;
     /* Dark background for home content in dark mode */
 }
 
@@ -328,6 +361,103 @@ body.dark-mode .home-content i {
 body.dark-mode .profile-details-top .job {
     color: #ccc;
     /* Job text color in dark mode */
+}
+/* Dark Mode Styling */
+body.dark-mode .mobile-header {
+    background-color: #0B0B0D; /* Dark background for the header */
+    color: white; /* Text color for readability */
+    padding: 10px;
+}
+
+body.dark-mode .mobile-header .back-button {
+    background: none;
+    color: white; /* Back button icon color */
+}
+
+body.dark-mode .mobile-header .logo {
+    display: flex;
+    align-items: center;
+}
+
+body.dark-mode .mobile-header .logo img {
+    width: 40px; /* Adjust logo size */
+    height: 40px;
+    margin-right: 10px;
+}
+
+body.dark-mode .mobile-header .title {
+    color: white; /* Text color for the title */
+    font-size: 20px;
+    font-weight: bold;
+}
+
+body.dark-mode .mobile-header .profile {
+    display: flex;
+    align-items: center;
+}
+
+body.dark-mode .mobile-header .profile img {
+    width: 40px; /* Admin profile image size */
+    height: 40px;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+body.dark-mode .mobile-header #logout-icon-mobile {
+    color: white; /* Logout icon color */
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+body.dark-mode .bottom-nav {
+    background-color: #0B0B0D; /* Dark background for the bottom nav */
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #494949; /* Subtle border at the top */
+}
+
+body.dark-mode .bottom-nav a {
+    color: white; /* Text color for links */
+    font-size: 14px;
+    text-align: center;
+    display: block;
+}
+
+body.dark-mode .bottom-nav a i {
+    color: white; /* Icon color */
+    margin-bottom: 5px;
+}
+
+body.dark-mode .bottom-nav a.active {
+    background-color: #494949; /* Background color for active links */
+    border-radius: 5px;
+    padding: 5px;
+}
+
+body.dark-mode .submenu {
+    background-color: #1a1a1a; /* Dark background for submenus */
+    display: none; /* Initially hidden */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+body.dark-mode .menu-toggle:focus + .submenu,
+body.dark-mode .submenu.active {
+    display: block; /* Show submenu when the menu-toggle is clicked */
+}
+
+body.dark-mode .submenu a {
+    color: white; /* Submenu item text color */
+    font-size: 14px;
+    padding: 5px;
+    display: block;
+}
+
+body.dark-mode .submenu a:hover {
+    background-color: #333; /* Hover effect for submenu items */
+    border-radius: 5px;
 }
 
 /* Toggle switch button container */
@@ -362,11 +492,11 @@ body.dark-mode .profile-details-top .job {
 
 /* When active (night mode on) */
 .toggle-switch.active {
-    background-color: #bb73f9;
+    background-color: #FB9F1D;
 }
 
 .toggle-switch.active {
-    background-color: #bb73f9;
+    background-color: #FB9F1D;
 }
 
 .sidebar.close .toggle-switch.active {
@@ -477,7 +607,7 @@ body.dark-mode .help-center {
 }
 
 body.dark-mode .sidebar .bottom-section {
-    background-color: #59586b;
+    background-color: #000000;
 }
 
 .sidebar.close .bottom-section {
@@ -641,7 +771,7 @@ section {
     min-width: 78px;
     text-align: center;
     line-height: 50px;
-    color: #A3A6AB;
+    color: #a3a6ab;
     font-size: 18px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -680,22 +810,22 @@ section {
 
 /* Pewarnaan pada text menu apabila user berada di menu tsb */
 .sidebar .nav-links li a.active .link_name {
-    color: #FB9F1D;
+    color: #fb9f1d;
     /* Active color */
 }
 
 .sidebar .nav-links li a.active i {
-    color: #FB9F1D;
+    color: #fb9f1d;
     /* Active color for icon */
 }
 
 .sub-menu a.active {
-    color: #FB9F1D;
+    color: #fb9f1d;
     /* Active color for submenu link text */
 }
 
 .sub-menu a.active i {
-    color: #FB9F1D;
+    color: #fb9f1d;
     /* Active color for submenu icon, if any */
 }
 
@@ -963,8 +1093,12 @@ section {
 }
 
 .mobile-header .title {
-    font-size: 18px;
+    font-size: 28px;
     font-weight: bold;
+    margin-left: -20px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
 }
 
 .mobile-header .profile {
@@ -976,6 +1110,7 @@ section {
     height: 35px;
     border-radius: 50%;
     margin-right: 10px;
+    margin-left: 10px;
 }
 /* Bottom Navigation Bar */
 .bottom-nav {
@@ -990,6 +1125,12 @@ section {
     z-index: 200;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
 }
+.active-btn {
+    border: 3px solid #000; /* Border hitam untuk tombol aktif */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Tambahkan bayangan */
+    color: white; /* Warna teks putih jika aktif */
+}
+
 
 .bottom-nav a {
     color: #6c757d;
@@ -1014,12 +1155,12 @@ section {
 
 /* Active link color */
 .bottom-nav a.active {
-    color: #FB9F1D;
+    color: #fb9f1d;
 }
 
 /* Hover effect */
 .bottom-nav a:hover {
-    color: #FB9F1D;
+    color: #fb9f1d;
 }
 
 /* Submenu that appears below its parent nav item */
@@ -1059,12 +1200,12 @@ section {
 }
 
 .submenu a:hover {
-    color: #FB9F1D;
+    color: #fb9f1d;
 }
 
 /* Active submenu link */
 .submenu a.active {
-    color: #FB9F1D;
+    color: #fb9f1d;
 }
 
 /* Adjust width of submenu to be narrower on smaller screens */
@@ -1099,7 +1240,7 @@ section {
 }
 
 .back-button:hover i {
-    color: #FB9F1D; /* Warna ikon saat di-hover */
+    color: #fb9f1d; /* Warna ikon saat di-hover */
 }
 
 .back-button i {
@@ -1114,7 +1255,6 @@ section {
 @media screen and (max-width: 768px) {
     .desktop,
     .sidebar,
-    .home-section,
     .home-content,
     .desktop-header {
         display: none;
@@ -1123,6 +1263,37 @@ section {
     div.header-container {
         display: none;
     }
+    body {
+        background-color: #f6f6f3;
+    }
+    .card-body {
+        width: 100%;
+    }
+    .home-section {
+        left: 0%;
+        margin-top: 50px;
+        margin-bottom: 50px;
+        padding: 0px;
+        width: 101%;
+    }
+    .sidebar.close ~ .home-section {
+
+        margin-top: 50px;
+        left: 0%;
+        margin-bottom: 50px;
+        padding: 0px;
+        width: 102%;
+    }
+
+    .table-responsives {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table {
+        width: 100%;
+        min-width: 600px; /* Tentukan lebar minimum tabel untuk mobile */
+    }
 }
 
 /* Adjust content for larger screens (desktop) */
@@ -1130,6 +1301,7 @@ section {
     .mobile-header,
     .bottom-nav,
     .mobile-content,
+    body.dark-mode .bottom-nav,
     div.header-container-mobile {
         display: none;
     }

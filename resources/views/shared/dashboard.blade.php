@@ -146,16 +146,21 @@
     }
 
     .card-total {
-        box-shadow:
-            rgb(182, 109, 255)-10px 0px,
-            /* First shadow */
-            rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    box-shadow:
+        rgb(182, 109, 255) -10px 0px, /* First shadow */
+        rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px; /* Second shadow */
 
-        height: 160px;
-        max-width: 380px;
-        border-radius: 20px;
-        position: relative;
-    }
+    height: 160px;
+    max-width: 380px;
+    border-radius: 20px;
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px; /* Memberikan padding sedikit agar grafik tidak terlalu menempel ke pinggir */
+    box-sizing: border-box;
+}
 
     .card-map {
         box-shadow:
@@ -346,6 +351,69 @@
         margin-right: 10px;
     }
 
+    .card-body .card-ticket {
+        padding: 2px 10px;
+    }
+
+    .ticket-title {
+        display: none;
+    }
+
+    .message-icon {
+        display: none;
+    }
+
+    .ticket-container {
+        position: relative;
+        transition: transform 0.2s;
+        box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+    }
+
+    .ticket-container:hover {
+        transform: translateY(-4px);
+    }
+
+    .progres-badge {
+        display: none;
+    }
+
+    .subject-ticket {
+        font-size: 14px;
+        font-weight: bold;
+        color: black;
+
+    }
+    .created-at {
+        font-size: 12px;
+    }
+
+    body.dark-mode .subject-ticket {
+        font-size: 14px;
+        font-weight: bold;
+        color: white;
+
+    }
+    .tickets-scroll {
+        max-height: 400px;
+        overflow-y: scroll;
+        /* Aktifkan scroll vertikal */
+        overflow-x: hidden;
+        /* Nonaktifkan scroll horizontal */
+    }
+
+    /* Menghilangkan tampilan scrollbar di Webkit (Chrome, Safari) */
+    .tickets-scroll::-webkit-scrollbar {
+        display: none;
+        /* Menyembunyikan scrollbar */
+    }
+
+    /* Untuk Firefox */
+    .tickets-scroll {
+        scrollbar-width: none;
+        /* Menyembunyikan scrollbar di Firefox */
+    }
+
+
     /* Mobile Styles */
     @media (max-width: 768px) {
 
@@ -394,7 +462,6 @@
         }
     }
 </style>
-
 <script>
     $(document).ready(function () {
         // Initialize DataTables
@@ -513,9 +580,6 @@
             });
         });
     </script>
-
-
-
     <style>
         /* Custom styles for the SweetAlert popup */
         .custom-alert-popup {
@@ -563,7 +627,6 @@
 
 <div class="container mt-1">
     <div class="row" style="margin-left: 0px;">
-        <!-- Summary Cards -->
         <!-- Card Asset Total -->
         <div class="col-lg-4 col-md-6 mb-2 assettotal-padding">
             <a href="{{ route('assets.total') }}" class="text-decoration-none">
@@ -584,7 +647,7 @@
             </a>
         </div>
 
-        <!-- Card Type -->
+        <!-- Card Asset Location -->
         <div class="col-lg-4 col-md-6 mb-2 assettotal-padding">
             <a href="{{ route('assets.location') }}" class="text-decoration-none">
                 <div
@@ -605,7 +668,7 @@
             </a>
         </div>
 
-        <!-- Card Asset Location -->
+        <!-- Card Asset Maintenance -->
         <div class="col-lg-4 col-md-6 mb-2 assettotal-padding">
             <a href="{{ route('assets.maintenance') }}" class="text-decoration-none">
                 <div
@@ -630,9 +693,9 @@
     <br />
     <div class="row">
         <!-- Column for Pie Charts (Left Side) -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="row">
-                <!-- Pie Chart for Types -->
+                <!-- Pie Chart for Total -->
                 <div class="col-md-12 mb-4">
                     <div class="card border-1 shadow-sm card-chart">
                         <div class="card-body">
@@ -646,8 +709,8 @@
             </div>
         </div>
 
-        <!-- Column for Summary Cards and Tables (Right Side) -->
-        <div class="col-md-6">
+        <!-- Column for Summary Cards and Tables (Center Side) -->
+        <div class="col-md-4">
             <!-- Summary Tables -->
             <div class="row">
                 <!-- Pie Chart for Locations -->
@@ -658,6 +721,27 @@
                             </h4>
                             <div class="chart-container">
                                 <canvas id="locationPieChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column for Summary Cards and Tables (Right Side) -->
+        <div class="col-md-4">
+            <!-- Summary Tables -->
+            <div class="row">
+                <!-- Ticket -->
+                <div class="col-md-12 mb-4">
+                    <div class="card border-1 shadow-sm card-chart">
+                        <div class="card-body">
+                            <a href="{{route('tickets.adminIndex')}}" style="color: inherit;">
+                                <h4 class="card-title text-center fw-bold display-6 mt-4 card-title-chart">Ticket</h4>
+                            </a>
+
+                            <div class="chart-container tickets-scroll">
+                                @livewire('admin-ticket-index')
                             </div>
                         </div>
                     </div>

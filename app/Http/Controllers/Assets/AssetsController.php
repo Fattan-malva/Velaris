@@ -15,19 +15,22 @@ use Illuminate\Support\Facades\Log;
 
 class AssetsController extends Controller
 {
+
+
     public function index()
     {
         $assetss = DB::table('assets')
-            ->join('merk', 'assets.merk', '=', 'merk.id') // Gabungkan dengan tabel merk untuk mendapatkan nama merk
-            ->leftJoin('customer', 'assets.name_holder', '=', 'customer.id') // Gabungkan dengan tabel customer untuk mendapatkan nama pemegang aset
-            ->leftJoin('depreciation', 'assets.code', '=', 'depreciation.asset_code') // Gabungkan dengan tabel depreciation untuk mendapatkan nilai depresiasi
+            ->join('merk', 'assets.merk', '=', 'merk.id')
+            ->leftJoin('customer', 'assets.name_holder', '=', 'customer.id')
+            ->leftJoin('depreciation', 'assets.code', '=', 'depreciation.asset_code')
             ->select(
-                'assets.id', // Select specific columns from the assets table
+                'assets.id',
                 'assets.code',
                 'assets.name_holder',
                 'assets.merk',
                 'assets.status',
                 'assets.serial_number',
+                'assets.asset_age',
                 'assets.category',
                 'assets.spesification',
                 'assets.next_maintenance',
@@ -35,40 +38,34 @@ class AssetsController extends Controller
                 'assets.entry_date',
                 'assets.scheduling_maintenance',
                 'assets.last_maintenance',
-                'assets.location', // add all columns you want to use
+                'assets.location',
                 'merk.name as merk_name',
                 'customer.name as customer_name',
                 DB::raw('
-                COALESCE(
-                
-                    (SELECT depreciation_price 
-                     FROM depreciation 
-                     WHERE depreciation.asset_code = assets.code 
-                     AND depreciation.date = CURDATE() 
-                     LIMIT 1), 
-
-                    (SELECT depreciation_price 
-                     FROM depreciation 
-                     WHERE depreciation.asset_code = assets.code 
-                     AND depreciation.date < CURDATE() 
-                     AND MONTH(depreciation.date) = MONTH(CURDATE())
-                     ORDER BY depreciation.date DESC 
-                     LIMIT 1),
-
-                    (SELECT depreciation_price 
-                     FROM depreciation 
-                     WHERE depreciation.asset_code = assets.code 
-                     AND depreciation.date > CURDATE() 
-                     AND MONTH(depreciation.date) = MONTH(CURDATE()) + 1
-                     ORDER BY depreciation.date ASC 
-                     LIMIT 1)
-                ) as depreciation_price
-            '), // Select depreciation for today, fallback to last month or next month
-                DB::raw('MAX(depreciation.date) as depreciation_date') // Ambil tanggal depresiasi terbaru
+                    COALESCE(
+                        (SELECT depreciation_price 
+                         FROM depreciation 
+                         WHERE depreciation.asset_code = assets.code 
+                         AND depreciation.date = CURDATE() 
+                         LIMIT 1), 
+                         
+                        (SELECT depreciation_price 
+                         FROM depreciation 
+                         WHERE depreciation.asset_code = assets.code 
+                         AND depreciation.date < CURDATE() 
+                         ORDER BY depreciation.date DESC 
+                         LIMIT 1),
+                         
+                        (SELECT depreciation_price 
+                         FROM depreciation 
+                         WHERE depreciation.asset_code = assets.code 
+                         AND depreciation.date > CURDATE() 
+                         ORDER BY depreciation.date ASC 
+                         LIMIT 1)
+                    ) as depreciation_price'
+                ),
+                DB::raw('MAX(depreciation.date) as depreciation_date')
             )
-            ->where(function ($query) {
-                $query->where('depreciation.date', '<=', DB::raw('CURDATE()'));
-            })
             ->groupBy(
                 'assets.id',
                 'assets.code',
@@ -76,6 +73,7 @@ class AssetsController extends Controller
                 'assets.merk',
                 'assets.status',
                 'assets.serial_number',
+                'assets.asset_age',
                 'assets.next_maintenance',
                 'assets.spesification',
                 'assets.condition',
@@ -83,14 +81,29 @@ class AssetsController extends Controller
                 'assets.scheduling_maintenance',
                 'assets.last_maintenance',
                 'assets.entry_date',
-                'assets.location', // Include all assets columns
+                'assets.location',
                 'merk.name',
-                'customer.name' // Include merk and customer columns in GROUP BY
+                'customer.name'
             )
             ->get();
-
+    
+        // Add calculated time remaining in seconds for JavaScript
+        $assetss = $assetss->map(function ($asset) {
+            // Calculate how much time has passed since entry date
+            $entryDate = Carbon::parse($asset->entry_date);
+            $now = Carbon::now();
+            $timeDifferenceInSeconds = $entryDate->diffInSeconds($now);
+    
+            // Store the computed time difference and whether it is expired
+            $asset->time_remaining_seconds = $timeDifferenceInSeconds;
+            $asset->is_expired = $now->greaterThan($entryDate->copy()->addYears($asset->asset_age));
+    
+            return $asset;
+        });
+    
         return view('assets.index', compact('assetss'));
     }
+    
     public function getDepreciation($asset_code)
     {
         $depreciations = DB::table('depreciation')
@@ -116,7 +129,7 @@ class AssetsController extends Controller
             'code' => 'required|string|max:255|unique:assets,code',
             'category' => 'required|string|max:255',
             'merk' => 'required|exists:merk,id',
-            'serial_number' => 'required|string|max:255',
+            'serial_number' => 'required|string|max:255|unique:assets,serial_number',
             'entry_date' => 'required|date',
             'scheduling_maintenance_value' => 'required|numeric',
             'scheduling_maintenance_unit' => 'required|string|in:Weeks,Months,Years',
@@ -124,22 +137,22 @@ class AssetsController extends Controller
             'condition' => 'required|in:Good,Exception,Bad,New',
             'asset_age_value' => 'required|numeric',
             'asset_age_unit' => 'required|string|in:Weeks,Months,Years',
-            'starting_price' => 'required|numeric',
+            'starting_price' => 'required',
             'documentation' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048'
         ]);
-
+        // Remove dots from starting_price to store as decimal
+       
+   
         // Convert entry date to standard format
         $formattedDate = Carbon::parse($request->entry_date)->format('Y-m-d');
-
         // Calculate next maintenance date
         $maintenanceInterval = $request->scheduling_maintenance_value;
         $maintenanceUnit = $request->scheduling_maintenance_unit;
         $assetAgeInterval = $request->asset_age_value;
         $assetAgeUnit = $request->asset_age_unit;
-
+    
         // Initialize next maintenance date
         $nextMaintenanceDate = null;
-
         switch ($maintenanceUnit) {
             case 'Weeks':
                 $nextMaintenanceDate = Carbon::parse($formattedDate)->addDays($maintenanceInterval * 7);
@@ -153,9 +166,10 @@ class AssetsController extends Controller
             default:
                 break;
         }
-
+    
         $nextMaintenanceDateFormatted = $nextMaintenanceDate ? $nextMaintenanceDate->format('Y-m-d') : null;
-
+        $startingPrice = str_replace('.', '', $request->starting_price);
+        // Create the asset record
         $assets = Assets::create([
             'category' => $request->category,
             'merk' => $request->merk,
@@ -164,23 +178,24 @@ class AssetsController extends Controller
             'entry_date' => $formattedDate,
             'scheduling_maintenance' => $maintenanceInterval . ' ' . $maintenanceUnit,
             'asset_age' => $assetAgeInterval . ' ' . $assetAgeUnit,
-            'starting_price' => $request->starting_price,
+            'starting_price' => $startingPrice,
             'next_maintenance' => $nextMaintenanceDateFormatted,
             'spesification' => $request->spesification,
             'condition' => $request->condition,
             'note_maintenance' => '',
         ]);
-
         
 
+    
+        // Documentation upload
         $documentationPath = null;
         if ($request->hasFile('documentation')) {
             $file = $request->file('documentation');
             $documentationPath = 'documentation/' . time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('documentation'), $documentationPath);
         }
-
-
+    
+        // Asset history creation
         AssetsHistory::create([
             'assets_id' => $assets->id,
             'action' => 'INSERT',
@@ -193,31 +208,28 @@ class AssetsController extends Controller
             'condition' => $assets->condition,
             'documentation' => $documentationPath,
         ]);
-        
-
-        $totalMonths = ($assetAgeUnit === 'Years') ? ($assetAgeInterval * 12) :
-            (($assetAgeUnit === 'Months') ? $assetAgeInterval : 0);
-
-
-
-        $monthlyDepreciation = $totalMonths > 0 ? $request->starting_price / $totalMonths : 0;
-        $depreciationPrice = $request->starting_price;
+    
+        // Calculate depreciation
+        $totalMonths = ($assetAgeUnit === 'Years') ? ($assetAgeInterval * 12) : 
+                       (($assetAgeUnit === 'Months') ? $assetAgeInterval : 0);
+        $monthlyDepreciation = $totalMonths > 0 ? $startingPrice / $totalMonths : 0;
+        $depreciationPrice = $startingPrice;
         $depreciationDate = Carbon::parse($formattedDate);
-
+    
         while ($depreciationPrice > 0) {
             Depreciation::create([
                 'asset_code' => $assets->code,
                 'date' => $depreciationDate->format('Y-m-d'),
                 'depreciation_price' => max(0, $depreciationPrice)
             ]);
-
+    
             $depreciationPrice -= $monthlyDepreciation;
             $depreciationDate->addMonth();
         }
-
-    
+      
         return redirect()->route('assets.add-asset')->with('success', 'Asset created successfully.');
     }
+    
 
 
 

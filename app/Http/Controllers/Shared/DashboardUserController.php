@@ -29,6 +29,7 @@ class DashboardUserController extends Controller
             ->join('assets', 'transactions.asset_code', '=', 'assets.id')
             ->select(
                 'transactions.*',
+                'assets.*',
                 'merk.name as merk_name',
                 'customer.name as customer_name',
                 'assets.code as tagging'

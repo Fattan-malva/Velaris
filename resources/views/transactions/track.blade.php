@@ -57,7 +57,6 @@
     </div>
 
     <div class="card">
-        <!-- Button Section -->
         <div class="card-body">
             <h2>Tracking Asset: {{ $asset->jenis_aset }} ({{ $asset->serial_number }})</h2>
             <div id="map" class="map-container"></div>
@@ -70,6 +69,12 @@
                 </a>
             </div>
         </div>
+
+        <!-- Fullscreen Map Modal -->
+        <div id="fullscreen-map" class="fullscreen-map">
+            <div id="map-fullscreen"></div>
+        </div>
+
     </div>
 </div>
 
@@ -82,31 +87,102 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Ensure the asset latitude and longitude are set
-        var latitude = {{ $asset->latitude }};
-        var longitude = {{ $asset->longitude }};
+   document.addEventListener('DOMContentLoaded', function () {
+    // Ensure the asset latitude and longitude are set
+    var latitude = {{ $asset->latitude }};
+    var longitude = {{ $asset->longitude }};
 
-        // Initialize the map centered on the asset's location
-        var map = L.map('map').setView([latitude, longitude], 15);
+    // Initialize the map for the regular view
+    var map = L.map('map').setView([latitude, longitude], 15);
 
-        // Add tile layer from OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+    // Add tile layer from OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
-        // Add a marker to the map at the asset's location
-        var marker = L.marker([latitude, longitude]).addTo(map)
-            .bindPopup('{{ $asset->jenis_aset }} - {{ $asset->serial_number }}')
-            .openPopup();
+    // Add a marker to the map at the asset's location
+    var marker = L.marker([latitude, longitude]).addTo(map)
+        .bindPopup('{{ $asset->jenis_aset }} - {{ $asset->serial_number }}')
+        .openPopup();
+
+    // Fullscreen map setup
+    var fullscreenMapContainer = document.getElementById('fullscreen-map');
+    var mapFullscreen = L.map('map-fullscreen').setView([latitude, longitude], 15);
+
+    // Add the tile layer for fullscreen map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mapFullscreen);
+
+    // Add a marker to the fullscreen map
+    var fullscreenMarker = L.marker([latitude, longitude]).addTo(mapFullscreen)
+        .bindPopup('{{ $asset->jenis_aset }} - {{ $asset->serial_number }}')
+        .openPopup();
+
+    // Function to refresh map size (important for fullscreen)
+    function resizeMap() {
+        map.invalidateSize();
+        mapFullscreen.invalidateSize();
+    }
+
+    // Show fullscreen map when clicking the regular map
+    document.getElementById('map').addEventListener('click', function () {
+        fullscreenMapContainer.style.display = 'block';
+        document.body.classList.add('no-scroll'); // Disable scrolling
+        mapFullscreen.setView([latitude, longitude], 15); // Make sure the fullscreen map is centered on the asset location
+
+        // Wait for the map container to be displayed before resizing
+        setTimeout(resizeMap, 100);
     });
+
+    // Close fullscreen map on ESC key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            fullscreenMapContainer.style.display = 'none';
+            document.body.classList.remove('no-scroll'); // Re-enable scrolling
+        }
+    });
+});
+
+
 </script>
 
 @endsection
 
 <style>
+  /* Fullscreen Map Container */
+.fullscreen-map {
+    display: none; /* Default hidden */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+}
+
+/* Regular Map */
+#map {
+    width: 100%;
+    height: 400px; /* Adjust based on your layout */
+}
+
+/* Fullscreen Map */
+#map-fullscreen {
+    width: 100%;
+    height: 100%;
+}
+
+/* Hide scrollbars */
+body.no-scroll {
+    overflow: hidden;
+}
+
+
+
     .btn-track {
-        background-color: #CB95E1;
+        background-color: #F89720;
         color: #fff;
         font-weight: 500;
         padding: 10px;
@@ -125,6 +201,8 @@
         margin-top: 20px;
         /* Space between header and map */
         justify-content: center;
+        z-index: 0;
+        position: relative;
     }
 
     /* Header Styles */

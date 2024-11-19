@@ -137,14 +137,18 @@
                         <label for="starting_price" class="form-label">Price</label>
                         <div class="input-group">
                             <span class="input-group-text">Rp</span>
-                            <input type="number" class="form-control @error('starting_price') is-invalid @enderror"
+                            <input type="text" class="form-control @error('starting_price') is-invalid @enderror"
                                 id="starting_price" name="starting_price" value="{{ old('starting_price') }}"
-                                placeholder="Enter price" onkeydown="return event.key !== 'e' && event.key !== '-'">
+                                placeholder="Enter price" oninput="formatPrice(this)"
+                                onkeydown="return onlyNumberKey(event)">
                             @error('starting_price')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
+
+
+
 
 
                     <div class="col-md-6 form-group">
@@ -236,6 +240,26 @@
             this.submit(); // Submit the form after the loading alert
         }, 1500);
     });
+    function onlyNumberKey(evt) {
+        let charCode = evt.which ? evt.which : evt.keyCode;
+        // Izinkan hanya angka (0-9) dan tombol pengontrol (backspace, delete, dll.)
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+    function formatPrice(input) {
+        // Hapus semua titik dari nilai input
+        let value = input.value.replace(/\./g, '');
+
+        // Tambahkan titik setiap tiga digit
+        let formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        // Perbarui nilai input dengan angka yang sudah diformat
+        input.value = formattedValue;
+    }
+
 </script>
 <style>
     .card {

@@ -55,45 +55,50 @@
                             <label for="code" class="form-label">Select Assets to Maintenance</label>
                             <select class="form-control select-dark" id="code" name="ids[]" multiple="multiple" required>
                                 @foreach ($assetss as $assets)
-                                                                                    @php
-                                                                                        // Get the entry date and last maintenance date, defaulting to entry date if last maintenance is null
-                                                                                        $tanggalMaintenance = $assets->last_maintenance ?? $assets->entry_date;
-
-                                                                                        // Parse the scheduling maintenance value into interval and unit
-                                                                                        [$intervalValue, $intervalUnit] = explode(
-                                                                                            ' ',
-                                                                                            $assets->scheduling_maintenance,
-                                                                                        );
-
-                                                                                        // Calculate the next maintenance date based on interval and unit
-                                                                                        $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance);
-                                                                                        switch (strtolower($intervalUnit)) {
-                                                                                            case 'weeks':
-                                                                                                $nextMaintenanceDate->addWeeks($intervalValue);
-                                                                                                break;
-                                                                                            case 'months':
-                                                                                                $nextMaintenanceDate->addMonths($intervalValue);
-                                                                                                break;
-                                                                                            case 'years':
-                                                                                                $nextMaintenanceDate->addYears($intervalValue);
-                                                                                                break;
-                                                                                            default:
-                                                                                                // If interval unit is invalid, skip the calculation
-                                                                                                $nextMaintenanceDate = null;
-                                                                                                break;
-                                                                                        }
-
-                                                                                        // Determine if maintenance is due
-                                                                                        $maintenanceDue =
-                                                                                            $nextMaintenanceDate &&
-                                                                                            \Carbon\Carbon::now()->greaterThanOrEqualTo($nextMaintenanceDate);
-                                                                                    @endphp
-
-                                                                                    @if ($maintenanceDue)
-                                                                                        <option value="{{ $assets->id }}">{{ $assets->code }}</option>
-                                                                                    @endif
+                                    <option value="{{ $assets->id }}">{{ $assets->code }}</option>
                                 @endforeach
                             </select>
+                            <!-- <select class="form-control select-dark" id="code" name="ids[]" multiple="multiple" required>
+                                    @foreach ($assetss as $assets)
+                                        @php
+                                            // Get the entry date and last maintenance date, defaulting to entry date if last maintenance is null
+                                            $tanggalMaintenance = $assets->last_maintenance ?? $assets->entry_date;
+
+                                            // Parse the scheduling maintenance value into interval and unit
+                                            [$intervalValue, $intervalUnit] = explode(
+                                                ' ',
+                                                $assets->scheduling_maintenance,
+                                            );
+
+                                            // Calculate the next maintenance date based on interval and unit
+                                            $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance);
+                                            switch (strtolower($intervalUnit)) {
+                                                case 'weeks':
+                                                    $nextMaintenanceDate->addWeeks($intervalValue);
+                                                    break;
+                                                case 'months':
+                                                    $nextMaintenanceDate->addMonths($intervalValue);
+                                                    break;
+                                                case 'years':
+                                                    $nextMaintenanceDate->addYears($intervalValue);
+                                                    break;
+                                                default:
+                                                    // If interval unit is invalid, skip the calculation
+                                                    $nextMaintenanceDate = null;
+                                                    break;
+                                            }
+
+                                            // Determine if maintenance is due
+                                            $maintenanceDue =
+                                                $nextMaintenanceDate &&
+                                                \Carbon\Carbon::now()->greaterThanOrEqualTo($nextMaintenanceDate);
+                                        @endphp
+
+                                        @if ($maintenanceDue)
+                                            <option value="{{ $assets->id }}">{{ $assets->code }}</option>
+                                        @endif
+                                    @endforeach
+                                </select> -->
                         </div>
 
                         <div class="col-md-6 form-group">

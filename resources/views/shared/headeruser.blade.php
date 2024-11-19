@@ -1,31 +1,36 @@
 <header id="header" class="fixed-top d-flex align-items-center">
 
-    <div class="container d-flex align-items-center justify-content-between">
-        <!-- Logo Image -->
-        <img src="{{ asset('assets/img/velaris.png') }}" alt="GSI Logo" class="logo-image">
+    <div class="containe-navbar d-flex align-items-center justify-content-between">
+        <!-- Back Button for Mobile Only -->
+        <button class="back-button d-md-none" onclick="window.history.back()">
+            <i class="fa-solid fa-circle-chevron-left"></i>
+        </button>
 
+        <!-- Logo Image -->
+        <img src="{{ asset('assets/img/assetslogo.png') }}" alt="GSI Logo" class="logo-image">
+
+        <!-- Logo Text for Desktop -->
         <h1 class="logo-deks me-auto d-none d-md-block">
             <a href="{{ route('shared.homeUser') }}" class="text-decoration-none text-dark title-logo">
-                eLaris
+                ssets
             </a>
         </h1>
-
 
         <!-- Logo Text for Mobile -->
         <h1 class="logo-mobile me-auto d-block d-md-none">
             <a href="{{ route('shared.homeUser') }}" class="text-decoration-none text-dark title-logo">
-                eLaris
+                ssets
             </a>
         </h1>
 
         <!-- User Profile Icon -->
         <li class="nav-item d-md-none">
-            <a href="#" class="nav-link user-prof" data-bs-toggle="modal" data-bs-target="#uniqueProfileModal">
+            <a href="#" class="nav-link user-prof" data-bs-toggle="modal" data-bs-target="#uniqueProfileModal"
+                style="margin-left:200px;">
                 <img src="{{ asset('assets/img/admin.png') }}" alt="Profile Icon" class="profile-icon">
                 <span class="d-none d-md-inline ms-2">{{ session('user_name') }}</span>
             </a>
         </li>
-
 
         <!-- Navbar Toggler for Mobile (Remove or hide for mobile) -->
         <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="offcanvas"
@@ -33,25 +38,38 @@
             aria-label="Toggle navigation" style="display: none;">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- Navigation for Desktop -->
-        <nav id="navbarMenu" class="navbar d-flex align-items-center d-none d-md-flex">
+
+        <nav id="navbarMenu" class="navbar d-flex align-items-center d-none d-md-flex justify-content-between"
+            style="margin-left:1200px;">
+            <!-- Left Side: Logo (Optional if needed) -->
             <ul class="navbar-nav d-flex align-items-center">
-                <!-- Add Desktop Nav Items Here -->
-            </ul>
-            <ul class="navbar-nav d-flex align-items-center">
+
+                <!-- Ticket -->
                 <li class="nav-item">
-                    <!-- User Profile Icon -->
+                    <a href="#" class="nav-link" data-bs-toggle="offcanvas" aria-controls="ticketOffcanvas"
+                        data-bs-target="#ticketOffcanvas">
+                        <i class="fa-solid fa-envelope-open-text" style="font-size: 25px; color: #6c757d;"></i>
+                    </a>
+                </li>
+
+            </ul>
+
+            <!-- Right Side: User Profile and Ticket -->
+            <ul class="navbar-nav d-flex align-items-center">
+                <!-- User Profile -->
+                <li class="nav-item">
                     <a href="#" class="nav-link badge badge-custom" data-bs-toggle="modal"
                         data-bs-target="#uniqueProfileModal"
                         style="font-size: 0.8rem; padding: 0.5em 1em; color: white; border-radius: 1.5em; background-color: rgba(33, 37, 41, 0.5);">
                         <img src="{{ asset('assets/img/admin.png') }}" alt="Profile Icon" class="profile-icon">
                         <span class="d-none d-md-inline ms-2">{{ session('user_name') }}</span>
                     </a>
-
                 </li>
             </ul>
         </nav>
+
     </div>
+
 
     <!-- Offcanvas Navigation for Mobile -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
@@ -87,7 +105,9 @@
                     <i class="fa-solid fa-user" style="font-size: 25px;"></i>
                     <span class="title-nav-bottom">Profile</span>
                 </a>
-
+            </li>
+            <li class="nav-item text-center">
+                @livewire('bottom-bar')
             </li>
             <li class="nav-item text-center">
                 <a class="nav-link" href="{{ route('logout') }}" data-page="logout" id="logout-icon">
@@ -118,10 +138,11 @@
                     class="img-fluid rounded-circle profile-picture" style="margin-bottom: -80px; margin-top: 20px;">
             </div>
             <div class="text-end mt-2" style="margin-right: 30px;">
-                <a class="btn" href="{{ route('customer.editUser', session('user_id')) }}" style="background-color: #4fb0f1; border-radius:40px;">View Profile
+                <a class="btn" href="{{ route('customer.editUser', session('user_id')) }}"
+                    style="background-color: #4fb0f1; border-radius:40px;">View Profile
                 </a>
             </div>
-            
+
             <div class="modal-body">
                 <!-- Profile Content -->
                 <div class="text-left mt-2 mb-2">
@@ -160,7 +181,7 @@
                 <a class="btn-logout" id="logout-icon-modal">
                     <i class='bx bx-log-out' style="cursor:pointer;"></i> Logout
                 </a>
-                
+
                 <!-- Logout Form -->
                 <form id="logout-form-modal" action="{{ route('logout') }}" method="POST" class="d-none">
                     @csrf
@@ -173,6 +194,79 @@
 
 
 <style>
+    /* General container adjustments */
+    .container-navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Center content (logo and back button) for mobile */
+    @media (max-width: 767px) {
+        .container {
+            justify-content: center;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .logo-image,
+        .logo-mobile {
+            display: block;
+            text-align: center;
+        }
+
+        .logo-deks {
+            display: none;
+        }
+
+        .logo-mobile {
+            margin-top: 10px;
+            ;
+            margin-left: -20px;
+        }
+
+        .user-prof {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .user-prof .profile-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+    }
+
+    /* Hide back button for desktop */
+    @media (min-width: 768px) {
+        .back-button {
+            display: none;
+        }
+    }
+
+    /* Style improvements for the back button */
+    .back-button i {
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .back-button:hover i {
+        transform: scale(1.1);
+    }
+
     .profile-info {
         display: flex;
         flex-direction: column;
@@ -234,6 +328,7 @@
     .logo-deks {
         font-size: 35px;
         margin-top: 10px;
+        margin-left: -20px;
     }
 
     /* Navbar styles */
@@ -243,7 +338,8 @@
         width: 100%;
         justify-content: space-between;
     }
-/* 
+
+    /* 
     .navbar ul {
         list-style: none;
         padding: 0;
@@ -413,7 +509,7 @@
         /* margin-left: auto; */
         margin-right: auto;
     }
-    
+
     .btn {
         font-size: 16px;
         font-weight: bold;
@@ -582,20 +678,6 @@
             margin-left: 5px;
         }
 
-        .logo-image {
-            /* margin-left: 65px; */
-            max-height: 70px;
-            width: auto;
-            display: inline-block;
-            margin-left: 0;
-        }
-
-        .logo-mobile {
-            font-size: 2rem;
-            /* Adjust size for mobile */
-            margin-top: 15px;
-            /* Add some space between logo and text */
-        }
 
         .user-prof {
             display: flex;
@@ -623,22 +705,22 @@
         }
 
         .navbar-nav .nav-link:hover {
-            color: #B66DFF;
+            color: #FDCC08;
             /* Teks menjadi ungu saat hover */
         }
 
         .navbar-nav .nav-link:hover i {
-            color: #B66DFF;
+            color: #FDCC08;
             /* Ikon menjadi putih saat hover */
         }
 
         /* Active state */
         .navbar-nav .nav-link.active span {
-            color: #B66DFF;
+            color: #FDCC08;
         }
 
         .navbar-nav .nav-link.active i {
-            color: #B66DFF;
+            color: #FDCC08;
         }
 
         .edit-profile {
@@ -727,7 +809,7 @@
                 });
             }
         }).then((result) => {
-            if (result.isConfirmed) {  
+            if (result.isConfirmed) {
                 // If the user confirms, submit the logout form
                 document.getElementById('logout-form').submit();
             }
@@ -755,7 +837,7 @@
                 });
             }
         }).then((result) => {
-            if (result.isConfirmed) {  
+            if (result.isConfirmed) {
                 // If the user confirms, submit the logout form
                 document.getElementById('logout-form-modal').submit();
             }

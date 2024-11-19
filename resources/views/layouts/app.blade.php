@@ -8,8 +8,8 @@
     <title>@yield('title', 'VeLaris')</title>
 
     <link rel="icon" href="{{ asset('assets/img/assetslogo.png') }}" type="image/png">
-
-
+    <!-- LIVE WIRE -->
+    @livewireStyles
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -216,6 +216,11 @@
 </head>
 
 <body>
+    <!-- LIVE WIRE -->
+    @livewireScripts
+    @php
+        $unreadTicketsCount = \App\Models\Ticket::where('is_read', false)->count();
+    @endphp
     @php
         $userRole = session('user_role');
     @endphp
@@ -489,23 +494,76 @@
                     }
                 }
             };
+            // Mengurutkan data berdasarkan assetCounts (dari yang terkecil ke terbesar)
+            const sortedData = assetCounts
+                .map((value, index) => ({ value, label: assetLabels[index] }))  // Gabungkan label dan data
+                .sort((a, b) => a.value - b.value);  // Urutkan berdasarkan value (assetCounts)
 
-            // Initialize asset pie chart
+            // Pisahkan data yang sudah diurutkan kembali menjadi dua array terpisah
+            const sortedLabels = sortedData.map(item => item.label);
+            const sortedCounts = sortedData.map(item => item.value);
+
+            // Membuat array dataset untuk setiap bar
+            const datasets = sortedLabels.map((label, index) => ({
+                label: label, // Label untuk setiap bar
+                data: [sortedCounts[index]], // Data untuk setiap bar
+                backgroundColor: [
+                    ['#1BCFB4', '#B66DFF', '#FFE700', '#4CAF50', '#00C9A7', '#36A2EB', '#7B3F61', '#FF66CC', '#3B9CFF', '#4D4D4D'][index]
+                ], // Warna untuk setiap bar
+                borderWidth: 1, // Border width untuk setiap bar
+            }));
+
+            // Membuat Bar Chart menggunakan dataset yang dipecah per label
             const ctxAsset = document.getElementById('assetPieChart').getContext('2d');
             new Chart(ctxAsset, {
-                type: 'doughnut',
+                type: 'bar', // Mengubah tipe chart menjadi bar
                 data: {
-                    labels: assetLabels,
-                    datasets: [{
-                        data: assetCounts,
-                        backgroundColor: ['#b66dff', '#ffdc3b', '#1bcfb4', '#4BC0C0', '#9966FF'],
-                    }]
+                    labels: [''], // Label sumbu X kosong karena dataset memiliki label sendiri
+                    datasets: datasets // Memasukkan dataset yang sudah dibuat
                 },
                 options: {
-                    cutout: '60%', // Tentukan ukuran lubang di tengah
-                    ...commonOptions  // Tambahkan opsi dari variabel commonOptions
+                    responsive: true, // Membuat chart responsif
+                    plugins: {
+                        legend: {
+                            display: true, // Menampilkan legend
+                        },
+                        title: {
+                            display: true, // Menampilkan judul chart
+                            text: 'Asset Counts', // Judul chart
+                            font: {
+                                size: 18, // Ukuran font untuk judul
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true, // Memulai sumbu X dari 0
+                            ticks: {
+                                display: false, // Menyembunyikan label pada sumbu X
+                            }
+                        },
+                        y: {
+                            beginAtZero: true, // Memulai sumbu Y dari 0
+                            ticks: {
+                                stepSize: 2, // Menambahkan lebih banyak angka pada sumbu Y
+                                max: Math.max(...sortedCounts) + 2, // Memperluas batas atas sumbu Y sedikit
+                                font: {
+                                    size: 12, // Ukuran font untuk angka pada sumbu Y
+                                }
+                            },
+                            grid: {
+                                drawBorder: true, // Menampilkan garis grid di sumbu Y
+                                color: '#ddd', // Warna grid
+                            }
+                        }
+                    },
+                    ...commonOptions // Menambahkan opsi dari variabel commonOptions jika diperlukan
                 }
             });
+
+
+
 
             // Initialize location pie chart with formatted labels
             const ctxLocation = document.getElementById('locationPieChart').getContext('2d');
@@ -515,7 +573,19 @@
                     labels: formattedLocationLabels, // Use formatted labels
                     datasets: [{
                         data: locationCounts,
-                        backgroundColor: ['#b66dff', '#ffdc3b', '#1bcfb4', '#4BC0C0', '#9966FF'],
+                        backgroundColor: [
+                            '#B66DFF',
+                            '#1BCFB4',
+                            '#FFE700',
+                            '#B66DFF',
+                            '#36A2EB',
+                            '#7B3F61',
+                            '#00C9A7',
+                            '#FF66CC',
+                            '#3B9CFF',
+                            '#4D4D4D'
+                        ],
+                        borderWidth: 0
                     }]
                 },
                 options: commonOptions

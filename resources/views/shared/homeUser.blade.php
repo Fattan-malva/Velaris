@@ -1,10 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Home')
-
 @section('content')
 <link rel="icon" href="{{ asset('assets/img/velaris.png') }}" type="image/png">
 <main id="main">
-    <!-- ======= User Assets Section ======= -->
     <section id="user-transactions" class="user-transactions">
         <br>
         <br>
@@ -15,8 +13,9 @@
         <br>
         <div class="container">
             <div class="row">
-<div class="col-md-4 mb-4">
-<div class="card" style="box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;">
+                <div class="col-md-4 mb-4">
+                    
+                    <div class="card" style="box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;">
                         <div class="card-header text-white" style="background-color: #fed713; text-align: center">
                             <h2 style="font-weight: bold; margin-top:5px">Waiting Approval</h2>
                         </div>
@@ -27,7 +26,6 @@
                                 <input type="checkbox" id="selectAll" class="form-check-input" style="margin-top: 0px;">
                             </div>
                         </div>
-
                         <div class="card-body">
                             @if ($pendingAssets->isEmpty())
                                 <p class="text-center">No transactions waiting for approval.</p>
@@ -45,14 +43,10 @@
                                                                 alt="Pending Asset Icon" class="me-3"
                                                                 style="width: 80px; height: 80px;">
                                                             <p class="card-text flex-grow-1">
-                                                                <strong>Asset Tag:</strong> {{ $asset->tagging }}<br>
-                                                                <strong>Jenis Aset:</strong> {{ $asset->category_asset }}<br>
+                                                                <strong>Category:</strong> {{ $asset->category_asset }}<br>
+                                                                <strong>Asset Code:</strong> {{ $asset->tagging }}<br>
                                                                 <strong>Merk:</strong> {{ $asset->merk_name }}
                                                             </p>
-                                                            <!-- <span
-                                                                class="badge position-absolute top-0" style="background-color: rgba({{ $asset->type_transactions == 'Handover' ? '27,207,180' : '' }} {{ $asset->type_transactions == 'Mutasi' ? '254,215,19' : '' }} {{ $asset->type_transactions == 'Return' ? '254,124,150' : '' }});  margin-left: {{ $asset->type_transactions == 'Return' ? '260px' : '245px' }}; margin-top: 10px;">
-                                                                {{ $asset->type_transactions }}
-                                                            </span> -->
                                                             <div class="form-check ms-auto position-absolute top-0 end-0 m-2 " style="margin-left: auto;">
                                                             <span
                                                                 class="badge" style="background-color: rgba({{ $asset->type_transactions == 'Handover' ? '27,207,180' : '' }} {{ $asset->type_transactions == 'Mutasi' ? '254,215,19' : '' }} {{ $asset->type_transactions == 'Return' ? '254,124,150' : '' }}); margin-left: {{ $asset->type_transactions == 'Return' ? '-90px' : '-105px' }};">
@@ -79,12 +73,11 @@
                                     </div>
                                     <input type="hidden" name="action" id="action" value="">
                                 </form>
+                                
                             @endif
                         </div>
                     </div>
-
-</div>
-
+            </div>
                 <!-- Assets Section -->
                 <div class="col-md-8">
                     <!-- Section for Approved Assets -->
@@ -96,142 +89,173 @@
                             @if ($transactions->isEmpty())
                                 <p class="text-center">No approved transactions found.</p>
                             @else
-
-                                                    <div class="row justify-content-center">
-                                                        @foreach ($transactions as $index => $asset)
-                                                                                    <div class="col-md-5 mb-3">
-                                                                                        <div class="card"
-                                                                                            style="background-color: rgb(218,181,255); border: none;">
-                                                                                            <div class="card-body">
-                                                                                                <div class="d-flex align-items-center mb-4">
-                                                                                                    @php
-                                                                                                        // Determine the image file based on the category_asset
-                                                                                                        $iconMap = [
-                                                                                                            'PC' => 'pc.png',
-                                                                                                            'Tablet' => 'tablet.png',
-                                                                                                            'Laptop' => 'laptop.png',
-                                                                                                            // Add more mappings as needed
-                                                                                                        ];
-                                                                                                        $iconFile = isset($iconMap[$asset->category_asset]) ? $iconMap[$asset->category_asset] : 'default.png'; // Fallback to default icon
-                                                                                                    @endphp
-                                                                                                    <img src="{{ asset('assets/img/' . $iconFile) }}" alt="Asset Icon"
-                                                                                                        class="me-3" style="width: 60px; height: 60px;">
-                                                                                                    <p class="card-text">
-                                                                                                        <strong>Asset Tag:</strong> {{ $asset->tagging }}<br>
-                                                                                                        <strong>Jenis Aset:</strong> {{ $asset->category_asset }}<br>
-                                                                                                        <strong>Merk:</strong> {{ $asset->merk_name }}<br>
-                                                                                                    </p>
-                                                                                                </div>
-
-                                                                                                <div class="action-buttons d-flex justify-content-end">
-                                                                                                <button class="btn btn-sm" style="background-color: #4FB0F1; color: #fff; font-weight: 500;" data-bs-toggle="modal"
-                                                                                                    data-bs-target="#detailModal{{ $asset->id }}" title="View Details">
-                                                                                                    <i class="bi bi-file-earmark-text"></i> Detail
-                                                                                                </button>
-                                                                                            </div>
-
-                                                                                            </div>
-                                                                                            <!-- Modal -->
-                                                                                            <div class="modal fade" id="detailModal{{ $asset->id }}" tabindex="-1"
-                                                                                                aria-labelledby="detailModalLabel{{ $asset->id }}" aria-hidden="true">
-                                                                                                <div class="modal-dialog modal-lg">
-                                                                                                    <div class="modal-content">
-                                                                                                        <div class="modal-header">
-                                                                                                            <h4 class="modal-title text-center flex-grow-1" style="font-weight: 600;" id="detailModalLabel{{ $asset->id }}">
-                                                                                                                Asset Details</h4>
-                                                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                                                                aria-label="Close"></button>
-                                                                                                        </div>
-                                                                                                        <div class="modal-body">
-                                                                                                            <div class="row">
-                                                                                                            <div class="col-md-6">
-    <table class="table" style="border-collapse: collapse; border: none;">
-        <tbody>
-            <tr>
-                <th style="border: none; font-size: 16px; width: 120px;">Asset Code :</th>
-                <td style="border: none;">{{ $asset->tagging }}</td>
-            </tr>
-            <tr>
-                <th style="border: none; font-size: 16px; width: 110px;">Jenis Aset :</th>
-                <td style="border: none;">{{ $asset->category_asset }}</td>
-            </tr>
-            <tr>
-                <th style="border: none; font-size: 16px; width: 110px;">Merk :</th>
-                <td style="border: none;">{{ $asset->merk_name }}</td>
-            </tr>
-            <tr>
-                <th style="border: none; font-size: 16px; width: 110px;">Location :</th>
-                <td style="border: none;">{{ $asset->location }}</td>
-            </tr>
-            <tr>
-                <th style="border: none; font-size: 16px; width: 110px;">Status :</th>
-                <td style="border: none;">{{ $asset->approval_status }}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div class="col-md-6">
-    <table class="table" style="border-collapse: collapse; border: none;">
-        <tbody>
-            <tr>
-                <th style="border: none; font-size: 16px; width: 135px;">Serial Number :</th>
-                <td style="border: none;">{{ $asset->serial_number }}</td>
-            </tr>
-            <!-- <tr>
-                <th style="border: none; font-size: 16px; width: 110px;">O365 :</th>
-                <td style="border: none;">{{ $asset->o365 }}</td>
-            </tr> -->
-            <tr>
-                <th style="border: none; font-size: 16px; width: 110px;">Action :</th>
-                <td style="border: none;">{{ $asset->type_transactions }}</td>
-            </tr>
-            <tr>
-                <th style="border: none; font-size: 16px; width: 110px;">Kondisi :</th>
-                <td style="border: none;">{{ $asset->condition }}</td>
-            </tr>
-            <tr>
-                <th style="border: none; font-size: 16px; width: 145px;">Documentation :</th>
-                <td style="border: none;">
-                    @if($asset->documentation)
-                        <a href="{{ asset('storage/' . $asset->documentation) }}" target="_blank" class="text-decoration-underline">View Documentation</a>
-                    @else
-                        No documentation available.
-                    @endif
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-
-                                                                                        </div>
-                                                                                    </div>
-                                                        @endforeach
+                                <div class="row justify-content-center">
+                                    @foreach ($transactions as $index => $asset)
+                                        <div class="col-md-5 mb-3">
+                                            <div class="card"
+                                                style="background-color: rgb(218,181,255); border: none;">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-4">
+                                                        @php
+                                                            // Determine the image file based on the category_asset
+                                                            $iconMap = [
+                                                                'PC' => 'pc.png',
+                                                                'Tablet' => 'tablet.png',
+                                                                'Laptop' => 'laptop.png',
+                                                                // Add more mappings as needed
+                                                            ];
+                                                            $iconFile = isset($iconMap[$asset->category_asset]) ? $iconMap[$asset->category_asset] : 'default.png'; // Fallback to default icon
+                                                        @endphp
+                                                        <img src="{{ asset('assets/img/' . $iconFile) }}" alt="Asset Icon"
+                                                            class="me-3" style="width: 60px; height: 60px;">
+                                                        <p class="card-text">
+                                                            <strong>Category:</strong> {{ $asset->category_asset }}<br>
+                                                            <strong>Asset Code:</strong> {{ $asset->tagging }}<br>
+                                                            <strong>Merk:</strong> {{ $asset->merk_name }}<br>
+                                                        </p>
                                                     </div>
-                            @endif
 
+                                                    <div class="action-buttons d-flex justify-content-end">
+                                                    <button class="btn btn-sm" style="background-color: #4FB0F1; color: #fff; font-weight: 500;" data-bs-toggle="modal"
+                                                        data-bs-target="#detailModal{{ $asset->id }}" title="View Details">
+                                                        <i class="bi bi-file-earmark-text"></i> Detail
+                                                    </button>
+                                                </div>
+
+                                                </div>
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="detailModal{{ $asset->id }}" tabindex="-1"
+                                                    aria-labelledby="detailModalLabel{{ $asset->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title text-center flex-grow-1" style="font-weight: 600;" id="detailModalLabel{{ $asset->id }}">
+                                                                    Asset Details</h4>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                <div class="col-md-6">
+                                                                <table class="table" style="border-collapse: collapse; border: none;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 110px;">Category</th>
+                                                                            <td style="border: none;">{{ $asset->category_asset }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 120px;">Asset Code</th>
+                                                                            <td style="border: none;">{{ $asset->tagging }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 120px;">S/N</th>
+                                                                            <td style="border: none;">{{ $asset->serial_number }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 110px;">Merk</th>
+                                                                            <td style="border: none;">{{ $asset->merk_name }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 110px;">Specification</th>
+                                                                            <td style="border: none;">{{ $asset->spesification }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 110px;">Condition</th>
+                                                                            <td style="border: none;">{{ $asset->condition }}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <table class="table" style="border-collapse: collapse; border: none;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 135px;">Handover Date</th>
+                                                                            <td style="border: none;">{{ $asset->handover_date }}</td>
+                                                                        </tr>                                                                    
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 110px;">Scheduling Maintenance</th>
+                                                                            <td style="border: none;">{{ $asset->scheduling_maintenance }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 110px;">Last Maintenance</th>
+                                                                            <td style="border: none;">{{ $asset->last_maintenance ?? 'Not Yet Maintenance' }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="border: none; font-size: 16px; width: 110px;">Next Maintenance</th>
+                                                                            <td style="border: none;">{{ $asset->next_maintenance }}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                    
+                                                                </table>
+                                                            </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    @if($asset->documentation)
+                                                                        <button type="button" class="btn" style="background-color: #4294FF;" onclick="window.open('{{ asset('storage/' . $asset->documentation) }}', '_blank')">
+                                                                            <i class="bi bi-file-earmark-image"></i> Documentation
+                                                                        </button>
+                                                                    @else
+                                                                        <button type="button" class="btn" style="background-color: #6c757d;" disabled>
+                                                                            <i class="bi bi-file-earmark-excel"></i> No Documentation
+                                                                        </button>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+<!-- Offcanvas Ticket -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="ticketOffcanvas" aria-labelledby="ticketOffcanvasLabel" style="width: 50%; z-index: 1050;">
+    <div class="offcanvas-header" style="background-color: #B46EFF;">
+        <h5 id="ticketOffcanvasLabel" class="text-white fw-bold">Ticket</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- Ticket Index Component -->
+        <div>
+            @livewire('ticket-index')
+        </div>
+    </div>
+</div>
+
+<!-- Modal Create Ticket (placed outside offcanvas to appear above it) -->
+<div class="modal fade" id="createTicketModal" tabindex="-1" aria-labelledby="createTicketModalLabel" aria-hidden="true" wire:ignore.self style="z-index: 1051;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-center" id="createTicketModalLabel">Create New Ticket</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- TicketCreate Livewire Component -->
+                @livewire('ticket-create')
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
     </section>
 </main>
-
 @section('scripts')
 <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
 @endsection
-
-
-
-
-
 <script>
     // Toggle "Select All" functionality
     document.getElementById('selectAll').addEventListener('click', function () {
@@ -341,3 +365,63 @@
         }
     </style>
 @endpush
+<style>
+    /* Card and badge styling */
+.ticket-container {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background-color: #fff;
+    transition: transform 0.2s;
+}
+
+.ticket-container:hover {
+    transform: translateY(-4px);
+}
+
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-badge.open {
+    background-color: #28a745;
+}
+
+.status-badge.in-progress {
+    background-color: #007bff;
+}
+
+.status-badge.closed {
+    background-color: #6c757d;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .ticket-container {
+        margin: 0px 0;
+    }
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .card-body {
+        padding: 10px;
+    }
+    .card-title {
+        font-size: 1rem;
+    }
+    .status-badge {
+        font-size: 0.7rem;
+    }
+}
+
+</style>

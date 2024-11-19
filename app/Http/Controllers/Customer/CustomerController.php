@@ -42,7 +42,7 @@ class CustomerController extends Controller
             'name' => $request->input('name'),
             'mapping' => $request->input('mapping'),
         ]);
-        event(new \App\Events\CustomerDataChanged($customer, 'created'));
+
 
         return redirect()->route('customer.index')->with('success', 'User created successfully.');
     }
@@ -78,7 +78,7 @@ class CustomerController extends Controller
 
         $customer->update($data);
 
-        event(new \App\Events\CustomerDataChanged($customer, 'updated'));
+
 
         return redirect()->route('customer.index')->with('success', 'User updated successfully.');
     }
@@ -86,16 +86,20 @@ class CustomerController extends Controller
     // Remove the specified resource from storage
     public function destroy(Customer $customer)
     {
-        // Check if customer has related assets
-        if ($customer->assets()->count() > 0) {
-            return redirect()->route('customer.index')->with('error', 'The user still has assets, please return assets first if you want to delete this user.');
+        // Check if the customer is referenced in the 'transactions' table
+        $hasTransactions = \DB::table('transactions')->where('name_holder', $customer->id)->exists();
+
+        if ($hasTransactions) {
+            // If there are transactions related to the customer, don't delete
+            return redirect()->route('customer.index')->with('error', 'This customer has associated transactions and cannot be deleted.');
         }
-        event(new \App\Events\CustomerDataChanged($customer, 'deleted'));
-        // If no related assets, delete customer
+        // If no related transactions, proceed with deletion
         $customer->delete();
 
         return redirect()->route('customer.index')->with('success', 'Customer deleted successfully.');
     }
+
+
 
     public function editUser($id)
     {
@@ -104,7 +108,7 @@ class CustomerController extends Controller
     }
 
     // Update the user profile
-   
+
     public function updateUser(Request $request, $id)
     {
         $request->validate([
@@ -113,7 +117,7 @@ class CustomerController extends Controller
             'mapping' => 'required|string|max:50',
             'email' => 'required|string|max:255|unique:customer,username,' . $id, // Ensure unique email
         ]);
-    
+
         $user = Customer::findOrFail($id);
         $user->update([
             'nrp' => $request->nrp,
@@ -122,8 +126,8 @@ class CustomerController extends Controller
             'username' => $request->email, // Assuming this is the email field
         ]);
 
-    
+
         return response()->json(['success' => true]);
     }
-    
+
 }

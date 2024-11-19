@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\{
     UserAuthController,
 };
 use App\Http\Controllers\Customer\CustomerController;
+use App\Http\Controllers\Tickets\TicketController;
 use App\Http\Controllers\Merk\MerkController;
 use App\Http\Controllers\Shared\{
     DashboardAdminController,
@@ -30,6 +31,7 @@ use App\Http\Controllers\{
 
 
 
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -44,6 +46,15 @@ Route::post('/register', [UserAuthController::class, 'storeregister'])->name('us
 Route::get('/auth/detailQR/{id}', [PrintController::class, 'showAssetDetail'])->name('auth.detailQR');
 
 Route::middleware(['auth.check'])->group(function () {
+
+    Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
+    Route::get('/tickets-user/{id}', [TicketController::class, 'showMobile'])->name('tickets.showMobile');
+    Route::post('/tickets/{id}/message', [TicketController::class, 'addMessage'])->name('tickets.addMessage');
+    
+
+
     Route::get('/welcome-user', [DashboardUserController::class, 'index'])->name('shared.homeUser');
     Route::get('/portal-user', [DashboardAdminController::class, 'indexUser'])->name('dashboard.user');
     Route::get('/home/sales', [HomeSalesController::class, 'index'])->name('shared.homeSales');
@@ -82,6 +93,9 @@ Route::middleware(['auth.check:sales'])->group(function () {
 
 
 Route::middleware(['auth.check:admin'])->group(function () {
+    Route::get('/admin/tickets', [TicketController::class, 'adminIndex'])->name('tickets.adminIndex');
+    Route::get('/tickets-admin/{id}', [TicketController::class, 'show'])->name('tickets.show');
+    
     Route::get('/portal-admin', [DashboardAdminController::class, 'index'])->name('dashboard');
     Route::resource('customer', CustomerController::class);
     Route::get('customer', [CustomerController::class, 'index'])->name('customer.index');

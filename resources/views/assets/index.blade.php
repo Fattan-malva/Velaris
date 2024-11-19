@@ -9,7 +9,6 @@
     <div>
         <div class="container">
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
             <script>
                 // Menampilkan pesan sukses setelah redirect dari controller
                 @if (session('success'))
@@ -39,13 +38,6 @@
                         <span class="small-text">to previous page</span>
                     </div>
                 </div>
-                <!-- <a class="back-wrapper" id="back-icon" href="{{ url()->previous() }}">
-                                        <i class='bx bxs-chevron-left back-icon'></i>
-                                        <div class="back-text">
-                                            <span class="title">Back</span>
-                                            <span class="small-text">to previous page</span>
-                                        </div>
-                                    </a> -->
                 <h3 class="assetList-title">
                     Asset List&nbsp;&nbsp;
                     <span class="icon-wrapper">
@@ -88,13 +80,13 @@
                 <table id="assetTable" class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 70px;">No.</th>
+                            <th scope="col" style="width: 50px;">No.</th>
                             <th scope="col" style="width: 150px;">Asset Code</th>
                             <th scope="col">S/N</th>
                             <th scope="col" style="width: 100px;">Location</th>
                             <th scope="col" style="width: 130px;">Name Holder</th>
-                            <th scope="col">Value (Rp)</th>
-                            <th scope="col">Maintenance</th>
+                            <th scope="col" style="width: 130px;">Value (Rp)</th>
+                            <th scope="col" style="width: 130px;">Maintenance</th>
                             <th scope="col" style="width: 100px;">Status</th>
                             <th scope="col" style="width: 50px;" class="non-sortable">
                                 <input type="checkbox" id="selectAllCheckbox">
@@ -103,76 +95,76 @@
                     </thead>
                     <tbody>
                         @foreach ($assetss as $index => $asset)
-                                                <tr>
-                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
-                                                    style="cursor: pointer;">{{ $index + 1 }}</td>
-                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
-                                                    style="cursor: pointer;">{{ $asset->code }}</td>
-                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
-                                                    style="cursor: pointer;">{{ $asset->serial_number }}</td>
+                            <tr>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                style="cursor: pointer;">{{ $index + 1 }}</td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                style="cursor: pointer;">{{ $asset->code }}</td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                style="cursor: pointer;">{{ $asset->serial_number }}</td>
 
-                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
-                                                    style="cursor: pointer;">
-                                                        @php
-                                                            $location = $asset->location ?? 'In Inventory';
-                                                            if ($location !== 'In Inventory') {
-                                                                $location = strtok($location, ',');
-                                                            }
-                                                        @endphp
-                                                        {{ $location }}
-                                                    </td>
-                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
-                                                    style="cursor: pointer;">{{ $asset->customer_name ?? 'Not Yet Handover' }}</td>
-                                                    <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
-                                                    style="cursor: pointer;">{{ number_format($asset->depreciation_price, 0, ',', '.') }}</td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                style="cursor: pointer;">
+                                    @php
+                                        $location = $asset->location ?? 'In Inventory';
+                                        if ($location !== 'In Inventory') {
+                                            $location = strtok($location, ',');
+                                        }
+                                    @endphp
+                                    {{ $location }}
+                                </td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                style="cursor: pointer;">{{ $asset->customer_name ?? 'Not Yet Handover' }}</td>
+                                <td data-bs-toggle="modal" title="Click to view details" data-bs-target="#detailsModal-{{ $asset->id }}"
+                                style="cursor: pointer;">{{ number_format($asset->depreciation_price, 0, ',', '.') }}</td>
 
-                                                    <td>
-                                                        @php
-                                                            $tanggalMaintenance = $asset->last_maintenance ?? $asset->entry_date;
-                                                            [$intervalValue, $intervalUnit] = explode(' ', $asset->scheduling_maintenance);
-                                                            switch (strtolower($intervalUnit)) {
-                                                                case 'weeks':
-                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance)->addWeeks($intervalValue);
-                                                                    break;
-                                                                case 'months':
-                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance)->addMonths($intervalValue);
-                                                                    break;
-                                                                case 'years':
-                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance)->addYears($intervalValue);
-                                                                    break;
-                                                                default:
-                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance);
-                                                                    break;
-                                                            }
-                                                            $maintenanceDue = now()->greaterThanOrEqualTo($nextMaintenanceDate);
-                                                        @endphp
-                                                        @if ($maintenanceDue)
-                                                            <a href="{{ route('assets.maintenance') }}" title="Click to Maintenance" style="cursor: pointer;">
-                                                            <span class="badge text-center align-middle"
-                                                                style="padding: 5px; font-size: 0.9em; background-color:#FE7C96;">Need
-                                                                Maintenance</span>
-                                                            </a>
-                                                        @else
-                                                            <span class="badge text-center align-middle"
-                                                                style="padding: 5px 44px; font-size: 0.9em; background-color:#B46EFF;">Done</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                    <a href="{{ route('transactions.index') }}" title="Click to view transactions" style="cursor: pointer;">
-                                                        @if ($asset->status === 'Inventory')
-                                                            <span class="badge bg-warning"
-                                                                style="padding: 5px 10px; font-size: 0.9em; background-color:#FED713;">Available</span>
-                                                        @elseif ($asset->status === 'Operation')
-                                                            <span class="badge"
-                                                                style="padding: 5px 18px; font-size: 0.9em; background-color:#1BCFB4;">In Use</span>
-                                                        @endif
-                                                    </a>
-                                                    </td>
-                                                    <td>
-                                                        <input type="checkbox" style="cursor: pointer;" class="assetCheckbox" value="{{ $asset->id }}"
-                                                            id="checkbox-{{ $asset->id }}" data-serial="{{ $asset->serial_number }}">
-                                                    </td>
-                                                </tr>
+                                <td>
+                                    @php
+                                        $tanggalMaintenance = $asset->last_maintenance ?? $asset->entry_date;
+                                        [$intervalValue, $intervalUnit] = explode(' ', $asset->scheduling_maintenance);
+                                        switch (strtolower($intervalUnit)) {
+                                            case 'weeks':
+                                                $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance)->addWeeks($intervalValue);
+                                                break;
+                                            case 'months':
+                                                $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance)->addMonths($intervalValue);
+                                                break;
+                                            case 'years':
+                                                $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance)->addYears($intervalValue);
+                                                break;
+                                            default:
+                                                $nextMaintenanceDate = \Carbon\Carbon::parse($tanggalMaintenance);
+                                                break;
+                                        }
+                                        $maintenanceDue = now()->greaterThanOrEqualTo($nextMaintenanceDate);
+                                    @endphp
+                                    @if ($maintenanceDue)
+                                        <a href="{{ route('assets.maintenance') }}" title="Click to Maintenance" style="cursor: pointer;">
+                                        <span class="badge text-center align-middle"
+                                            style="padding: 5px; font-size: 0.9em; background-color:#FE7C96;">Need
+                                            Maintenance</span>
+                                        </a>
+                                    @else
+                                        <span class="badge text-center align-middle"
+                                            style="padding: 5px 44px; font-size: 0.9em; background-color:#B46EFF;">Done</span>
+                                    @endif
+                                </td>
+                                <td>
+                                <a href="{{ route('transactions.index') }}" title="Click to view transactions" style="cursor: pointer;">
+                                    @if ($asset->status === 'Inventory')
+                                        <span class="badge bg-warning"
+                                            style="padding: 5px 10px; font-size: 0.9em; background-color:#FED713;">Available</span>
+                                    @elseif ($asset->status === 'Operation')
+                                        <span class="badge"
+                                            style="padding: 5px 18px; font-size: 0.9em; background-color:#1BCFB4;">In Use</span>
+                                    @endif
+                                </a>
+                                </td>
+                                <td>
+                                    <input type="checkbox" style="cursor: pointer;" class="assetCheckbox" value="{{ $asset->id }}"
+                                        id="checkbox-{{ $asset->id }}" data-serial="{{ $asset->serial_number }}">
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -212,209 +204,197 @@
 </div>
 
 @foreach ($assetss as $asset)
-    <div class="modal fade" id="detailsModal-{{ $asset->id }}" tabindex="-1" aria-labelledby="detailsModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title text-center fw-bold w-100" id="detailsModalLabel">Asset Details</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <!-- Tabel Kiri -->
-                        <div class="col-md-6">
-                            <table class="table no-border-table">
-                                <tbody>
-                                    <tr>
-                                        <th><strong>Category</strong></th>
-                                        <td>{{ $asset->category }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th><strong>Code</strong></th>
-                                        <td>{{ $asset->code }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th><strong>Merk</strong></th>
-                                        <td>{{ $asset->merk_name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th><strong>S/N</strong></th>
-                                        <td>{{ $asset->serial_number }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th><strong>Specification</strong></th>
-                                        <td>{{ $asset->spesification }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th><strong>Condition</strong></th>
-                                        <td>{{ $asset->condition }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Tabel Kanan -->
-                        <div class="col-md-6">
-                            <table class="table no-border-table">
-                                <tbody>
-                                    <tr>
-                                        <th><strong>Entry Date</strong></th>
-                                        <td
-                                            style="background-color: rgba(0, 0, 255, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
-                                            @php
-                                                $tanggalMasuk = $asset->entry_date;
-                                                echo date('d-m-Y', strtotime($tanggalMasuk));
-                                            @endphp
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <th><strong>Handover Date</strong></th>
-                                        <td @php
-                                            $tanggalDiterima = $asset->handover_date ?? '-';
-                                        $bgColor = ($tanggalDiterima === '0000-00-00 00:00:00' || $tanggalDiterima === '-') ? 'rgba(128, 128, 128, 0.2)' : 'rgba(0, 255, 0, 0.2)'; @endphp
-                                            style="background-color: {{ $bgColor }}; border-radius: 20px; padding: 5px 10px; display: inline-block;">
-
-                                            @if ($tanggalDiterima === '0000-00-00 00:00:00' || $tanggalDiterima === '-')
-                                                Not Yet Handover
-                                            @else
-                                                {{ date('d-m-Y', strtotime($tanggalDiterima)) }}
-                                            @endif
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <th><strong>Scheduling Maintenance</strong></th>
-                                        <td>{{ $asset->scheduling_maintenance }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th><strong>Last Maintenance</strong></th>
-                                        <td
-                                            style="background-color: rgba(255, 255, 0, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
-                                            @php
-                                                $last_maintenanceDate = $asset->last_maintenance ?? '-';
-                                                if (
-                                                    $last_maintenanceDate === '0000-00-00 00:00:00' ||
-                                                    $last_maintenanceDate === '-'
-                                                ) {
-                                                    echo '-';
-                                                } else {
-                                                    echo date('d-m-Y', strtotime($last_maintenanceDate));
-                                                }
-                                            @endphp
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><strong>Next Maintenance</strong></th>
-                                        <td
-                                            style="background-color: rgba(255, 182, 193, 0.2); border-radius: 20px; padding: 5px 10px; display: inline-block;">
-                                            @if ($asset->next_maintenance)
-                                                                                @php
-                                                                                    $nextMaintenanceDate = \Carbon\Carbon::parse(
-                                                                                        $asset->next_maintenance,
-                                                                                    );
-                                                                                    echo $nextMaintenanceDate->format('d-m-Y');
-                                                                                @endphp
-                                            @else
-                                                <span>Not Scheduled</span>
-                                            @endif
-                                        </td>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn open-history-modal" style="background-color: #FFC107;"
-                        data-code="{{ $asset->code }}" data-asset-id="{{ $asset->id }}" data-bs-toggle="modal"
-                        data-bs-target="#DepreciationModal-{{ $asset->id }}">
-                        <i class="bi bi-calculator"></i>
-                        View Depreciation
-                    </button>
-                    <button type="button" class="btn open-history-modal" style="background-color: #9A9A9A;"
-                        data-code="{{ $asset->code }}" data-asset-id="{{ $asset->id }}" data-bs-toggle="modal"
-                        data-bs-target="#historyModal-{{ $asset->id }}"
-                        onclick="loadTransactionHistory('{{ $asset->code }}', '{{ $asset->id }}')">
-                        <i class="bi bi-clock-history"></i>
-                        View History
-                    </button>
-             
-
-
-
-
-                </div>
+<div class="modal fade" id="detailsModal-{{ $asset->id }}" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-center fw-bold w-100" id="detailsModalLabel">Asset Details</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-    </div>
-
-    <!-- History Modal -->
-    <div class="modal fade" id="historyModal-{{ $asset->id }}" tabindex="-1" aria-labelledby="historyModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-center fw-bold w-100" id="historyModalLabel">
-                        Transaction History for
-                        <span class="asset-code">{{ $asset->code }}</span>
-                    </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mt-4">
-                        <table class="table table-hover">
-                            <thead>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Tabel Kiri -->
+                    <div class="col-md-6">
+                        <table class="table no-border-table">
+                            <tbody>
                                 <tr>
-                                    <th>Transfer Date</th>
-                                    <th>Action</th>
-                                    <th>Holder</th>
-                                    <th>Note</th>
-                                    <th>Documentation</th>
+                                    <th><strong>Category</strong></th>
+                                    <td>{{ $asset->category }}</td>
                                 </tr>
-                            </thead>
-                            <tbody id="modalHistoryBody-{{ $asset->id }}">
-                                <!-- History rows will be inserted here -->
+                                <tr>
+                                    <th><strong>Code</strong></th>
+                                    <td>{{ $asset->code }}</td>
+                                </tr>
+                                <tr>
+                                    <th><strong>Merk</strong></th>
+                                    <td>{{ $asset->merk_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th><strong>S/N</strong></th>
+                                    <td>{{ $asset->serial_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th><strong>Specification</strong></th>
+                                    <td>{{ $asset->spesification }}</td>
+                                </tr>
+                                <tr>
+                                    <th><strong>Condition</strong></th>
+                                    <td>{{ $asset->condition }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Tabel Kanan -->
+                    <div class="col-md-6">
+                        <table class="table no-border-table">
+                            <tbody>
+                                <tr>
+                                    <th><strong>Entry Date</strong></th>
+                                    <td class="badge-style">
+                                        @php
+                                            $tanggalMasuk = $asset->entry_date;
+                                            echo date('d-m-Y', strtotime($tanggalMasuk));
+                                        @endphp
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th><strong>Handover Date</strong></th>
+                                    <td 
+                                        @php
+                                            $tanggalDiterima = $asset->handover_date ?? '-';
+                                            $bgColor = ($tanggalDiterima === '0000-00-00 00:00:00' || $tanggalDiterima === '-') 
+                                                ? 'rgba(128, 128, 128, 0.2)' 
+                                                : 'rgba(0, 255, 0, 0.2)';
+                                        @endphp
+                                        style="background-color: {{ $bgColor }}; border-radius: 20px; padding: 5px 10px; display: inline-block;">
+                                        @if ($tanggalDiterima === '0000-00-00 00:00:00' || $tanggalDiterima === '-')
+                                            Not Yet Handover
+                                        @else
+                                            {{ date('d-m-Y', strtotime($tanggalDiterima)) }}
+                                        @endif
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th><strong>Scheduling Maintenance</strong></th>
+                                    <td>{{ $asset->scheduling_maintenance }}</td>
+                                </tr>
+                                <tr>
+                                    <th><strong>Last Maintenance</strong></th>
+                                    <td class="badge-style" style="background-color: rgba(255, 255, 0, 0.2);">
+                                        @php
+                                            $last_maintenanceDate = $asset->last_maintenance ?? '-';
+                                            echo ($last_maintenanceDate === '0000-00-00 00:00:00' || $last_maintenanceDate === '-') ? '-' : date('d-m-Y', strtotime($last_maintenanceDate));
+                                        @endphp
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><strong>Next Maintenance</strong></th>
+                                    <td class="badge-style" style="background-color: rgba(255, 182, 193, 0.2);">
+                                        @if ($asset->next_maintenance)
+                                            @php
+                                                $nextMaintenanceDate = \Carbon\Carbon::parse($asset->next_maintenance);
+                                                echo $nextMaintenanceDate->format('d-m-Y');
+                                            @endphp
+                                        @else
+                                            <span>Not Scheduled</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><strong>Asset Age</strong></th>
+                                    <td id="asset-age-{{ $asset->id }}" 
+                                        class="{{ $asset->is_expired ? 'text-danger' : '' }}"
+                                        style="border-radius: 20px; background-color: rgba(128, 128, 128, 0.2); padding: 5px 10px; display: inline-block;">
+                                        <span class="countdown" data-time-remaining="{{ $asset->time_remaining_seconds }}"></span>
+                                    </td>
+
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="modal fade" id="DepreciationModal-{{ $asset->id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-center fw-bold w-100" id="exampleModalLabel">Depreciation History for {{ $asset->code }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Asset Value</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="modalDepreciationBody-{{ $asset->id }}">
-                            <!-- Data akan dimuat di sini -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" style="background-color: #FFC107;"
+                        data-bs-toggle="offcanvas" data-bs-target="#depreciationOffcanvas-{{ $asset->id }}"
+                        onclick="closeDetailsModal('{{ $asset->id }}'); loadDepreciationData('{{ $asset->code }}', '{{ $asset->id }}')">
+                    <i class="bi bi-calculator"></i>
+                    View Depreciation
+                </button>
+                <button type="button" class="btn" style="background-color: #9A9A9A;"
+                        data-bs-toggle="offcanvas" data-bs-target="#historyOffcanvas-{{ $asset->id }}"
+                        onclick="closeDetailsModal('{{ $asset->id }}'); loadTransactionHistory('{{ $asset->code }}', '{{ $asset->id }}')">
+                    <i class="bi bi-clock-history"></i>
+                    View History
+                </button>
             </div>
+
         </div>
     </div>
+</div>
+
+
+<!-- History Offcanvas -->
+<div class="offcanvas offcanvas-end" id="historyOffcanvas-{{ $asset->id }}" tabindex="-1" aria-labelledby="historyOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="historyOffcanvasLabel">
+            Transaction History for <span class="asset-code">{{ $asset->code }}</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mt-4">
+            <table class="table table-hover" id="historyTable-{{ $asset->id }}">
+                <thead>
+                    <tr>
+                        <th>Transfer Date</th>
+                        <th>Action</th>
+                        <th>Holder</th>
+                        <th>Note</th>
+                        <th>Documentation</th>
+                    </tr>
+                </thead>
+                <tbody id="modalHistoryBody-{{ $asset->id }}">
+                    <!-- History rows will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Depreciation Offcanvas -->
+<div class="offcanvas offcanvas-end" id="depreciationOffcanvas-{{ $asset->id }}" tabindex="-1" aria-labelledby="depreciationOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="depreciationOffcanvasLabel">
+            Depreciation History for {{ $asset->code }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Asset Value</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="modalDepreciationBody-{{ $asset->id }}">
+                <!-- Depreciation rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
 
 
+    @endforeach
 
 
 
@@ -433,85 +413,117 @@
             });
         });
     });
+    function closeDetailsModal(assetId) {
+        const detailsModal = document.getElementById(`detailsModal-${assetId}`);
+        const modalInstance = bootstrap.Modal.getInstance(detailsModal);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+     // Function to update the countdown
+    // Function to update the countdown
+    function updateCountdown() {
+        document.querySelectorAll('.countdown').forEach(function(element) {
+            let timeRemaining = parseInt(element.getAttribute('data-time-remaining'));
 
-    // Function to load transaction history
+            if (timeRemaining > 0) {
+                timeRemaining++;  // Increment to keep the countdown running
+
+                let days = Math.floor(timeRemaining / (24 * 60 * 60));
+                let hours = Math.floor((timeRemaining % (24 * 60 * 60)) / (60 * 60));
+                let minutes = Math.floor((timeRemaining % (60 * 60)) / 60);
+                let seconds = timeRemaining % 60;
+
+                element.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                element.setAttribute('data-time-remaining', timeRemaining);  // Update the remaining time in seconds
+
+                // If asset age is exceeded, set text to red
+                let assetAgeElement = element.closest('td');
+                if (timeRemaining < 0) {
+                    assetAgeElement.classList.add('text-danger');
+                } else {
+                    assetAgeElement.classList.remove('text-danger');
+                }
+            }
+        });
+    }
+
+    // Call the updateCountdown function every second
+    setInterval(updateCountdown, 1000);
     function loadTransactionHistory(assetCode, assetId) {
-        var modalBody = document.getElementById('modalHistoryBody-' + assetId);
+    var modalBody = document.getElementById('modalHistoryBody-' + assetId);
 
-        fetch(`/transaction-history/${assetCode}`)
-            .then(response => response.json())
-            .then(data => {
-                modalBody.innerHTML = '';
+    fetch(`/transaction-history/${assetCode}`)
+        .then(response => response.json())
+        .then(data => {
+            modalBody.innerHTML = '';
 
+            data.forEach(item => {
+                let typeBadge;
+                let printButton = '';
+                let docIcon = '';
+
+                if (item.type_transactions === 'Return') {
+                    typeBadge = '<span class="badge bg-danger">Return</span>';
+                    printButton = `<button class="btn btn-sm btn-success" onclick="printReturnProof(${item.id})"><i class="fas fa-print"></i></button>`;
+                } else if (item.type_transactions === 'Handover') {
+                    typeBadge = '<span class="badge bg-success">Handover</span>';
+                    printButton = `<button class="btn btn-sm btn-success" onclick="printHandoverProof(${item.id})"><i class="fas fa-print"></i></button>`;
+                } else {
+                    typeBadge = `<span class="badge bg-secondary">${item.type_transactions}</span>`;
+                }
+
+                if (item.documentation) {
+                    docIcon = `<a href="/storage/${item.documentation}" target="_blank" class="btn btn-sm btn-info"><i class="fas fa-file-alt"></i></a>`;
+                } else {
+                    docIcon = '<span class="text-muted"><i class="fas fa-times"></i></span>';
+                }
+
+                var row = `<tr>
+                                <td>${item.created_at}</td>
+                                <td>${typeBadge}</td>
+                                <td>${item.name_holder}</td>
+                                <td>${item.note}</td>
+                                <td>${docIcon}${printButton}</td> 
+                            </tr>`;
+                modalBody.innerHTML += row;
+            });
+        });
+}
+
+// Function to load depreciation data
+function loadDepreciationData(assetCode, assetId) {
+    var modalBody = document.getElementById('modalDepreciationBody-' + assetId);
+
+    fetch(`/depreciation/${assetCode}`)
+        .then(response => response.json())
+        .then(data => {
+            modalBody.innerHTML = '';
+
+            if (Array.isArray(data) && data.length > 0) {
                 data.forEach(item => {
-                    let typeBadge;
-                    let printButton = '';
-                    let docIcon = '';
+                    var currentDate = new Date();
+                    var depreciationDate = new Date(item.date);
 
-                    if (item.type_transactions === 'Return') {
-                        typeBadge = '<span class="badge bg-danger">Return</span>';
-                        printButton = `<button class="btn btn-sm btn-success" onclick="printReturnProof(${item.id})"><i class="fas fa-print"></i></button>`;
-                    } else if (item.type_transactions === 'Handover') {
-                        typeBadge = '<span class="badge bg-success">Handover</span>';
-                        printButton = `<button class="btn btn-sm btn-success" onclick="printHandoverProof(${item.id})"><i class="fas fa-print"></i></button>`;
-                    } else {
-                        typeBadge = `<span class="badge bg-secondary">${item.type_transactions}</span>`;
-                    }
-
-                    if (item.documentation) {
-                        docIcon = `<a href="/storage/${item.documentation}" target="_blank" class="btn btn-sm btn-info"><i class="fas fa-file-alt"></i></a>`;
-                    } else {
-                        docIcon = '<span class="text-muted"><i class="fas fa-times"></i></span>';
-                    }
+                    var status = (depreciationDate > currentDate) ? 'Has not depreciated' : 'Depreciated';
+                    var badgeClass = (status === 'Depreciated') ? 'badge bg-danger' : 'badge bg-success';
 
                     var row = `<tr>
-                                    <td>${item.created_at}</td>
-                                    <td>${typeBadge}</td>
-                                    <td>${item.name_holder}</td>
-                                    <td>${item.note}</td>
-                                    <td>${docIcon}</td> 
-                                    <td>${printButton}</td> 
+                                    <td>${item.date}</td>
+                                    <td>${formatNumber(item.depreciation_price)}</td>
+                                    <td><span class="${badgeClass}">${status}</span></td>
                                 </tr>`;
                     modalBody.innerHTML += row;
                 });
-            });
-    }
-
-    // Function to load depreciation data
-    function loadDepreciationData(assetCode, assetId) {
-        var modalBody = document.getElementById('modalDepreciationBody-' + assetId);
-
-        console.log('Asset Code:', assetCode);
-
-        fetch(`/depreciation/${assetCode}`)
-            .then(response => response.json())
-            .then(data => {
-                modalBody.innerHTML = '';
-
-                if (Array.isArray(data) && data.length > 0) {
-                    data.forEach(item => {
-                        var currentDate = new Date();
-                        var depreciationDate = new Date(item.date);
-
-                        var status = (depreciationDate > currentDate) ? 'Has not depreciated' : 'Depreciated';
-                        var badgeClass = (status === 'Depreciated') ? 'badge bg-danger' : 'badge bg-success';
-
-                        var row = `<tr>
-                                        <td>${item.date}</td>
-                                        <td>${formatNumber(item.depreciation_price)}</td>
-                                        <td><span class="${badgeClass}">${status}</span></td>
-                                    </tr>`;
-                        modalBody.innerHTML += row;
-                    });
-                } else {
-                    modalBody.innerHTML = '<tr><td colspan="3">No depreciation data available</td></tr>';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching depreciation data:', error);
-                modalBody.innerHTML = '<tr><td colspan="3">Error loading data</td></tr>';
-            });
-    }
+            } else {
+                modalBody.innerHTML = '<tr><td colspan="3">No depreciation data available</td></tr>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching depreciation data:', error);
+            modalBody.innerHTML = '<tr><td colspan="3">Error loading data</td></tr>';
+        });
+}
 
     // Basic number formatting function if formatNumber is not defined
     function formatNumber(number) {
@@ -532,8 +544,6 @@
 </script>
 
 
-
-@endforeach
 
 
 
@@ -605,14 +615,36 @@
         });
     });
 </script>
-
-
-
-
-
-
-
 <style>
+    
+      /* Custom styling for badges */
+      .badge-style {
+        background-color: rgba(0, 0, 255, 0.2);
+        border-radius: 20px;
+        padding: 5px 10px;
+        display: inline-block;
+        white-space: nowrap; /* Prevents text wrapping */
+    }
+
+    /* Table styling for smaller devices */
+    @media (max-width: 768px) {
+        .modal-dialog {
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .table {
+            width: 100%;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td, .table th {
+            white-space: nowrap;
+        }
+    }
+
     .card {
         box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
     }

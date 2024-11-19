@@ -8,17 +8,20 @@
     <!-- Boxicons CDN Link -->
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ asset('assets/css/navbar/admin.css')}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
 
     <!-- DESKTOP VIEW -->
     <div class="sidebar close">
-        <div class="logo-details">
-            <img src="{{ asset('assets/img/assetslogo.png') }}" alt="Global Service Indonesia Logo" class="sidebar-logo">
-            <span class="logo_name">ssets</span>
-        </div>
+        <a href="{{ route('dashboard') }}">
+            <div class="logo-details">
+                <img src="{{ asset('assets/img/assetslogo.png') }}" alt="Global Service Indonesia Logo"
+                    class="sidebar-logo">
+                <span class="logo_name">ssets</span>
+            </div>
+        </a>
         <ul class="nav-links">
             <li>
                 <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -56,7 +59,8 @@
                 </div>
                 <ul class="sub-menu">
                     <li><a href="{{ route('transactions.index') }}"
-                            class="{{ request()->routeIs('transactions.index') ? 'active' : '' }}">Approval Status</a></li>
+                            class="{{ request()->routeIs('transactions.index') ? 'active' : '' }}">Approval Status</a>
+                    </li>
                     <li><a href="{{ route('transactions.handover') }}"
                             class="{{ request()->routeIs('transactions.handover') ? 'active' : '' }}">Handover</a></li>
                     <li><a href="{{ route('transactions.indexreturn') }}"
@@ -68,35 +72,18 @@
                             Maintenance
                         </a>
                     </li>
-                    <!-- <li><a href="{{ route('transactions.indexmutasi') }}">Mutasi</a></li> -->
                 </ul>
             </li>
-            <!-- <li>
-                    <a href="{{ route('sales.index') }}" class="{{ request()->routeIs('sales.index') ? 'active' : '' }}">
-                        <i class='bx bx-message-alt-detail'></i>
-                        <span class="link_name">Ticket</span>
-                    </a>
-                </li> -->
+            <li>
+                @livewire('sidebar-notification')
+            </li>
             <li>
                 <a href="{{ route('inventory.history') }}"
-                    class="{{ request()->routeIs('sales.index') ? 'active' : '' }}">
+                    class="{{ request()->routeIs('inventory.history') ? 'active' : '' }}">
                     <i class='fa-solid fa-clock'></i>
                     <span class="link_name">History</span>
                 </a>
             </li>
-            <!-- <li>
-                    <div class="iocn-link">
-                        <a class="{{ request()->routeIs('transactions.history') || request()->routeIs('inventory.history') ? 'active' : '' }}">
-                            <i class='bx bx-history' class="{{ request()->routeIs('transactions.history') || request()->routeIs('inventory.history') ? 'active' : '' }}"></i>
-                            <span class="link_name">History</span>
-                        </a>
-                        <i class='bx bxs-chevron-left arrow'></i>
-                    </div>
-                    <ul class="sub-menu">
-                        <li><a href="{{ route('transactions.history') }}" class="{{ request()->routeIs('transactions.history') ? 'active' : '' }}">Activity</a></li>
-                        <li><a href="{{ route('inventory.history') }}" class="{{ request()->routeIs('inventory.history') ? 'active' : '' }}">Entry & Scrap</a></li>
-                    </ul>
-                </li> -->
             <li>
                 <div class="iocn-link">
                     <a href="#"
@@ -173,9 +160,10 @@
         </button>
         <div class="logo">
             <img src="{{ asset('assets/img/assetslogo.png') }}" alt="Logo">
-            <span class="title">ssets</span>
+            <a href="{{'portal-admin'}}"><span class="title">ssets</span></a>
         </div>
         <div class="profile">
+            @livewire('ticketmobile')
             <img src="{{ asset('assets/img/admin.png') }}" alt="Admin Profile">
             <i class="fa fa-sign-out-alt" id="logout-icon-mobile" style="cursor: pointer;"></i>
         </div>
@@ -187,15 +175,7 @@
 
 
 
-    <!-- Content untuk tampilan mobile -->
-    <div class="mobile-content">
-        <div>
-            <main class="py-4">
-                <br>
-                @yield('content')
-            </main>
-        </div>
-    </div>
+
 
     <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
@@ -219,7 +199,6 @@
             <a href="{{ route('inventory.history') }}"
                 class="{{ request()->routeIs('inventory.history') ? 'active' : '' }}">History</a>
         </div>
-
         <!-- Activity Menu -->
         <a href="javascript:void(0)" class="menu-toggle" data-target="activity-submenu">
             <i class="fas fa-chart-line"></i>
@@ -444,3 +423,30 @@
 
 
 </script>
+<style>
+    .badge-ticket {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        font-size: 11px;
+        font-weight: bold;
+        color: white;
+        background-color: #db1f1f;
+        padding: 3px 8px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .badge-tickets {
+        position: absolute;
+        top: 20px;
+        right: 90px;
+        font-size: 8px;
+        font-weight: bold;
+        color: white;
+        background-color: #db1f1f;
+        padding: 1px 6px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+</style>

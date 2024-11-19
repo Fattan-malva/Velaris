@@ -179,6 +179,7 @@
 </head>
 
 <body>
+    
     @php
         $userRole = session('user_role');
     @endphp
