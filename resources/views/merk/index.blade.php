@@ -127,7 +127,7 @@
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header text-black " style="background-color: #f8f8f8;">
+                <div class="modal-header">
                     <h5 class="modal-title" id="updateMerkModalLabel" style="font-weight: 600;">Edit Merk</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -137,7 +137,7 @@
                         @method('PUT')
 
                         <div class="mb-3">
-                            <label for="update_name" class="form-label text-black" style="font-weight: 600;">Merk
+                            <label for="update_name" class="form-label" style="font-weight: 600;">Merk
                                 Name</label>
                             <input type="text" class="form-control" id="update_name" name="name" required>
                         </div>
@@ -157,6 +157,52 @@
 
 
     <style>
+        /* DARK MODE - Modal */
+body.dark-mode .modal-content {
+    background-color: #2a2a2a;
+    color: #eaeaea;
+    border: 1px solid #444;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .modal-header {
+    background-color: #333333;
+    color: #ffffff;
+    border-bottom: 1px solid #444;
+}
+
+body.dark-mode .modal-header .btn-close {
+    filter: invert(1);
+}
+
+body.dark-mode .modal-body {
+    background-color: #2a2a2a;
+    color: #eaeaea;
+}
+
+body.dark-mode .form-label {
+    color: #eaeaea;
+}
+
+body.dark-mode .form-control {
+    background-color: #333333;
+    color: #eaeaea;
+    border: 1px solid #444444;
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #bbbbbb;
+}
+
+body.dark-mode .btn {
+    background-color: #1bcfb4;
+    color: #ffffff;
+}
+
+body.dark-mode .btn:hover {
+    background-color: #17b3a0;
+}
+
         .card {
             box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
         }

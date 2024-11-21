@@ -161,7 +161,9 @@ body.dark-mode .form-group input[type="file"]::-webkit-file-upload-button {
     cursor: pointer; /* Pointer cursor on hover */
 }
 
-body.dark-mode .form-group input[type="file"]:hover::-webkit-file-upload-button {
+body.dark-mode
+    .form-group
+    input[type="file"]:hover::-webkit-file-upload-button {
     background-color: #333; /* Darker background on hover */
 }
 
@@ -330,8 +332,6 @@ body.dark-mode .card-ticket {
     /* Dark background for home section in dark mode */
 }
 
-
-
 .home-content {
     background: #fff;
     /* Default background for home content in light mode */
@@ -364,9 +364,8 @@ body.dark-mode .profile-details-top .job {
 }
 /* Dark Mode Styling */
 body.dark-mode .mobile-header {
-    background-color: #0B0B0D; /* Dark background for the header */
+    background-color: #0b0b0d; /* Dark background for the header */
     color: white; /* Text color for readability */
-    padding: 10px;
 }
 
 body.dark-mode .mobile-header .back-button {
@@ -410,7 +409,7 @@ body.dark-mode .mobile-header #logout-icon-mobile {
 }
 
 body.dark-mode .bottom-nav {
-    background-color: #0B0B0D; /* Dark background for the bottom nav */
+    background-color: #0b0b0d; /* Dark background for the bottom nav */
     padding: 10px;
     display: flex;
     justify-content: space-around;
@@ -429,35 +428,32 @@ body.dark-mode .bottom-nav a i {
     color: white; /* Icon color */
     margin-bottom: 5px;
 }
-
-body.dark-mode .bottom-nav a.active {
-    background-color: #494949; /* Background color for active links */
-    border-radius: 5px;
-    padding: 5px;
+/* Tombol Dark Mode */
+.dark-mode-toggle {
+    display: none; /* Default: tidak tampil di desktop */
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6C757D;
+    cursor: pointer;
+    transition: color 0.3s ease;
+   
 }
 
-body.dark-mode .submenu {
-    background-color: #1a1a1a; /* Dark background for submenus */
-    display: none; /* Initially hidden */
-    padding: 10px;
-    border-radius: 5px;
+.dark-mode-toggle:hover {
+    color: #fb9f1d;
 }
 
-body.dark-mode .menu-toggle:focus + .submenu,
-body.dark-mode .submenu.active {
-    display: block; /* Show submenu when the menu-toggle is clicked */
+/* Hanya tampil di layar mobile */
+@media (max-width: 768px) {
+    .dark-mode-toggle {
+        display: inline-block;
+    }
 }
 
-body.dark-mode .submenu a {
-    color: white; /* Submenu item text color */
-    font-size: 14px;
-    padding: 5px;
-    display: block;
-}
-
-body.dark-mode .submenu a:hover {
-    background-color: #333; /* Hover effect for submenu items */
-    border-radius: 5px;
+/* Mode Gelap */
+body.dark-mode .dark-mode-toggle {
+    color: #fb9f1d; /* Warna ikon dalam mode gelap */
 }
 
 /* Toggle switch button container */
@@ -492,11 +488,11 @@ body.dark-mode .submenu a:hover {
 
 /* When active (night mode on) */
 .toggle-switch.active {
-    background-color: #FB9F1D;
+    background-color: #fb9f1d;
 }
 
 .toggle-switch.active {
-    background-color: #FB9F1D;
+    background-color: #fb9f1d;
 }
 
 .sidebar.close .toggle-switch.active {
@@ -1131,7 +1127,6 @@ section {
     color: white; /* Warna teks putih jika aktif */
 }
 
-
 .bottom-nav a {
     color: #6c757d;
     text-align: center;
@@ -1182,6 +1177,14 @@ section {
         visibility 0.3s ease;
 }
 
+body.dark-mode .submenu {
+    background-color: #000000;
+    display: flex; /* Atur submenu menjadi flexbox */
+    gap: 10px; /* Tambahkan jarak antar item submenu */
+    justify-content: center; /* Opsional: Mengatur submenu di tengah */
+    align-items: center; /* Vertikal rata tengah */
+}
+
 /* Show submenu with animation */
 .submenu.show {
     visibility: visible;
@@ -1208,6 +1211,26 @@ section {
     color: #fb9f1d;
 }
 
+body.dark-mode .submenu a {
+    color: #6c757d;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 14px;
+}
+
+body.dark-mode .submenu a:hover {
+    color: #fb9f1d;
+    background-color: #32343582;
+    border-radius: 50px;
+}
+
+/* Active submenu link */
+body.dark-mode .submenu a.active {
+    color: #fb9f1d;
+}
+
 /* Adjust width of submenu to be narrower on smaller screens */
 @media (max-width: 768px) {
     .submenu {
@@ -1216,6 +1239,16 @@ section {
     }
 
     .submenu a {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    body.sidebar.dark-mode .submenu {
+        width: 100%; /* Ensure submenu fits parent width */
+        text-align: center;
+    }
+
+    body.sidebar.dark-mode .submenu a {
         padding: 10px;
         font-size: 12px;
     }
@@ -1277,7 +1310,6 @@ section {
         width: 101%;
     }
     .sidebar.close ~ .home-section {
-
         margin-top: 50px;
         left: 0%;
         margin-bottom: 50px;

@@ -158,14 +158,12 @@
         <button class="back-button" onclick="window.history.back()">
             <i class="fa-solid fa-circle-chevron-left"></i>
         </button>
-        <div class="logo">
-            <img src="{{ asset('assets/img/assetslogo.png') }}" alt="Logo">
-            <a href="{{'portal-admin'}}"><span class="title">ssets</span></a>
-        </div>
         <div class="profile">
+            <button id="darkModeButton" class="dark-mode-toggle" onclick="toggleDarkMode()" style="margin-right:10px;">
+                <i id="darkModeIcon" class="bx bx-moon"></i> <!-- Default: Ikon bulan -->
+            </button>
             @livewire('ticketmobile')
-            <img src="{{ asset('assets/img/admin.png') }}" alt="Admin Profile">
-            <i class="fa fa-sign-out-alt" id="logout-icon-mobile" style="cursor: pointer;"></i>
+            <i class="fa fa-sign-out-alt fa-xl" id="logout-icon-mobile" style="cursor: pointer; margin-left:10px;"></i>
         </div>
     </header>
     <!-- Logout Form -->
@@ -239,6 +237,42 @@
 
 </html>
 <script>
+    function toggleDarkMode() {
+        const body = document.body;
+        const icon = document.getElementById('darkModeIcon');
+
+        // Toggle mode
+        body.classList.toggle('dark-mode');
+
+        // Ganti ikon
+        if (body.classList.contains('dark-mode')) {
+            icon.classList.remove('bx-moon');
+            icon.classList.add('bx-sun'); // Ikon matahari
+        } else {
+            icon.classList.remove('bx-sun');
+            icon.classList.add('bx-moon'); // Ikon bulan
+        }
+
+        // Simpan preferensi pengguna di localStorage
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            localStorage.setItem('darkMode', 'disabled');
+        }
+    }
+
+    // Cek preferensi dark mode saat halaman dimuat
+    window.onload = function () {
+        const body = document.body;
+        const icon = document.getElementById('darkModeIcon');
+
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            icon.classList.remove('bx-moon');
+            icon.classList.add('bx-sun');
+        }
+    };
+
     // Function to toggle dark mode and handle switch movement
     function toggleNightMode() {
         const body = document.body;

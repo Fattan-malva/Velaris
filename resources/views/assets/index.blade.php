@@ -342,7 +342,7 @@
 <!-- History Offcanvas -->
 <div class="offcanvas offcanvas-end" id="historyOffcanvas-{{ $asset->id }}" tabindex="-1" aria-labelledby="historyOffcanvasLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="historyOffcanvasLabel">
+        <h5 class="offcanvas-title fw-bold" id="historyOffcanvasLabel">
             Transaction History for <span class="asset-code">{{ $asset->code }}</span>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -370,7 +370,7 @@
 <!-- Depreciation Offcanvas -->
 <div class="offcanvas offcanvas-end" id="depreciationOffcanvas-{{ $asset->id }}" tabindex="-1" aria-labelledby="depreciationOffcanvasLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="depreciationOffcanvasLabel">
+        <h5 class="offcanvas-title fw-bold" id="depreciationOffcanvasLabel">
             Depreciation History for {{ $asset->code }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -616,6 +616,60 @@ function loadDepreciationData(assetCode, assetId) {
     });
 </script>
 <style>
+    /* RESPONSIVE - Offcanvas */
+@media (max-width: 768px) {
+    .offcanvas {
+        width: 100% !important; /* Offcanvas akan menutupi seluruh layar di mobile */
+    }
+
+    .offcanvas-body {
+        padding: 5px; /* Kurangi padding untuk tampilan yang lebih baik */
+    }
+}
+
+    /* DARK MODE - Offcanvas */
+body.dark-mode .offcanvas {
+    background-color: #0b0b0d;
+    color: #eaeaea;
+}
+
+body.dark-mode .offcanvas-header {
+    background-color: #0b0b0d;
+    color: #ffffff;
+    border-bottom: 1px solid #444;
+}
+
+body.dark-mode .offcanvas-title {
+    color: #ffffff;
+}
+
+body.dark-mode .btn-close {
+    filter: invert(1);
+}
+
+body.dark-mode .offcanvas-body {
+    background-color: #0b0b0d;
+    color: #eaeaea;
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .table thead {
+    background-color: #444444;
+    color: #eaeaea;
+}
+
+body.dark-mode .table tbody {
+    color: #eaeaea;
+}
+
+body.dark-mode .table td,
+body.dark-mode .table th {
+    border-color: #555;
+}
+
     
       /* Custom styling for badges */
       .badge-style {

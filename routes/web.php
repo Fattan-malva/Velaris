@@ -35,9 +35,6 @@ use App\Http\Controllers\{
 Route::get('/', function () {
     return view('auth.login');
 });
-Route::get('/healthz', function () {
-    return response()->json(['status' => 'OK']);
-});
 
 Route::get('auth/microsoft', [MicrosoftAuthController::class, 'redirectToProvider'])->name('auth.microsoft');
 Route::get('auth/microsoft/callback', [MicrosoftAuthController::class, 'handleProviderCallback']);
@@ -55,7 +52,7 @@ Route::middleware(['auth.check'])->group(function () {
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/tickets-user/{id}', [TicketController::class, 'showMobile'])->name('tickets.showMobile');
     Route::post('/tickets/{id}/message', [TicketController::class, 'addMessage'])->name('tickets.addMessage');
-
+    
 
 
     Route::get('/welcome-user', [DashboardUserController::class, 'index'])->name('shared.homeUser');
@@ -98,7 +95,7 @@ Route::middleware(['auth.check:sales'])->group(function () {
 Route::middleware(['auth.check:admin'])->group(function () {
     Route::get('/admin/tickets', [TicketController::class, 'adminIndex'])->name('tickets.adminIndex');
     Route::get('/tickets-admin/{id}', [TicketController::class, 'show'])->name('tickets.show');
-
+    
     Route::get('/portal-admin', [DashboardAdminController::class, 'index'])->name('dashboard');
     Route::resource('customer', CustomerController::class);
     Route::get('customer', [CustomerController::class, 'index'])->name('customer.index');

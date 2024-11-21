@@ -33,6 +33,36 @@ class MerkController extends Controller
         return redirect()->route('merk.index')->with('success', 'Merk created successfully.');
     }
 
+    public function storeApi(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        try {
+            // Buat data merk
+            $merk = Merk::create([
+                'name' => $request->name,
+            ]);
+
+            // Kembalikan respons JSON
+            return response()->json([
+                'success' => true,
+                'message' => 'Merk created successfully.',
+                'data' => $merk,
+            ], 201);
+        } catch (\Exception $e) {
+            // Tangani error
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create merk.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
     /**
      * Show the form for editing the specified resource.
      */

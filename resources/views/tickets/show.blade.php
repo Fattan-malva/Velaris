@@ -430,4 +430,74 @@
             margin-right: 0;
         }
     }
+    /* DARK MODE */
+
+/* Container */
+body.dark-mode .chat-container {
+    color: #eaeaea;
+}
+
+/* Header */
+body.dark-mode .chat-header {
+    color: #f0f0f0;
+}
+
+body.dark-mode .chat-status {
+    color: #bbbbbb;
+}
+
+/* Date Badge */
+body.dark-mode .date-badge {
+    background-color: rgba(30, 30, 30, 0.8);
+    color: #f0f0f0;
+}
+
+/* Messages */
+body.dark-mode .chat-messages {
+    background: #1a1919;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .message-bubble.self {
+    background-color: #FACB77;
+}
+
+body.dark-mode .message-bubble.other {
+    background-color: #3a3a3a;
+    color: #eaeaea;
+}
+
+body.dark-mode .message-time {
+    color: #0b0b0d;
+}
+
+/* Input */
+body.dark-mode .chat-textarea {
+    background: #333333;
+    border: 1px solid #444444;
+    color: #eaeaea;
+}
+
+body.dark-mode .chat-textarea::placeholder {
+    color: #bbbbbb;
+}
+
+body.dark-mode .chat-submit-button {
+    background-color: #444444;
+    color: #f0f0f0;
+}
+body.dark-mode .custom-card-header  {
+    background-color: #0b0b0d;
+    color: #f0f0f0;
+    border: none;
+}
+
+/* Ticket & Todo Cards */
+body.dark-mode .ticket-info-card,
+body.dark-mode .todo-list-card {
+    background-color: #2a2a2a;
+    color: #eaeaea;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
 </style>
