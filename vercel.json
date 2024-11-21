@@ -13,7 +13,7 @@
         { "src": "public/**/*", "use": "@vercel/static" }
     ],
     "public": true,
-    "buildCommand": "composer install --optimize-autoloader --no-dev && php artisan config:cache && php artisan route:cache && npm install && npm run build",
+    "buildCommand": "composer install --optimize-autoloader --no-dev && php artisan config:cache && php artisan route:cache",
     "outputDirectory": "public",
     "env": {
         "APP_ENV": "production",
