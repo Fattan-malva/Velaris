@@ -19,7 +19,7 @@
             <div class="logo-details">
                 <img src="{{ asset('assets/img/assetslogo.png') }}" alt="Global Service Indonesia Logo"
                     class="sidebar-logo">
-                <span class="logo_name">ssets</span>
+                <span class="logo_name">stagfirullah</span>
             </div>
         </a>
         <ul class="nav-links">
